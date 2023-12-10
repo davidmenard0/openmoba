@@ -1,13 +1,16 @@
-[gd_scene load_steps=6 format=3 uid="uid://per3lls2li7f"]
+[gd_scene load_steps=7 format=3 uid="uid://bfhm45w25o4qr"]
 
 [ext_resource type="Script" path="res://Scripts/Player.cs" id="1_qvaa4"]
+[ext_resource type="Texture2D" uid="uid://bhcl46pw2cxe7" path="res://icon.svg" id="2_0uukr"]
 
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_f22l6"]
-radius = 10.0
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_r7tdq"]
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_aybyg"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ehqw6"]
+albedo_texture = ExtResource("2_0uukr")
+uv1_scale = Vector3(2, 2, 2)
 
-[sub_resource type="SphereMesh" id="SphereMesh_h6kgv"]
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_m63jp"]
+material = SubResource("StandardMaterial3D_ehqw6")
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_i4osf"]
 properties/0/path = NodePath(".:peer_id")
@@ -20,21 +23,26 @@ properties/2/path = NodePath(".:rotation")
 properties/2/spawn = true
 properties/2/replication_mode = 1
 
-[node name="Objective" type="CharacterBody3D"]
-collision_layer = 2
+[node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_qvaa4")
 
-[node name="InfluenceArea" type="Area3D" parent="."]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="InfluenceArea"]
-shape = SubResource("CylinderShape3D_f22l6")
-
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-shape = SubResource("SphereShape3D_aybyg")
+shape = SubResource("CapsuleShape3D_r7tdq")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1.31134e-07, 0, -1, 0, 1, 0, 1, 0, 1.31134e-07, 0, 0, 0)
-mesh = SubResource("SphereMesh_h6kgv")
+mesh = SubResource("CapsuleMesh_m63jp")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+fov = 90.0
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 1.5, 0)
+billboard = 1
+text = "1"
+font_size = 64
+outline_size = 8
 
 [node name="Synchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_i4osf")

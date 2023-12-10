@@ -20,7 +20,7 @@ public partial class Game : Node
 		_main = GetTree().Root.GetNode("Main");
 		_players = _main.GetNode("Players");
 
-		_menu = ResourceLoader.Load<PackedScene>("res://scenes/menu.tscn").Instantiate();
+		_menu = ResourceLoader.Load<PackedScene>("res://Scenes/UI/Menu.tscn").Instantiate();
 		_main.AddChild(_menu);
 
 		//TODO: This isn't working for some reason, so instead, we just call it in Menu.cs for now
@@ -48,13 +48,18 @@ public partial class Game : Node
 		if(_menu != null)
 			_menu.QueueFree();
 
-		_map = ResourceLoader.Load<PackedScene>("res://scenes/map.tscn").Instantiate();
+		_map = ResourceLoader.Load<PackedScene>("res://Scenes/MainMap.tscn").Instantiate();
 		_main.AddChild(_map);
 	}
 
     public void SpawnPlayer(long id)
     {
-        Player player = (Player)ResourceLoader.Load<PackedScene>("res://scenes/player.tscn").Instantiate();
+        Player player = (Player)ResourceLoader.Load<PackedScene>("res://Scenes/Player.tscn").Instantiate();
+
+		var pos = player.Position;
+		pos.Y = 10f;
+		player.Position = pos;
+
 		player.PeerID = Mathf.RoundToInt(id);
 		_players.AddChild(player);
     }

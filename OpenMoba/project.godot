@@ -10,7 +10,9 @@ config_version=5
 
 [application]
 
-config/name="Simple Multiplayer"
+config/name="OpenMoba"
+config/description="OpenMoba is a new paradigm in MOBAs. We believe a competitive game should be open, free intellectual properly, much like popular games (like soccer) are. 
+We evolve archaic MOBA mechanics in a thirlling, modern approach to MOBAs. "
 run/main_scene="res://Scenes/Main.tscn"
 config/features=PackedStringArray("4.2", "C#", "Forward Plus")
 config/icon="res://icon.svg"

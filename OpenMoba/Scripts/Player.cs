@@ -1,6 +1,9 @@
 using Godot;
 using System;
 
+//TODO: Separate client and server code. 
+// We have a fully server-authoritative game, so client should be input-only
+
 public partial class Player : CharacterBody3D
 {
 	const float GRAVITY = 30f;
@@ -27,6 +30,8 @@ public partial class Player : CharacterBody3D
 		SetProcessInput(isLocal);
 		SetPhysicsProcess(isLocal);
 		SetProcess(isLocal);
+
+		Input.MouseMode = Input.MouseModeEnum.Captured;
 	}
 
 	public override void _Process(double delta)
