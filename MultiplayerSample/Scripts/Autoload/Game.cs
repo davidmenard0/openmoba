@@ -1,12 +1,13 @@
 using Godot;
 using GodotPlugins.Game;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Xml.Resolvers;
 
 public partial class Game : Node
 {
-	const int PORT = 1337;
+	public const int PORT = 8023;
 
 	private Node _main;
 	private Node _players;
@@ -22,12 +23,19 @@ public partial class Game : Node
 		_menu = ResourceLoader.Load<PackedScene>("res://scenes/menu.tscn").Instantiate();
 		_main.AddChild(_menu);
 
+		//TODO: This isn't working for some reason, so instead, we just call it in Menu.cs for now
+		// until we can figure it out
 		Multiplayer.PeerConnected += SpawnPlayer;
 		Multiplayer.PeerDisconnected += RemovePlayer;
+
+		//This is a signal, no errors
+		var error = Multiplayer.Connect("peer_connected", new Callable(this, nameof(this.SpawnPlayer)));
+		if(error != Error.Ok)
+		{
+			GD.Print("Error: Peer not connected");
+		}
 	}
 
-
-    // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(double delta)
 	{
 	}
@@ -43,7 +51,14 @@ public partial class Game : Node
 		_main.AddChild(_map);
 	}
 
-    private void SpawnPlayer(long id)
+    public void SpawnPlayer(long id)
+    {
+        Player player = (Player)ResourceLoader.Load<PackedScene>("res://scenes/player.tscn").Instantiate();
+		player.PeerID = Mathf.RoundToInt(id);
+		_players.AddChild(player);
+    }
+
+	private void _OnPeerConnected(long id)
     {
         Player player = (Player)ResourceLoader.Load<PackedScene>("res://scenes/player.tscn").Instantiate();
 		player.PeerID = Mathf.RoundToInt(id);

@@ -9,15 +9,16 @@ public partial class Player : CharacterBody3D
 
 	public int PeerID
 	{
-		get {return PeerID;}
+		get {return _peerID;}
 		set 
 		{ 
-			PeerID = value;
-			Name = PeerID.ToString();
-			GetNode<Label3D>("Label3D").Text = PeerID.ToString();
-			SetMultiplayerAuthority(PeerID);
+			_peerID = value;
+			Name = _peerID.ToString();
+			GetNode<Label3D>("Label3D").Text = _peerID.ToString();
+			SetMultiplayerAuthority(_peerID);
 		}
 	}
+	private int _peerID;
 
 	public override void _Ready()
 	{
@@ -49,7 +50,7 @@ public partial class Player : CharacterBody3D
 			v.Y = JUMP_VELOCITY;
 		}
 
-		var input_dir = Input.GetVector("move_left", "move_right", "move_forward", "move_backwards");
+		var input_dir = Input.GetVector("move_left", "move_right", "move_forward", "move_backward");
 		var direction = (Transform.Basis * new Vector3(input_dir.X, 0f, input_dir.Y)).Normalized();
 		if(direction.LengthSquared() > Mathf.Epsilon)
 		{

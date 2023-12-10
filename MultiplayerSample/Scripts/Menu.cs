@@ -16,22 +16,47 @@ public partial class Menu : Control
 
 	public void _on_create_pressed()
 	{
-		var peer = new ENetMultiplayerPeer();
-		peer.CreateServer(1337);
+		ENetMultiplayerPeer peer = new ENetMultiplayerPeer();
+		var error = peer.CreateServer(Game.PORT);
+		if(error != Error.Ok)
+		{
+			GD.Print("Error, cannot host! : " + error.ToString());
+			return;
+		}
+		peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
+
 		Multiplayer.MultiplayerPeer = peer;
 		GD.Print("Server Created");
 
+		if(peer.GetConnectionStatus() == MultiplayerPeer.ConnectionStatus.Disconnected){
+			GD.Print("Failde to start server");
+			return;
+		}
+
 		var game = GetNode<Game>("/root/Game");
 		game.LoadMap();
+
+		//TODO: We shouldn't have to call this. It *should* be the callback from 
+		// Multiplayer.PeerConnected, but for some reason, Im not receiving the callback
+		game.SpawnPlayer(peer.GetUniqueId());
 	}
 	public void _on_connect_pressed()
 	{
 		var peer = new ENetMultiplayerPeer();
-		peer.CreateClient("localhost", 1337);
+		var error = peer.CreateClient("localhost", Game.PORT);
+		if(error != Error.Ok)
+		{
+			GD.Print("Error, cannot connect! : " + error.ToString());
+			return;
+		}
+		peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
 		Multiplayer.MultiplayerPeer = peer;
 		GD.Print("Client Connected");
-		
 		var game = GetNode<Game>("/root/Game");
 		game.LoadMap();
+
+		//TODO: We shouldn't have to call this. It *should* be the callback from 
+		// Multiplayer.PeerConnected, but for some reason, Im not receiving the callback
+		game.SpawnPlayer(peer.GetUniqueId());
 	}
 }
