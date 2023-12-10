@@ -55,6 +55,7 @@ public partial class Game : Node
     public void SpawnPlayer(long id)
     {
         Player player = (Player)ResourceLoader.Load<PackedScene>("res://Scenes/Player.tscn").Instantiate();
+		player.Team = _players.GetChildCount() % 2;
 
 		var pos = player.Position;
 		pos.Y = 10f;
@@ -62,6 +63,7 @@ public partial class Game : Node
 
 		player.PeerID = Mathf.RoundToInt(id);
 		_players.AddChild(player);
+
     }
 
 	private void _OnPeerConnected(long id)

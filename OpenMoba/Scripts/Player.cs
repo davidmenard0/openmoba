@@ -17,11 +17,18 @@ public partial class Player : CharacterBody3D
 		{ 
 			_peerID = value;
 			Name = _peerID.ToString();
-			GetNode<Label3D>("Label3D").Text = _peerID.ToString();
+			GetNode<Label3D>("IDLabel").Text = _peerID.ToString();
 			SetMultiplayerAuthority(_peerID);
 		}
 	}
 	private int _peerID;
+
+	public int Team
+	{
+		get{return _team;}
+		set{_team = value;}
+	}
+	private int _team;
 
 	public override void _Ready()
 	{

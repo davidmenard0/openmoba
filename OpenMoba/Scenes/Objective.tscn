@@ -22,8 +22,9 @@ properties/2/replication_mode = 1
 
 [node name="Objective" type="StaticBody3D"]
 
-[node name="InfluenceArea" type="Area3D" parent="."]
+[node name="InfluenceArea" type="Area3D" parent="." node_paths=PackedStringArray("Progreslabel")]
 script = ExtResource("1_vi55k")
+Progreslabel = NodePath("../ProgressLabel")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="InfluenceArea"]
 shape = SubResource("CylinderShape3D_f22l6")
@@ -38,3 +39,7 @@ skeleton = NodePath("")
 
 [node name="Synchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_i4osf")
+
+[node name="ProgressLabel" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.914927, 0)
+text = "0%"
