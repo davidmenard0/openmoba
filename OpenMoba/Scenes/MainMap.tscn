@@ -1,6 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://d0kbbii8qj6we"]
+[gd_scene load_steps=8 format=3 uid="uid://d0kbbii8qj6we"]
 
+[ext_resource type="Script" path="res://Scripts/Map.cs" id="1_6ak0a"]
 [ext_resource type="Material" uid="uid://dyslbqyj6rrvv" path="res://Assets/Materials/prototype1.tres" id="1_sjksx"]
+[ext_resource type="PackedScene" uid="uid://bfhm45w25o4qr" path="res://Scenes/Player.tscn" id="2_jw35w"]
 [ext_resource type="PackedScene" uid="uid://per3lls2li7f" path="res://Scenes/Objective.tscn" id="2_x7t5d"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_apb68"]
@@ -16,7 +18,9 @@ sky = SubResource("Sky_xsbnd")
 tonemap_mode = 2
 glow_enabled = true
 
-[node name="Map" type="Node"]
+[node name="MainMap" type="Node3D"]
+script = ExtResource("1_6ak0a")
+playerScene = ExtResource("2_jw35w")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_evxj3")
@@ -32,7 +36,7 @@ size = Vector3(64, 1, 64)
 material = ExtResource("1_sjksx")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(0.716302, -0.018266, 0.697551, 0, 0.999657, 0.0261769, -0.697791, -0.0187506, 0.716056, 28.9686, -4.031, 29.6568)
+transform = Transform3D(0.716302, -0.018266, 0.697552, 0, 0.999657, 0.0261769, -0.697791, -0.0187506, 0.716056, 28.9686, -4.031, 29.6568)
 current = true
 fov = 70.0
 
@@ -41,8 +45,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 
 [node name="SpawnPoints" type="Node3D" parent="."]
 
-[node name="Team1" type="Node3D" parent="SpawnPoints"]
+[node name="1" type="Node3D" parent="SpawnPoints"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 5, 25)
 
-[node name="Team2" type="Node3D" parent="SpawnPoints"]
+[node name="2" type="Node3D" parent="SpawnPoints"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 5, -25)

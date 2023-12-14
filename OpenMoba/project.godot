@@ -10,32 +10,22 @@ config_version=5
 
 [application]
 
-config/name="OpenMoba"
-config/description="OpenMoba is a new paradigm in MOBAs. We believe a competitive game should be open, free intellectual properly, much like popular games (like soccer) are. 
-We evolve archaic MOBA mechanics in a thirlling, modern approach to MOBAs. "
-run/main_scene="res://Scenes/Main.tscn"
+config/name="Multiplayer Lan Tutorial CSharp"
+run/main_scene="res://Scenes/UI/MainMenu.tscn"
 config/features=PackedStringArray("4.2", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
-[autoload]
-
-Game="*res://Scripts/Autoload/Game.cs"
-
-[display]
-
-window/size/viewport_width=640
-window/size/viewport_height=360
-
 [dotnet]
 
-project/assembly_name="Simple Multiplayer"
-
-[filesystem]
-
-import/blender/enabled=false
+project/assembly_name="Multiplayer Lan Tutorial CSharp"
 
 [input]
 
+fire={
+"deadzone": 0.5,
+"events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":1,"position":Vector2(148, 17),"global_position":Vector2(153, 69),"factor":1.0,"button_index":1,"canceled":false,"pressed":true,"double_click":false,"script":null)
+]
+}
 move_forward={
 "deadzone": 0.5,
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":87,"key_label":0,"unicode":119,"echo":false,"script":null)

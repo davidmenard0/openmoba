@@ -1,27 +1,13 @@
 using Godot;
 using System;
 
-//TODO: Separate client and server code. 
-// We have a fully server-authoritative game, so client should be input-only
-
 public partial class Player : CharacterBody3D
 {
 	const float GRAVITY = 30f;
 	const float SPEED = 15f;
 	const float JUMP_VELOCITY = 10f;
 
-	public int PeerID
-	{
-		get {return _peerID;}
-		set 
-		{ 
-			_peerID = value;
-			Name = _peerID.ToString();
-			GetNode<Label3D>("IDLabel").Text = _peerID.ToString();
-			SetMultiplayerAuthority(_peerID);
-		}
-	}
-	private int _peerID;
+	public PlayerInfo _playerInfo;
 
 	public int Team
 	{
@@ -30,27 +16,39 @@ public partial class Player : CharacterBody3D
 	}
 	private int _team;
 
+	public Vector2 InputVector
+	{
+		get{return _inputDirection;}
+		set{_inputDirection = value;}
+	}
+	private Vector2 _inputDirection;
+
 	public override void _Ready()
 	{
-		GetNode<Camera3D>("Camera3D").Current = PeerID == Multiplayer.GetUniqueId();
-		var isLocal = IsMultiplayerAuthority();
-		SetProcessInput(isLocal);
-		SetPhysicsProcess(isLocal);
-		SetProcess(isLocal);
+		bool isLocal = _playerInfo.PeerID == Multiplayer.GetUniqueId();
+		GetNode<Camera3D>("Camera3D").Current = isLocal;
+		
+		//local authority only true if running a local server
+		var authority = IsMultiplayerAuthority();
+		var isServer = Multiplayer.IsServer();
 
-		Input.MouseMode = Input.MouseModeEnum.Captured;
-	}
+		SetProcessInput(true);
+		SetPhysicsProcess(IsMultiplayerAuthority());
+		SetProcess(IsMultiplayerAuthority());
 
-	public override void _Process(double delta)
-	{
-		if(Input.IsActionJustPressed("ui_cancel"))
+		if(isLocal)
 		{
-			Input.MouseMode = Input.MouseMode == Input.MouseModeEnum.Visible ? Input.MouseModeEnum.Captured : Input.MouseModeEnum.Visible;
+			GD.Print("MP Unique ID: " + Multiplayer.GetUniqueId());
+			GD.Print("Assigned Peer ID: " + _playerInfo.PeerID);
+			Input.MouseMode = Input.MouseModeEnum.Captured;
 		}
 	}
 
     public override void _PhysicsProcess(double delta)
     {
+		//Physics only on server
+		if(!Multiplayer.IsServer()) return;
+
 		var v = Velocity;
         if(!IsOnFloor())
 		{
@@ -62,8 +60,7 @@ public partial class Player : CharacterBody3D
 			v.Y = JUMP_VELOCITY;
 		}
 
-		var input_dir = Input.GetVector("move_left", "move_right", "move_forward", "move_backward");
-		var direction = (Transform.Basis * new Vector3(input_dir.X, 0f, input_dir.Y)).Normalized();
+		var direction = (Transform.Basis * new Vector3(InputVector.X, 0f, InputVector.Y)).Normalized();
 		if(direction.LengthSquared() > Mathf.Epsilon)
 		{
 			v.X = direction.X * SPEED;
@@ -81,6 +78,11 @@ public partial class Player : CharacterBody3D
 
     public override void _Input(InputEvent @event)
     {
+		if(Input.IsActionJustPressed("ui_cancel"))
+		{
+			Input.MouseMode = Input.MouseMode == Input.MouseModeEnum.Visible ? Input.MouseModeEnum.Captured : Input.MouseModeEnum.Visible;
+		}
+
         if(Input.MouseMode == Input.MouseModeEnum.Visible)
 			return;
 		
@@ -91,5 +93,11 @@ public partial class Player : CharacterBody3D
 			r.Y += e.Relative.X * -0.001f;
 			Rotation = r;
 		}
+
+		InputVector = Input.GetVector("move_left", "move_right", "move_forward", "move_backward");
     }
+
+	public void SetUpPlayer(string name){
+		GetNode<Label3D>("IDLabel").Text = name;
+	}
 }

@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://per3lls2li7f"]
+[gd_scene load_steps=7 format=3 uid="uid://per3lls2li7f"]
 
 [ext_resource type="Script" path="res://Scripts/Objective.cs" id="1_vi55k"]
+[ext_resource type="PackedScene" uid="uid://ddsgeunqurqkr" path="res://Assets/VFX/ObjectiveParticle.tscn" id="2_8s57j"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_f22l6"]
 radius = 10.0
@@ -22,9 +23,9 @@ properties/2/replication_mode = 1
 
 [node name="Objective" type="StaticBody3D"]
 
-[node name="InfluenceArea" type="Area3D" parent="." node_paths=PackedStringArray("Progreslabel")]
+[node name="InfluenceArea" type="Area3D" parent="." node_paths=PackedStringArray("ProgressLabel")]
 script = ExtResource("1_vi55k")
-Progreslabel = NodePath("../ProgressLabel")
+ProgressLabel = NodePath("../ProgressLabel")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="InfluenceArea"]
 shape = SubResource("CylinderShape3D_f22l6")
@@ -43,3 +44,5 @@ replication_config = SubResource("SceneReplicationConfig_i4osf")
 [node name="ProgressLabel" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.914927, 0)
 text = "0%"
+
+[node name="ObjectiveParticle" parent="." instance=ExtResource("2_8s57j")]

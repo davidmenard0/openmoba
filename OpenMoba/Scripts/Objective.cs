@@ -7,7 +7,7 @@ public partial class Objective : Node
 	[Export]
 	public float CaptureTime = 60f;
 	[Export]
-	public Label3D Progreslabel;
+	public Label3D ProgressLabel;
 
 	private int _pushCount = 0;
 	private float _captureProgress = 0f;
@@ -18,7 +18,7 @@ public partial class Objective : Node
 	{
 		if(!Multiplayer.IsServer()) return;
 
-		Debug.Assert(Progreslabel != null, "ERROR: ProgressLabel must be assigned in objective");
+		Debug.Assert(ProgressLabel != null, "ERROR: ProgressLabel must be assigned in objective");
 
 		Connect("body_entered", new Callable(this, "_OnBodyEntered"));
 		Connect("body_exited", new Callable(this, "_OnBodyExited"));
@@ -30,7 +30,7 @@ public partial class Objective : Node
 		if(!Multiplayer.IsServer()) return;
 
 		_captureProgress += _pushCount * (float)delta / CaptureTime;
-		Progreslabel.Text = Mathf.Abs(_captureProgress * 100f).ToString(".#") + '%';
+		ProgressLabel.Text = Mathf.Abs(_captureProgress * 100f).ToString(".#") + '%';
 
 		if(_captureProgress >= 1.0f)
 		{
@@ -58,8 +58,11 @@ public partial class Objective : Node
     {
         if (body is CharacterBody3D)
         {
-            GD.Print("Character3D entered the Area3D");
-            // Your logic for when a Character3D enters the area
+            Player p = (Player)body;
+			if(p.Team == 0)
+				_pushCount--;
+			else
+				_pushCount++;
         }
     }
 }
