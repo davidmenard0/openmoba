@@ -23,16 +23,18 @@ public partial class Player : CharacterBody3D
 	}
 	private Vector2 _inputDirection;
 
+	private bool _jump = false;
+
 	public override void _Ready()
 	{
-		bool isLocal = _playerInfo.PeerID == Multiplayer.GetUniqueId();
+		bool isLocal = GetMultiplayerAuthority() == Multiplayer.GetUniqueId();
 		GetNode<Camera3D>("Camera3D").Current = isLocal;
 		
 		//local authority only true if running a local server
 		var authority = IsMultiplayerAuthority();
 		var isServer = Multiplayer.IsServer();
 
-		SetProcessInput(true);
+		SetProcessInput(isLocal);
 		SetPhysicsProcess(IsMultiplayerAuthority());
 		SetProcess(IsMultiplayerAuthority());
 
@@ -55,9 +57,10 @@ public partial class Player : CharacterBody3D
 			v.Y -= (float) (GRAVITY * delta);
 		}
 
-		if(Input.IsActionJustPressed("move_jump") && IsOnFloor() )
+		if(_jump)
 		{
 			v.Y = JUMP_VELOCITY;
+			_jump = false;
 		}
 
 		var direction = (Transform.Basis * new Vector3(InputVector.X, 0f, InputVector.Y)).Normalized();
@@ -78,9 +81,16 @@ public partial class Player : CharacterBody3D
 
     public override void _Input(InputEvent @event)
     {
+		//Inputs only called on puppets
+
 		if(Input.IsActionJustPressed("ui_cancel"))
 		{
 			Input.MouseMode = Input.MouseMode == Input.MouseModeEnum.Visible ? Input.MouseModeEnum.Captured : Input.MouseModeEnum.Visible;
+		}
+		
+		if(Input.IsActionJustPressed("move_jump") && IsOnFloor() )
+		{
+			_jump = true;
 		}
 
         if(Input.MouseMode == Input.MouseModeEnum.Visible)

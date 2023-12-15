@@ -50,3 +50,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 5, 25)
 
 [node name="2" type="Node3D" parent="SpawnPoints"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 5, -25)
+
+[node name="Players" type="Node3D" parent="."]

@@ -46,5 +46,7 @@ text = "1"
 font_size = 64
 outline_size = 8
 
-[node name="Synchronizer" type="MultiplayerSynchronizer" parent="."]
+[node name="ServerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_i4osf")
+
+[node name="PlayerInput" type="MultiplayerSynchronizer" parent="."]

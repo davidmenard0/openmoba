@@ -1,6 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://b5jhp8a2u3gnb"]
+[gd_scene load_steps=3 format=3 uid="uid://b5jhp8a2u3gnb"]
 
 [ext_resource type="Script" path="res://Scripts/Main.cs" id="1_uobwu"]
+[ext_resource type="Script" path="res://Scripts/MultiplayerController.cs" id="2_8586g"]
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_uobwu")
+
+[node name="MultiplayerController" type="Node" parent="."]
+script = ExtResource("2_8586g")

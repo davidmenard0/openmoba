@@ -4,8 +4,11 @@ using System.Xml.Schema;
 using System.Linq;
 
 
-public partial class MultiplayerController : Control
+public partial class MultiplayerController : Node
 {
+	[Signal]
+    public delegate void OnButtonEventHandler();
+
 	[Export]
 	private int port = 8910;
 
@@ -13,29 +16,29 @@ public partial class MultiplayerController : Control
 	private string address = "127.0.0.1";
 
 	private ENetMultiplayerPeer peer;
+	private string _name = "";
 	
 	public override void _Ready()
 	{
 		
-		Multiplayer.ConnectedToServer += Client_ConnectedToServer;
+		Multiplayer.ConnectedToServer += Puppet_ConnectedToServer;
 		Multiplayer.PeerConnected += Server_PeerConnected;
 		Multiplayer.PeerDisconnected += Server_PeerDisconnected;
 		Multiplayer.ConnectionFailed += ConnectionFailed;
 		if(OS.GetCmdlineArgs().Contains("--server"))
 		{
-			HostGame(false);
+			HostGame("", false);
 		}
 	}
 
 	#region multiplayer callbacks
 
-	
-    private void Client_ConnectedToServer()
+    private void Puppet_ConnectedToServer()
     {
 		//Called in peers when they connect to server. 
 		// Send your name and ID to server.
         GD.Print("(Client) Connected To Server.");
-		RpcId(1, "SendPlayerInformation", GetNode<LineEdit>("NameInput").Text, Multiplayer.GetUniqueId());
+		RpcId(1, "RPC_SendPlayerInformation", _name, Multiplayer.GetUniqueId());
     }
 
     private void Server_PeerConnected(long id)
@@ -66,33 +69,9 @@ public partial class MultiplayerController : Control
 
 
 	#endregion
-
-
-	#region button callbacks
-
-	public void _on_host_button_down()
-	{
-		HostGame(true);
-	}
-
-	public void _on_join_button_down()
-	{
-		peer = new ENetMultiplayerPeer();
-		peer.CreateClient(address, port);
-
-		peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
-		Multiplayer.MultiplayerPeer = peer;
-		GD.Print("Joining Game!");
-	}
-
-	public void _on_start_game_button_down()
-	{
-		Rpc("StartGame");
-	}
-	#endregion
-
 	
-	private void HostGame(bool spawnServerPlayer = false){
+	public void HostGame(string name, bool spawnServerPlayer = false){
+		_name = name;
 		peer = new ENetMultiplayerPeer();
 		var error = peer.CreateServer(port, 2);
 		if(error != Error.Ok)
@@ -106,19 +85,34 @@ public partial class MultiplayerController : Control
 		GD.Print("Waiting For Players!");
 		
 		if(spawnServerPlayer)
-			SendPlayerInformation(GetNode<LineEdit>("NameInput").Text, 1);
+			RPC_SendPlayerInformation(_name, 1);
+	}
+
+	public void JoinGame(string name)
+	{
+		_name = name;
+		peer = new ENetMultiplayerPeer();
+		peer.CreateClient(address, port);
+
+		peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
+		Multiplayer.MultiplayerPeer = peer;
+		GD.Print("Joining Game!");
+	}
+
+	public void StartGame()
+	{
+		Rpc("RPC_StartGame");
 	}
 
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	private void StartGame()
+	private void RPC_StartGame()
 	{
 		var scene = ResourceLoader.Load<PackedScene>("res://Scenes/MainMap.tscn").Instantiate<Node>();
 		GetTree().Root.AddChild(scene);
-		this.Hide();
 	}
 
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-	private void SendPlayerInformation(string name, int id)
+	private void RPC_SendPlayerInformation(string name, int id)
 	{
 		PlayerInfo playerInfo = new PlayerInfo(){
 			Name = name,
@@ -132,7 +126,7 @@ public partial class MultiplayerController : Control
 		if(Multiplayer.IsServer()){
 			foreach (var item in GameManager.Players)
 			{
-				Rpc("SendPlayerInformation", item.Name, item.PeerID);
+				Rpc("RPC_SendPlayerInformation", item.Name, item.PeerID);
 			}
 		}
 	}

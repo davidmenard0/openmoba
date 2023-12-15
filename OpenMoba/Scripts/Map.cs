@@ -10,6 +10,8 @@ public partial class Map : Node3D
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		if(!Multiplayer.IsServer()) return;
+
 		var spawnPoints = FindChild("SpawnPoints").GetChildren();
 		int index = 0;
 		foreach (var item in GameManager.Players)
@@ -17,6 +19,7 @@ public partial class Map : Node3D
 			Player currentPlayer = playerScene.Instantiate<Player>();
 			currentPlayer._playerInfo = item;
 			currentPlayer.SetUpPlayer(item.Name);
+			currentPlayer.SetMultiplayerAuthority(1, true);
 			AddChild(currentPlayer);
 			int team = index % 2;
 			currentPlayer.GlobalPosition = ((Node3D)spawnPoints[team]).GlobalPosition;

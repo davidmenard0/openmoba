@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://7g6oqy0hi451"]
 
-[ext_resource type="Script" path="res://Scripts/MultiplayerController.cs" id="1_ay2jx"]
+[ext_resource type="Script" path="res://Scripts/UI/MainMenu.cs" id="1_cmmeq"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -9,7 +9,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_ay2jx")
+script = ExtResource("1_cmmeq")
 
 [node name="Host" type="Button" parent="."]
 layout_mode = 0
