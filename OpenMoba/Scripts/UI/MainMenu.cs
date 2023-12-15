@@ -26,7 +26,6 @@ public partial class MainMenu : Control
 	public void _on_start_game_button_down()
 	{
 		_multiplayerController.StartGame();
-		this.Hide();
 	}
 	#endregion
 }

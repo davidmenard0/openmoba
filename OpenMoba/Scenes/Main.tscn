@@ -13,6 +13,10 @@ script = ExtResource("2_8586g")
 _spawnable_scenes = PackedStringArray("res://Scenes/Maps/MainMap.tscn")
 spawn_path = NodePath("../Map")
 
+[node name="PlayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("res://Scenes/Player.tscn")
+spawn_path = NodePath("../Map")
+
 [node name="UI" type="Node" parent="."]
 
 [node name="Map" type="Node" parent="."]

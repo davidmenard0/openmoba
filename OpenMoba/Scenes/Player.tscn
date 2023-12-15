@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://bfhm45w25o4qr"]
+[gd_scene load_steps=10 format=3 uid="uid://bfhm45w25o4qr"]
 
-[ext_resource type="Script" path="res://Scripts/Player.cs" id="1_qvaa4"]
+[ext_resource type="Script" path="res://Scripts/Player/Player.cs" id="1_58s1o"]
 [ext_resource type="Texture2D" uid="uid://bkyfvgfnf6wj8" path="res://icon.svg" id="2_0uukr"]
 [ext_resource type="Material" uid="uid://bumh373nox2qd" path="res://Assets/Materials/PlayerMat.tres" id="2_o7umo"]
+[ext_resource type="Script" path="res://Scripts/Player/PlayerInput.cs" id="4_a72mp"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_r7tdq"]
 
@@ -14,18 +15,20 @@ uv1_scale = Vector3(2, 2, 2)
 material = SubResource("StandardMaterial3D_ehqw6")
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_i4osf"]
-properties/0/path = NodePath(".:peer_id")
+properties/0/path = NodePath(".:position")
 properties/0/spawn = true
-properties/0/replication_mode = 0
-properties/1/path = NodePath(".:position")
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:rotation")
 properties/1/spawn = true
 properties/1/replication_mode = 1
-properties/2/path = NodePath(".:rotation")
-properties/2/spawn = true
-properties/2/replication_mode = 1
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_o5fwc"]
+properties/0/path = NodePath("PlayerInput:InputVector")
+properties/0/spawn = true
+properties/0/replication_mode = 1
 
 [node name="Player" type="CharacterBody3D"]
-script = ExtResource("1_qvaa4")
+script = ExtResource("1_58s1o")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_r7tdq")
@@ -36,7 +39,7 @@ material_override = ExtResource("2_o7umo")
 mesh = SubResource("CapsuleMesh_m63jp")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+transform = Transform3D(1, 0, 0, 0, 0.296408, 0.955061, 0, -0.955061, 0.296408, -0.597893, 12.0637, 2.8909)
 fov = 90.0
 
 [node name="IDLabel" type="Label3D" parent="."]
@@ -50,3 +53,5 @@ outline_size = 8
 replication_config = SubResource("SceneReplicationConfig_i4osf")
 
 [node name="PlayerInput" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_o5fwc")
+script = ExtResource("4_a72mp")

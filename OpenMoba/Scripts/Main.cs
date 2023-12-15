@@ -3,15 +3,15 @@ using System;
 
 public partial class Main : Node
 {
-	
+	public Node UI;
+	public Node Map;
+
 	public override void _Ready()
 	{
-		var mainmenu = ResourceLoader.Load<PackedScene>("res://Scenes/UI/MainMenu.tscn").Instantiate();
-		AddChild(mainmenu);
-	}
+		UI = GetNode<Node>("UI");
+		Map = GetNode<Node>("Map");
 
-	public void ChangeScenes()
-	{
-		GD.Print("derpy");
+		var mainmenu = ResourceLoader.Load<PackedScene>("res://Scenes/UI/MainMenu.tscn").Instantiate();
+		UI.AddChild(mainmenu);
 	}
 }

@@ -47,7 +47,7 @@ public partial class Objective : Node
         if (body is CharacterBody3D)
         {
             Player p = (Player)body;
-			if(p.Team == 0)
+			if(p.PlayerInfo.Team == 0)
 				_pushCount++;
 			else
 				_pushCount--;
@@ -59,7 +59,7 @@ public partial class Objective : Node
         if (body is CharacterBody3D)
         {
             Player p = (Player)body;
-			if(p.Team == 0)
+			if(p.PlayerInfo.Team == 0)
 				_pushCount--;
 			else
 				_pushCount++;

@@ -100,9 +100,18 @@ public partial class MultiplayerController : Node
 	public void StartGame()
 	{
 		LoadMap();
+		Rpc("RPC_StartGame");
 	}
 
-	[Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void RPC_StartGame()
+	{
+		//TODO: create a UIController instead
+		var main = GetNode<Main>("/root/Main");
+		main.UI.GetNode<Control>("MainMenu").Hide();
+	}
+
+	[Rpc]
 	private void RPC_SendPlayerInformation(string name, int id)
 	{
 		PlayerInfo playerInfo = new PlayerInfo(){

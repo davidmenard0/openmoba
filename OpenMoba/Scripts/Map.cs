@@ -13,17 +13,16 @@ public partial class Map : Node3D
 		if(!Multiplayer.IsServer()) return;
 
 		var spawnPoints = FindChild("SpawnPoints").GetChildren();
-		int index = 0;
-		foreach (var item in GameManager.Players)
+		int i = 0;
+		foreach (var p in GameManager.Players)
 		{
 			Player currentPlayer = playerScene.Instantiate<Player>();
-			currentPlayer._playerInfo = item;
-			currentPlayer.SetUpPlayer(item.Name);
+			p.Team = i % 2;
+			currentPlayer.Init(p);
 			currentPlayer.SetMultiplayerAuthority(1, true);
 			AddChild(currentPlayer);
-			int team = index % 2;
-			currentPlayer.GlobalPosition = ((Node3D)spawnPoints[team]).GlobalPosition;
-			index++;
+			currentPlayer.GlobalPosition = ((Node3D)spawnPoints[p.Team]).GlobalPosition;
+			i++;
 		}
 	}
 
