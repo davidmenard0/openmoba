@@ -2,13 +2,11 @@ using Godot;
 using System;
 using System.Xml.Schema;
 using System.Linq;
+using System.ComponentModel;
 
 
 public partial class MultiplayerController : Node
 {
-	[Signal]
-    public delegate void OnButtonEventHandler();
-
 	[Export]
 	private int port = 8910;
 
@@ -101,14 +99,7 @@ public partial class MultiplayerController : Node
 
 	public void StartGame()
 	{
-		Rpc("RPC_StartGame");
-	}
-
-	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	private void RPC_StartGame()
-	{
-		var scene = ResourceLoader.Load<PackedScene>("res://Scenes/MainMap.tscn").Instantiate<Node>();
-		GetTree().Root.AddChild(scene);
+		LoadMap();
 	}
 
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer)]
@@ -129,5 +120,21 @@ public partial class MultiplayerController : Node
 				Rpc("RPC_SendPlayerInformation", item.Name, item.PeerID);
 			}
 		}
+	}
+
+	//Map sync is handled by the MapSpawner object
+	private void LoadMap()
+	{
+		if(!Multiplayer.IsServer()) return;
+
+		var map = GetNode("../Map");
+		foreach(var c in map.GetChildren())
+		{
+			map.RemoveChild(c);
+			c.QueueFree();
+		}
+
+		Node3D newmap = ResourceLoader.Load<PackedScene>("res://Scenes/Maps/MainMap.tscn").Instantiate<Node3D>();
+		map.AddChild(newmap);
 	}
 }
