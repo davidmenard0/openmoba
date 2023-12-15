@@ -13,12 +13,17 @@ public partial class MultiplayerController : Node
 	[Export]
 	private string address = "127.0.0.1";
 
+	private UIController ui;
 	private ENetMultiplayerPeer peer;
 	private string _name = "";
 	
 	public override void _Ready()
 	{
-		
+		ui = GetNode<UIController>("/root/Main/UI");
+		ui.OnHostClicked += HostGame;
+		ui.OnJoinClicked += JoinGame;
+		ui.OnStartClicked += StartGame;
+
 		Multiplayer.ConnectedToServer += Puppet_ConnectedToServer;
 		Multiplayer.PeerConnected += Server_PeerConnected;
 		Multiplayer.PeerDisconnected += Server_PeerDisconnected;
@@ -29,7 +34,20 @@ public partial class MultiplayerController : Node
 		}
 	}
 
-	#region multiplayer callbacks
+    public override void _ExitTree()
+    {
+        ui.OnHostClicked -= HostGame;
+		ui.OnJoinClicked -= JoinGame;
+		ui.OnStartClicked -= StartGame;
+
+		Multiplayer.ConnectedToServer -= Puppet_ConnectedToServer;
+		Multiplayer.PeerConnected -= Server_PeerConnected;
+		Multiplayer.PeerDisconnected -= Server_PeerDisconnected;
+		Multiplayer.ConnectionFailed -= ConnectionFailed;
+    }
+
+    #region multiplayer callbacks
+
 
     private void Puppet_ConnectedToServer()
     {
@@ -106,9 +124,7 @@ public partial class MultiplayerController : Node
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
 	private void RPC_StartGame()
 	{
-		//TODO: create a UIController instead
-		var main = GetNode<Main>("/root/Main");
-		main.UI.GetNode<Control>("MainMenu").Hide();
+		ui.OnGameStarted?.Invoke();
 	}
 
 	[Rpc]

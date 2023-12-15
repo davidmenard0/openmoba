@@ -15,6 +15,10 @@ run/main_scene="res://Scenes/Main.tscn"
 config/features=PackedStringArray("4.2", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+UiController="*res://Scripts/UI/UIController.cs"
+
 [dotnet]
 
 project/assembly_name="Multiplayer Lan Tutorial CSharp"
