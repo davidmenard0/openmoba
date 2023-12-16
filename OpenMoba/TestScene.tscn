@@ -1,15 +1,231 @@
-[gd_scene load_steps=11 format=3 uid="uid://cqmcx0hg4y21v"]
+[gd_scene load_steps=27 format=3 uid="uid://cqmcx0hg4y21v"]
 
-[ext_resource type="Texture2D" uid="uid://chlnt56mtnfqo" path="res://Trash/parallax_background_layer_6.png" id="1_er8t8"]
-[ext_resource type="Script" path="res://Scripts/Map.cs" id="1_p5a22"]
-[ext_resource type="Texture2D" uid="uid://6r0yoxgn80ir" path="res://Trash/main_tileset.png" id="1_uru3g"]
-[ext_resource type="Texture2D" uid="uid://cwxl33xxbtg3r" path="res://Trash/building_01.png" id="2_4jefx"]
-[ext_resource type="PackedScene" uid="uid://hpbx14ma8p0v" path="res://Trash/player.tscn" id="2_yb0ig"]
-[ext_resource type="Texture2D" uid="uid://tnonfplskpfd" path="res://Trash/building_03.png" id="3_6hor7"]
-[ext_resource type="Texture2D" uid="uid://cg5nd8583ee0n" path="res://Trash/building_05.png" id="4_7waq4"]
+[ext_resource type="Script" path="res://_Game/Scripts/Map.cs" id="1_p5a22"]
+[ext_resource type="Texture2D" uid="uid://bkyfvgfnf6wj8" path="res://icon.svg" id="2_4ak6k"]
+
+[sub_resource type="CSharpScript" id="CSharpScript_4ul30"]
+script/source = "using Godot;
+using System;
+
+public partial class Player_ : CharacterBody2D
+{
+	public const float Speed = 300.0f;
+	public const float JumpVelocity = -400.0f;
+	[Export]
+	public PackedScene Bullet;
+
+	private Vector2 syncPos = new Vector2(0,0);
+	private float syncRotation = 0;
+
+	// Get the gravity from the project settings to be synced with RigidBody nodes.
+	public float gravity = ProjectSettings.GetSetting(\"physics/2d/default_gravity\").AsSingle();
+
+	public override void _Ready(){
+		GetNode<MultiplayerSynchronizer>(\"MultiplayerSynchronizer\").SetMultiplayerAuthority(int.Parse(Name));
+	}
+	public override void _PhysicsProcess(double delta)
+	{
+		if(GetNode<MultiplayerSynchronizer>(\"MultiplayerSynchronizer\").GetMultiplayerAuthority() == Multiplayer.GetUniqueId())
+		{
+			Vector2 velocity = Velocity;
+
+			// Add the gravity.
+			if (!IsOnFloor())
+				velocity.Y += gravity * (float)delta;
+
+			// Handle Jump.
+			if (Input.IsActionJustPressed(\"ui_accept\") && IsOnFloor())
+				velocity.Y = JumpVelocity;
+
+			GetNode<Node2D>(\"GunRotation\").LookAt(GetViewport().GetMousePosition());
+
+			if(Input.IsActionJustPressed(\"fire\")){
+				Rpc(\"fire\");
+			}
+
+			// Get the input direction and handle the movement/deceleration.
+			// As good practice, you should replace UI actions with custom gameplay actions.
+			Vector2 direction = Input.GetVector(\"ui_left\", \"ui_right\", \"ui_up\", \"ui_down\");
+			if (direction != Vector2.Zero)
+			{
+				velocity.X = direction.X * Speed;
+			}
+			else
+			{
+				velocity.X = Mathf.MoveToward(Velocity.X, 0, Speed);
+			}
+
+			Velocity = velocity;
+			MoveAndSlide();
+			syncPos = GlobalPosition;
+			syncRotation = GetNode<Node2D>(\"GunRotation\").RotationDegrees;
+		}else{
+			GlobalPosition = GlobalPosition.Lerp(syncPos, .1f);
+			GetNode<Node2D>(\"GunRotation\").RotationDegrees = Mathf.Lerp(GetNode<Node2D>(\"GunRotation\").RotationDegrees, syncRotation, .1f);
+		}
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer,CallLocal = true)]
+	private void fire(){
+		Node2D b = Bullet.Instantiate<Node2D>();
+		b.RotationDegrees = GetNode<Node2D>(\"GunRotation\").RotationDegrees;
+		b.GlobalPosition = GetNode<Node2D>(\"GunRotation/BulletSpawn\").GlobalPosition;
+		GetTree().Root.AddChild(b);
+	}
+
+	public void SetUpPlayer(string name){
+		GetNode<Label>(\"Label\").Text = name;
+	}
+}
+"
+
+[sub_resource type="CSharpScript" id="CSharpScript_ymtv5"]
+script/source = "using Godot;
+using System;
+
+public partial class Bullet : CharacterBody2D
+{
+	public const float Speed = 500.0f;
+
+	// Get the gravity from the project settings to be synced with RigidBody nodes.
+	public float gravity = ProjectSettings.GetSetting(\"physics/2d/default_gravity\").AsSingle();
+	private Vector2 direction = new Vector2();
+	public override void _Ready(){
+		direction = new Vector2(1,0).Rotated(Rotation);
+	}
+
+	public override void _PhysicsProcess(double delta)
+	{
+		Vector2 velocity = Velocity;
+
+		velocity = Speed * direction;
+		// Add the gravity.
+		if (!IsOnFloor())
+			velocity.Y += gravity * (float)delta;
+
+		Velocity = velocity;
+		MoveAndSlide();
+	}
+
+	private void _on_timer_timeout(){
+		QueueFree();
+	}
+}
+"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gfeud"]
+size = Vector2(22, 6)
+
+[sub_resource type="PackedScene" id="PackedScene_n1ema"]
+_bundled = {
+"conn_count": 1,
+"conns": PackedInt32Array(1073741828, 1073741827, 18, 17, 2, 0, 0),
+"editable_instances": [],
+"names": PackedStringArray("Bullet", "CharacterBody2D", "script", "Sprite2D", "Sprite2D", "position", "scale", "texture", "CollisionShape2D", "CollisionShape2D", "position", "shape", "Timer", "Timer", "wait_time", "one_shot", "autostart", "_on_timer_timeout", "timeout"),
+"node_count": 4,
+"node_paths": [NodePath("."), NodePath("."), NodePath("."), NodePath("."), NodePath("Timer")],
+"nodes": PackedInt32Array(-1, -1, 1, 0, -1, 1, 2, 0, 0, 1073741824, 0, 4, 3, -1, 3, 5, 1, 6, 2, 7, 3, 0, 1073741825, 0, 9, 8, -1, 2, 10, 4, 11, 5, 0, 1073741826, 0, 13, 12, -1, 3, 14, 6, 15, 7, 16, 8, 0),
+"variants": [SubResource("CSharpScript_ymtv5"), Vector2(11, 0), Vector2(0.175781, 0.046875), ExtResource("2_4ak6k"), Vector2(11, 0), SubResource("RectangleShape2D_gfeud"), 5.0, true, true],
+"version": 3
+}
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_o5rkh"]
+load_path = "res://.godot/imported/Main Character - Male - Full spritesheet - No Guide.png-33863eb1026d3e3ebf8243a93c612728.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0rxp2"]
+atlas = SubResource("CompressedTexture2D_o5rkh")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qlmlk"]
+atlas = SubResource("CompressedTexture2D_o5rkh")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7nq4q"]
+atlas = SubResource("CompressedTexture2D_o5rkh")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_133cr"]
+atlas = SubResource("CompressedTexture2D_o5rkh")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m61vo"]
+atlas = SubResource("CompressedTexture2D_o5rkh")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a7x74"]
+atlas = SubResource("CompressedTexture2D_o5rkh")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_h7wyx"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0rxp2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qlmlk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7nq4q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_133cr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m61vo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a7x74")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qv0kn"]
+size = Vector2(29, 38)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_o3s20"]
+load_path = "res://.godot/imported/Famas.png-a22c3c6060bf646ef1804efe068f8c85.ctex"
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_3kik1"]
+properties/0/path = NodePath(".:syncPos")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:syncRotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+
+[sub_resource type="PackedScene" id="PackedScene_675rs"]
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Player", "script", "Bullet", "CharacterBody2D", "AnimatedSprite2D", "texture_filter", "position", "scale", "sprite_frames", "flip_h", "CollisionShape2D", "shape", "GunRotation", "Node2D", "Sprite2D", "texture", "BulletSpawn", "MultiplayerSynchronizer", "replication_interval", "delta_interval", "replication_config", "Label", "offset_left", "offset_top", "offset_right", "offset_bottom", "text"),
+"node_count": 8,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 3, 0, -1, 2, 1, 0, 2, 1, 1, 0, 0, 0, 4, 4, -1, 5, 5, 2, 6, 3, 7, 4, 8, 5, 9, 6, 0, 0, 0, 10, 10, -1, 2, 6, 7, 11, 8, 0, 0, 0, 13, 12, -1, 1, 6, 9, 0, 3, 0, 14, 14, -1, 4, 5, 2, 6, 10, 7, 11, 15, 12, 0, 3, 0, 13, 16, -1, 1, 6, 13, 0, 0, 0, 17, 17, -1, 3, 18, 14, 19, 14, 20, 15, 0, 0, 0, 21, 21, -1, 5, 22, 16, 23, 17, 24, 18, 25, 19, 26, 20, 0),
+"variants": [SubResource("CSharpScript_4ul30"), SubResource("PackedScene_n1ema"), 1, Vector2(0, -33.5), Vector2(2.09375, 2.09375), SubResource("SpriteFrames_h7wyx"), true, Vector2(0.5, -19), SubResource("RectangleShape2D_qv0kn"), Vector2(0, -19), Vector2(41, 1), Vector2(0.411458, 0.411458), SubResource("CompressedTexture2D_o3s20"), Vector2(61, -1), 0.1, SubResource("SceneReplicationConfig_3kik1"), -18.0, -63.0, 22.0, -37.0, "test"],
+"version": 3
+}
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_ysxf8"]
+load_path = "res://.godot/imported/parallax_background_layer_6.png-d7cb76aaef6a2f1d402fabd5fb025dbe.ctex"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_86b0y"]
+load_path = "res://.godot/imported/building_01.png-8312a0ec0ac5a7418e3847e63fdd4fca.ctex"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_hm5qa"]
+load_path = "res://.godot/imported/building_03.png-118ab0a74c78d150c5c9eb526c77d49b.ctex"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_04qug"]
+load_path = "res://.godot/imported/building_05.png-5218d272b1b8141d4efda1c275e920a7.ctex"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_3i473"]
+load_path = "res://.godot/imported/main_tileset.png-c769c9e83da8f63bc9f17c4177f75ca9.ctex"
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_bfysl"]
-texture = ExtResource("1_uru3g")
+texture = SubResource("CompressedTexture2D_3i473")
 1:1/0 = 0
 2:1/0 = 0
 3:1/0 = 0
@@ -337,30 +553,30 @@ size = Vector2(880, 106)
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource("1_p5a22")
-playerScene = ExtResource("2_yb0ig")
+playerScene = SubResource("PackedScene_675rs")
 
 [node name="ParallaxBackgroundLayer6" type="Sprite2D" parent="."]
 position = Vector2(576.778, 323)
 scale = Vector2(2.25694, 2.25694)
-texture = ExtResource("1_er8t8")
+texture = SubResource("CompressedTexture2D_ysxf8")
 
 [node name="Building01" type="Sprite2D" parent="."]
 texture_filter = 1
 position = Vector2(286, 358.5)
 scale = Vector2(2.09375, 2.09375)
-texture = ExtResource("2_4jefx")
+texture = SubResource("CompressedTexture2D_86b0y")
 
 [node name="Building03" type="Sprite2D" parent="."]
 texture_filter = 1
 position = Vector2(865, 342.375)
 scale = Vector2(2.32031, 2.32031)
-texture = ExtResource("3_6hor7")
+texture = SubResource("CompressedTexture2D_hm5qa")
 
 [node name="Building05" type="Sprite2D" parent="."]
 texture_filter = 1
 position = Vector2(578, 292)
 scale = Vector2(2.07813, 2.07813)
-texture = ExtResource("4_7waq4")
+texture = SubResource("CompressedTexture2D_04qug")
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_smboo")
