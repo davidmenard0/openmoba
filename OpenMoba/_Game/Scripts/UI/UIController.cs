@@ -11,4 +11,8 @@ public partial class UIController : Node
 
 	// Multiplayer events
 	public Action OnGameStarted;
+
+
+	//InGameEvents
+	public Action<float> OnObjectiveProgressUpdate; //progress %
 }

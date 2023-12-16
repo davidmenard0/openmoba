@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Data.Common;
+using System.Diagnostics;
 
 
 public partial class Map : Node3D
@@ -11,6 +12,9 @@ public partial class Map : Node3D
 	public override void _Ready()
 	{
 		if(!Multiplayer.IsServer()) return;
+
+		var targets = GetNode<Node3D>("ObjectiveTargets");
+		Debug.Assert(targets != null, "ERROR: Couldn't find ObjectiveTargets in the map.");
 
 		var spawnPoints = FindChild("SpawnPoints").GetChildren();
 		int i = 0;

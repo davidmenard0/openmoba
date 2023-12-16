@@ -1,0 +1,37 @@
+[gd_scene load_steps=2 format=3 uid="uid://blew3em7063hi"]
+
+[ext_resource type="Script" path="res://_Game/Scripts/UI/InGameUI.cs" id="1_rmier"]
+
+[node name="InGameUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_rmier")
+
+[node name="ProgressRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -301.0
+offset_top = 25.0
+offset_right = 299.0
+offset_bottom = 30.0
+grow_horizontal = 2
+color = Color(0.639216, 0.639216, 0.639216, 0.392157)
+
+[node name="ProgressLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -26.0
+offset_top = 30.0
+offset_right = 24.0
+offset_bottom = 53.0
+grow_horizontal = 2
+text = "50%"
+horizontal_alignment = 1
