@@ -2,7 +2,7 @@ using Godot;
 using System;
 using System.Diagnostics;
 
-public partial class Objective : Node
+public partial class Objective : Node3D
 {
 [Export]
 	public float CaptureTime = 60f;
@@ -38,6 +38,8 @@ public partial class Objective : Node
 
 		double lastProgress = _captureProgress;
 		_captureProgress += _area.PushCounter * (float)delta / CaptureTime;
+		this.Transform = _objectiveTargets[0].Transform.InterpolateWith(_objectiveTargets[1].Transform, (1f+_captureProgress)*0.5f );
+		
 		ProgressLabel.Text = Mathf.Abs(_captureProgress * 100f).ToString(".#") + '%';
 
 		if( Mathf.Abs(_captureProgress - lastProgress) > Mathf.Epsilon )
