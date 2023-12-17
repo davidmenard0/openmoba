@@ -1,7 +1,8 @@
 [gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://dyslbqyj6rrvv"]
 
-[ext_resource type="Texture2D" uid="uid://duwdndq4c1lqw" path="res://_Game/Assets/Textures/prototype_textures/dark/texture_01.png" id="1_u7fav"]
+[ext_resource type="Texture2D" uid="uid://cljjxuvto28xc" path="res://_Game/Assets/Textures/prototype_textures/purple/texture_07.png" id="1_v4pnb"]
 
 [resource]
-albedo_texture = ExtResource("1_u7fav")
-uv1_scale = Vector3(16, 16, 16)
+albedo_color = Color(0.505882, 0.537255, 0.92549, 1)
+albedo_texture = ExtResource("1_v4pnb")
+uv1_scale = Vector3(32, 32, 32)

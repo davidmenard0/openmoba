@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Diagnostics;
+using System.Linq;
 
 public partial class Objective : Node3D
 {
@@ -38,7 +39,11 @@ public partial class Objective : Node3D
 
 		double lastProgress = _captureProgress;
 		_captureProgress += _area.PushCounter * (float)delta / CaptureTime;
-		this.Transform = _objectiveTargets[0].Transform.InterpolateWith(_objectiveTargets[1].Transform, (1f+_captureProgress)*0.5f );
+		_captureProgress = Mathf.Clamp(_captureProgress, -1f, 1f);
+
+		var pos = _objectiveTargets[0].GlobalPosition.Lerp(_objectiveTargets[1].GlobalPosition, (1f+_captureProgress)*0.5f );
+		pos.Y = GlobalPosition.Y; // dont change the Y, it's controled by a raycast in _PhysicsProcess
+		this.GlobalPosition = pos;
 		
 		if( Mathf.Abs(_captureProgress - lastProgress) > Mathf.Epsilon )
 			Rpc("RPC_UpdateObjectiveProgress", _captureProgress);
@@ -53,8 +58,20 @@ public partial class Objective : Node3D
 		}
 	}
 
-	//Clients only get progress updates
-	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public override void _PhysicsProcess(double delta)
+    {
+        var spaceState = GetWorld3D().DirectSpaceState;
+		Vector3 raycast_to = this.GlobalPosition + Vector3.Down*10f;
+		var query = PhysicsRayQueryParameters3D.Create(this.GlobalPosition, raycast_to);
+		var result = spaceState.IntersectRay(query);
+		if(result.Count > 0)
+		{
+			this.GlobalPosition = (Vector3)result["position"] + Vector3.Up;
+		}
+    }
+
+    //Clients only get progress updates
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
 	private void RPC_UpdateObjectiveProgress(float progress)
 	{
 		UI.OnObjectiveProgressUpdate?.Invoke(progress);

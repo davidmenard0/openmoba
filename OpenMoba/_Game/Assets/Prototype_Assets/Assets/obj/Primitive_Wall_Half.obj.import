@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://8lc4nou4bn4l"
+path="res://.godot/imported/Primitive_Wall_Half.obj-6e6da6413fb74d8dd95f361733fe3abf.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Primitive_Wall_Half.obj-6e6da6413fb74d8dd95f361733fe3abf.mesh"]
+
+source_file="res://_Game/Assets/Prototype_Assets/Assets/obj/Primitive_Wall_Half.obj"
+dest_files=["res://.godot/imported/Primitive_Wall_Half.obj-6e6da6413fb74d8dd95f361733fe3abf.mesh", "res://.godot/imported/Primitive_Wall_Half.obj-6e6da6413fb74d8dd95f361733fe3abf.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

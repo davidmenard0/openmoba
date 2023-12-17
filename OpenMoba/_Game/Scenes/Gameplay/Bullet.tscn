@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://c3g3l26myqkke"]
+
+[ext_resource type="Script" path="res://_Game/Scripts/Gameplay/Bullet.cs" id="1_qm7qq"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_pwnrk"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_er0h4"]
+
+[node name="Bullet" type="Node3D"]
+script = ExtResource("1_qm7qq")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
+mesh = SubResource("SphereMesh_pwnrk")
+
+[node name="Area3D" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
+shape = SubResource("SphereShape3D_er0h4")

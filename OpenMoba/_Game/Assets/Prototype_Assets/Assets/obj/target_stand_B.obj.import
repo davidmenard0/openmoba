@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://cdc10tt28gmex"
+path="res://.godot/imported/target_stand_B.obj-3832c4abed748a886bc082a3f7394eef.mesh"
+
+[deps]
+
+files=["res://.godot/imported/target_stand_B.obj-3832c4abed748a886bc082a3f7394eef.mesh"]
+
+source_file="res://_Game/Assets/Prototype_Assets/Assets/obj/target_stand_B.obj"
+dest_files=["res://.godot/imported/target_stand_B.obj-3832c4abed748a886bc082a3f7394eef.mesh", "res://.godot/imported/target_stand_B.obj-3832c4abed748a886bc082a3f7394eef.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

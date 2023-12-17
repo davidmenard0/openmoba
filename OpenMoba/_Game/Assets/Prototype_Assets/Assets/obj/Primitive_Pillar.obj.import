@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bl0c6lo4418n5"
+path="res://.godot/imported/Primitive_Pillar.obj-854183a3924708c29533dddef62644ba.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Primitive_Pillar.obj-854183a3924708c29533dddef62644ba.mesh"]
+
+source_file="res://_Game/Assets/Prototype_Assets/Assets/obj/Primitive_Pillar.obj"
+dest_files=["res://.godot/imported/Primitive_Pillar.obj-854183a3924708c29533dddef62644ba.mesh", "res://.godot/imported/Primitive_Pillar.obj-854183a3924708c29533dddef62644ba.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

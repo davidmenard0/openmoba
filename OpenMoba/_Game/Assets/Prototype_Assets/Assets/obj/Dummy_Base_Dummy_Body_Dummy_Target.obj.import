@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://c7v301j4a3s0x"
+path="res://.godot/imported/Dummy_Base_Dummy_Body_Dummy_Target.obj-f7471f6be5d3dcf8290ec36b0d62c8b6.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Dummy_Base_Dummy_Body_Dummy_Target.obj-f7471f6be5d3dcf8290ec36b0d62c8b6.mesh"]
+
+source_file="res://_Game/Assets/Prototype_Assets/Assets/obj/Dummy_Base_Dummy_Body_Dummy_Target.obj"
+dest_files=["res://.godot/imported/Dummy_Base_Dummy_Body_Dummy_Target.obj-f7471f6be5d3dcf8290ec36b0d62c8b6.mesh", "res://.godot/imported/Dummy_Base_Dummy_Body_Dummy_Target.obj-f7471f6be5d3dcf8290ec36b0d62c8b6.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

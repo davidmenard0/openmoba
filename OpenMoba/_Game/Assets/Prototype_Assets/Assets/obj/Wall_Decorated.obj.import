@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://cfnxcireiigo4"
+path="res://.godot/imported/Wall_Decorated.obj-9c1a3300b4d06010c70b8acba1b0f90e.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Wall_Decorated.obj-9c1a3300b4d06010c70b8acba1b0f90e.mesh"]
+
+source_file="res://_Game/Assets/Prototype_Assets/Assets/obj/Wall_Decorated.obj"
+dest_files=["res://.godot/imported/Wall_Decorated.obj-9c1a3300b4d06010c70b8acba1b0f90e.mesh", "res://.godot/imported/Wall_Decorated.obj-9c1a3300b4d06010c70b8acba1b0f90e.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

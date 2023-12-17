@@ -1,12 +1,19 @@
 using Godot;
 using System;
+using System.Diagnostics;
 
 public partial class Player : CharacterBody3D
 {
+	[Export]
+	public PackedScene Bullet;
+	[Export]
+	public Node3D BulletSpawn;
+
 	const float GRAVITY = 30f;
 	const float SPEED = 15f;
 
 	public PlayerInfo PlayerInfo;
+	public PlayerCamera Camera;
 
 	private PlayerInput _playerInput;
 	private bool _isMine = false;
@@ -40,7 +47,7 @@ public partial class Player : CharacterBody3D
 		}
 
 		var input = _playerInput.InputVector;
-		var direction = (Transform.Basis * new Vector3(input.X, 0f, input.Y)).Normalized();
+		var direction = new Vector3(input.X, 0f, input.Y).Normalized();
 		if(direction.LengthSquared() > Mathf.Epsilon)
 		{
 			v.X = direction.X * SPEED;
@@ -56,6 +63,22 @@ public partial class Player : CharacterBody3D
 		MoveAndSlide();
     }
 
+	public void Fire(int id)
+	{
+		//Double-check that the id is the one associated to this player. 
+		//This should always be true, since the RPC is only called on the correct player
+		if(PlayerInfo.PeerID != id)
+		{
+			Debug.Assert(PlayerInfo.PeerID == id, "ERROR: Fire called on another Player than the one that fired");
+			return;
+		}
+
+		var bullet = Bullet.Instantiate<Bullet>();
+		this.GetParent().AddChild(bullet);
+		bullet.GlobalPosition = BulletSpawn.GlobalPosition;
+		bullet.Direction = -this.GlobalTransform.Basis.Z; //forward vector
+	}
+
 	//Sending PeerID here just to double-check, because its an RPCID call anyways
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
 	private void RPC_InitPlayer(int id)
@@ -65,8 +88,7 @@ public partial class Player : CharacterBody3D
 			GD.Print("Puppet Peer ID received: " + id);
 
 			_isMine = true;
-			GetNode<Camera3D>("Camera3D").Current = true;
-			Input.MouseMode = Input.MouseModeEnum.Captured;
+			Camera = GetNode<PlayerCamera>("Camera3D");
 		}
 	}
 
