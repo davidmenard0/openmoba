@@ -8,12 +8,10 @@ public partial class MainMenu : Control
     public override void _Ready()
     {
         ui = GetNode<UIController>("/root/Main/UI");
-		ui.OnGameStarted += OnGameStarted;
     }
 
     public override void _ExitTree()
     {
-        ui.OnGameStarted -= OnGameStarted;
     }
 
     #region button callbacks
@@ -34,8 +32,4 @@ public partial class MainMenu : Control
 	}
 	#endregion
 
-	private void OnGameStarted()
-	{
-		Hide();
-	}
 }

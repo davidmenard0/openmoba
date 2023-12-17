@@ -10,8 +10,5 @@ public partial class Main : Node
 	{
 		UI = GetNode<Node>("UI");
 		Map = GetNode<Node>("Map");
-
-		var mainmenu = ResourceLoader.Load<PackedScene>("res://_Game/Scenes/UI/MainMenu.tscn").Instantiate();
-		UI.AddChild(mainmenu);
 	}
 }
