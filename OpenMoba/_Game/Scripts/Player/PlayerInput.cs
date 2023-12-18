@@ -11,18 +11,23 @@ public partial class PlayerInput : MultiplayerSynchronizer
     public override void _Ready()
     {
 		_player = GetParent<Player>();
-		//Only process input if puppet is the authority
-        SetProcessInput(GetMultiplayerAuthority() == Multiplayer.GetUniqueId());
+		
+		// Dont do this here! (And leave it commented as a warning
+		// at this point, the client might not have received its playerID yet
+		// So IsMine might not be initialized
+        // SetProcessInput(_player.IsMine);
     }
 
-    public override void _Input(InputEvent @event)
+    public override void _Process(double delta)
     {
-		//Inputs only called on clients		
+		if(!_player.IsMine) return;
+
+        //Inputs only called on clients		
 		InputVector = Input.GetVector("move_left", "move_right", "move_forward", "move_backward");
 
-		if(@event.IsActionPressed("fire"))
+		if(Input.IsActionJustPressed("fire"))
 		{
-			Rpc("RPC_Fire", Multiplayer.GetUniqueId());
+			RpcId(1,"Server_Fire", Multiplayer.GetUniqueId());
 		}
 
 		//Control player rotation based on mouse position
@@ -37,11 +42,10 @@ public partial class PlayerInput : MultiplayerSynchronizer
 			pos.Y = _player.GlobalPosition.Y;
 			_player.LookAt(pos);
 		}
-
     }
 
 	[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	private void RPC_Fire(int id)
+	private void Server_Fire(int id)
 	{
 		if(!Multiplayer.IsServer()) return;
 		_player.Fire(id);

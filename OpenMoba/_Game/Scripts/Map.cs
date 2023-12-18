@@ -16,16 +16,23 @@ public partial class Map : Node3D
 		var targets = GetNode<Node3D>("ObjectiveTargets");
 		Debug.Assert(targets != null, "ERROR: Couldn't find ObjectiveTargets in the map.");
 
-		var spawnPoints = FindChild("SpawnPoints").GetChildren();
+		Node playerSpawnPath = GetNode<Node>("/root/Main/PlayerObjects");
+		Debug.Assert(playerSpawnPath != null, "ERROR: Could not find PlayerObjects objec tunder Main.");
+
+		var spawnPoints = FindChild("SpawnPoints");
+		Debug.Assert(spawnPoints != null, "ERROR: Could not find SpawnPoints in map.");
+
+		var points = spawnPoints.GetChildren();
 		int i = 0;
 		foreach (var p in GameManager.Players)
 		{
-			Player currentPlayer = playerScene.Instantiate<Player>();
+			Player currentPlayer = ResourceLoader.Load<PackedScene>("res://_Game/Scenes/Gameplay/Player.tscn").Instantiate<Player>();
+			//Player currentPlayer = playerScene.Instantiate<Player>();
 			p.Team = i % 2;
 			currentPlayer.Init(p);
 			currentPlayer.SetMultiplayerAuthority(1, true);
-			AddChild(currentPlayer);
-			currentPlayer.GlobalPosition = ((Node3D)spawnPoints[p.Team]).GlobalPosition;
+			playerSpawnPath.AddChild(currentPlayer);
+			currentPlayer.GlobalPosition = ((Node3D)points[p.Team]).GlobalPosition;
 			i++;
 		}
 	}

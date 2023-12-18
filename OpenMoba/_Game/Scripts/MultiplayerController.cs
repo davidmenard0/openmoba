@@ -24,9 +24,9 @@ public partial class MultiplayerController : Node
 		UI.OnJoinClicked += JoinGame;
 		UI.OnStartClicked += StartGame;
 
-		Multiplayer.ConnectedToServer += Puppet_ConnectedToServer;
-		Multiplayer.PeerConnected += Server_PeerConnected;
-		Multiplayer.PeerDisconnected += Server_PeerDisconnected;
+		Multiplayer.ConnectedToServer += Client_ConnectedToServer;
+		Multiplayer.PeerConnected += PeerConnected;
+		Multiplayer.PeerDisconnected += PeerDisconnected;
 		Multiplayer.ConnectionFailed += ConnectionFailed;
 		if(OS.GetCmdlineArgs().Contains("--server"))
 		{
@@ -40,31 +40,31 @@ public partial class MultiplayerController : Node
 		UI.OnJoinClicked -= JoinGame;
 		UI.OnStartClicked -= StartGame;
 
-		Multiplayer.ConnectedToServer -= Puppet_ConnectedToServer;
-		Multiplayer.PeerConnected -= Server_PeerConnected;
-		Multiplayer.PeerDisconnected -= Server_PeerDisconnected;
+		Multiplayer.ConnectedToServer -= Client_ConnectedToServer;
+		Multiplayer.PeerConnected -= PeerConnected;
+		Multiplayer.PeerDisconnected -= PeerDisconnected;
 		Multiplayer.ConnectionFailed -= ConnectionFailed;
     }
 
     #region multiplayer callbacks
 
 
-    private void Puppet_ConnectedToServer()
+    private void Client_ConnectedToServer()
     {
-		//Called in peers when they connect to server. 
+		//Called in clients when they connect to server. 
 		// Send your name and ID to server.
-        GD.Print("(Client) Connected To Server.");
-		RpcId(1, "RPC_SendPlayerInformation", _name, Multiplayer.GetUniqueId());
+        GD.Print("(Client) Connected To Server. Sending player info.");
+		RpcId(1, "RPC_SendInfoToServer", Multiplayer.GetUniqueId(), _name);
     }
 
-    private void Server_PeerConnected(long id)
+    private void PeerConnected(long id)
     {
-		//Dont do anything here, the peer will send its info to server,
+		//Dont do anything here, the client will send its info to server,
 		// including its name.
         GD.Print("(Server/Client) Peer Connected to server: " + id.ToString());
     }
 	
-    private void Server_PeerDisconnected(long id)
+    private void PeerDisconnected(long id)
     {
         GD.Print("Player Disconnected: " + id.ToString());
 		GameManager.Players.Remove(GameManager.Players.Where(i => i.PeerID == id).First<PlayerInfo>());
@@ -86,6 +86,39 @@ public partial class MultiplayerController : Node
 
 	#endregion
 	
+
+	#region RPCs
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void RPC_StartGame()
+	{
+		UI.OnGameStarted?.Invoke();
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void RPC_SendInfoToServer(int id, string name)
+	{
+		UpdatePlayerInfo(id, name);
+		
+		//Server sends back player info to everyone
+		if(Multiplayer.IsServer()){
+			foreach (var item in GameManager.Players)
+			{
+				Rpc("RPC_ReceiveInfoOnClients", item.PeerID, item.Name);
+			}
+		}
+	}
+
+	//Dont call local, server has the info
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void RPC_ReceiveInfoOnClients(int id, string name)
+	{
+		UpdatePlayerInfo(id, name);
+	}
+
+	#endregion
+
+
 	public void HostGame(string name, bool spawnServerPlayer = false){
 		_name = name;
 		peer = new ENetMultiplayerPeer();
@@ -101,7 +134,7 @@ public partial class MultiplayerController : Node
 		GD.Print("Waiting For Players!");
 		
 		if(spawnServerPlayer)
-			RPC_SendPlayerInformation(_name, 1);
+			RPC_SendInfoToServer(1, _name);
 	}
 
 	public void JoinGame(string name)
@@ -121,14 +154,7 @@ public partial class MultiplayerController : Node
 		Rpc("RPC_StartGame");
 	}
 
-	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	private void RPC_StartGame()
-	{
-		UI.OnGameStarted?.Invoke();
-	}
-
-	[Rpc]
-	private void RPC_SendPlayerInformation(string name, int id)
+	private void UpdatePlayerInfo(int id, string name)
 	{
 		PlayerInfo playerInfo = new PlayerInfo(){
 			Name = name,
@@ -137,13 +163,6 @@ public partial class MultiplayerController : Node
 		
 		if(!GameManager.Players.Contains(playerInfo)){
 			GameManager.Players.Add(playerInfo);
-		}
-
-		if(Multiplayer.IsServer()){
-			foreach (var item in GameManager.Players)
-			{
-				Rpc("RPC_SendPlayerInformation", item.Name, item.PeerID);
-			}
 		}
 	}
 

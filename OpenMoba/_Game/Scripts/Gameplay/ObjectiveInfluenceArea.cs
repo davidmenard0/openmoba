@@ -15,7 +15,9 @@ public partial class ObjectiveInfluenceArea : Node
 
 	private void _OnBodyEntered(Node body)
     {
-        if (body is CharacterBody3D)
+		if(!Multiplayer.IsServer()) return;
+		
+        if (body is Player)
         {
             Player p = (Player)body;
 			if(p.PlayerInfo.Team == 0)
@@ -27,7 +29,9 @@ public partial class ObjectiveInfluenceArea : Node
 
 	private void _OnBodyExited(Node body)
     {
-        if (body is CharacterBody3D)
+		if(!Multiplayer.IsServer()) return;
+
+        if (body is Player)
         {
             Player p = (Player)body;
 			if(p.PlayerInfo.Team == 0)

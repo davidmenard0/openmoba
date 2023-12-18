@@ -224,4 +224,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 5, 25)
 [node name="2" type="Node3D" parent="SpawnPoints"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 5, -25)
 
-[node name="Players" type="Node3D" parent="."]
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.990446, -0.103121, -0.0915617, 0.13687, 0.65393, 0.744071, -0.0168541, -0.749494, 0.661796, -4.21889, 53.4508, 73.1412)
