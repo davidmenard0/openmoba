@@ -4,6 +4,8 @@ using System.Diagnostics;
 
 public partial class Player : CharacterBody3D
 {
+	public Action<bool> OnInit; //isMine
+
 	[Export]
 	private float Health = 10f;
 	[Export]
@@ -25,7 +27,6 @@ public partial class Player : CharacterBody3D
 	public void Init(PlayerInfo pi){
 		PlayerInfo = pi;
 		_gravity = (float)ProjectSettings.GetSetting("physics/3d/default_gravity");
-
 		GetNode<Label3D>("IDLabel").Text = pi.Name;
 	}
 
@@ -34,12 +35,18 @@ public partial class Player : CharacterBody3D
 		_playerInput = GetNode<PlayerInput>("PlayerInput");
 		Camera = GetNode<PlayerCamera>("Camera3D");
 
-		if(!Multiplayer.IsServer()) return;
+		// Dont init anythign here! The Player doesn't know yet if 
+		// its ID is the PeerID. 
+		// Request playerID & name from server.
+		// This is necessary because server is authority on everything
+		Rpc("RPC_Server_RequestInfo");
 
-		Rpc("RPC_InitPlayer", PlayerInfo.PeerID, PlayerInfo.Name);
-
-		SetPhysicsProcess(IsMultiplayerAuthority());
-		SetProcess(IsMultiplayerAuthority());
+		if(Multiplayer.IsServer())
+		{
+			//Process only on server
+			SetPhysicsProcess(true);
+			SetProcess(true);
+		}
 	}
 
     public override void _PhysicsProcess(double delta)
@@ -53,6 +60,9 @@ public partial class Player : CharacterBody3D
 			v.Y -= (float) (_gravity * delta);
 		}
 
+		if(PlayerInfo.PeerID != Multiplayer.GetUniqueId())
+			GD.Print(_playerInput.InputVector);
+			
 		var input = _playerInput.InputVector;
 		var direction = new Vector3(input.X, 0f, input.Y).Normalized();
 		if(direction.LengthSquared() > Mathf.Epsilon)
@@ -76,6 +86,7 @@ public partial class Player : CharacterBody3D
 
 		//Double-check that the id is the one associated to this player. 
 		//This should always be true, since the RPC is only called on the correct player
+		// It prevents anyone from sending this RPC with malicious intent
 		if(PlayerInfo.PeerID != id)
 		{
 			Debug.Assert(PlayerInfo.PeerID == id, "ERROR: Fire called on another Player than the one that fired");
@@ -102,10 +113,21 @@ public partial class Player : CharacterBody3D
 	
 	////// Update the IDs and names on all clients ///////
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	private void RPC_InitPlayer(int id, string name)
+	private void RPC_Server_RequestInfo()
 	{
-		PlayerInfo.PeerID = id;
-		PlayerInfo.Name = name;
+		//Only server holds this info, so send it to clients
+		Rpc("RPC_Client_RespondInfo", PlayerInfo.PeerID, PlayerInfo.Name);
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void RPC_Client_RespondInfo(int id, string name)
+	{
+		//Update client-side info
+		PlayerInfo playerInfo = new PlayerInfo(){
+			PeerID = id,
+			Name = name
+		};
+		Init(playerInfo);
 
 		if(id == Multiplayer.GetUniqueId())
 		{
@@ -113,4 +135,5 @@ public partial class Player : CharacterBody3D
 			IsMine = true;
 		}
 	}
+
 }

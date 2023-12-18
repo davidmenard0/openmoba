@@ -11,11 +11,24 @@ public partial class PlayerInput : MultiplayerSynchronizer
     public override void _Ready()
     {
 		_player = GetParent<Player>();
+		_player.OnInit += Init;
 		
 		// Dont do this here! (And leave it commented as a warning
 		// at this point, the client might not have received its playerID yet
 		// So IsMine might not be initialized
         // SetProcessInput(_player.IsMine);
+    }
+
+    private void Init(bool isMine)
+    {
+        SetProcess(isMine);
+		SetProcessInput(isMine);
+    }
+
+
+    public override void _ExitTree()
+    {
+		_player.OnInit -= Init;
     }
 
     public override void _Process(double delta)
@@ -44,7 +57,7 @@ public partial class PlayerInput : MultiplayerSynchronizer
 		}
     }
 
-	[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
 	private void Server_Fire(int id)
 	{
 		if(!Multiplayer.IsServer()) return;

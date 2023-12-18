@@ -60,6 +60,7 @@ outline_size = 8
 replication_config = SubResource("SceneReplicationConfig_i4osf")
 
 [node name="PlayerInput" type="MultiplayerSynchronizer" parent="."]
+root_path = NodePath(".")
 replication_config = SubResource("SceneReplicationConfig_o5fwc")
 script = ExtResource("4_a72mp")
 

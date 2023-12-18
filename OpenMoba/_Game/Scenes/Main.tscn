@@ -1,8 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://b5jhp8a2u3gnb"]
+[gd_scene load_steps=6 format=3 uid="uid://b5jhp8a2u3gnb"]
 
 [ext_resource type="Script" path="res://_Game/Scripts/Main.cs" id="1_uobwu"]
 [ext_resource type="Script" path="res://_Game/Scripts/MultiplayerController.cs" id="2_8586g"]
+[ext_resource type="Script" path="res://_Game/Scripts/PlayerObjectSpawner.cs" id="3_103y6"]
 [ext_resource type="Script" path="res://_Game/Scripts/UI/UIController.cs" id="3_xvs1u"]
+[ext_resource type="PackedScene" uid="uid://bfhm45w25o4qr" path="res://_Game/Scenes/Gameplay/Player.tscn" id="4_uvess"]
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_uobwu")
@@ -17,6 +19,8 @@ spawn_path = NodePath("../Map")
 [node name="PlayerObjectSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("res://_Game/Scenes/Gameplay/Player.tscn", "res://_Game/Scenes/Gameplay/Bullet.tscn")
 spawn_path = NodePath("../PlayerObjects")
+script = ExtResource("3_103y6")
+playerScene = ExtResource("4_uvess")
 
 [node name="UI" type="Node" parent="."]
 script = ExtResource("3_xvs1u")
