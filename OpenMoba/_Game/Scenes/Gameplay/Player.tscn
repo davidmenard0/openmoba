@@ -7,7 +7,12 @@
 [ext_resource type="Script" path="res://_Game/Scripts/Player/PlayerInput.cs" id="4_a72mp"]
 [ext_resource type="Script" path="res://_Game/Scripts/Player/PlayerCamera.cs" id="5_cb4gj"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_r7tdq"]
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_o5fwc"]
+properties/0/path = NodePath(".:InputVector")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
+[sub_resource type="BoxMesh" id="BoxMesh_3vcai"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ehqw6"]
 albedo_texture = ExtResource("2_0uukr")
@@ -16,38 +21,46 @@ uv1_scale = Vector3(2, 2, 2)
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_m63jp"]
 material = SubResource("StandardMaterial3D_ehqw6")
 
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_r7tdq"]
+
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_i4osf"]
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
 properties/0/replication_mode = 1
-properties/1/path = NodePath(".:rotation")
+properties/1/path = NodePath("ClientAuthority:rotation")
 properties/1/spawn = true
 properties/1/replication_mode = 1
-
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_o5fwc"]
-properties/0/path = NodePath("PlayerInput:InputVector")
-properties/0/spawn = true
-properties/0/replication_mode = 1
-
-[sub_resource type="BoxMesh" id="BoxMesh_3vcai"]
 
 [node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("BulletSpawn")]
 script = ExtResource("1_58s1o")
 Bullet = ExtResource("2_27g2i")
-BulletSpawn = NodePath("Direction_and_BulletSpawn")
+BulletSpawn = NodePath("ClientAuthority/Direction_and_BulletSpawn")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-shape = SubResource("CapsuleShape3D_r7tdq")
+[node name="ClientAuthority" type="Node3D" parent="."]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="PlayerInput" type="MultiplayerSynchronizer" parent="ClientAuthority"]
+root_path = NodePath(".")
+replication_config = SubResource("SceneReplicationConfig_o5fwc")
+script = ExtResource("4_a72mp")
+
+[node name="Direction_and_BulletSpawn" type="MeshInstance3D" parent="ClientAuthority"]
+transform = Transform3D(-1.09278e-08, 0, 0.1, 0, 0.1, 0, -0.25, 0, -4.37114e-09, 0, 0.6, -0.6)
+mesh = SubResource("BoxMesh_3vcai")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="ClientAuthority"]
 transform = Transform3D(1.31134e-07, 0, -1, 0, 1, 0, 1, 0, 1.31134e-07, 0, 0, 0)
 material_override = ExtResource("2_o7umo")
 mesh = SubResource("CapsuleMesh_m63jp")
+skeleton = NodePath("../..")
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="Camera3D" type="Camera3D" parent="ClientAuthority"]
 transform = Transform3D(1, 0, 0, 0, 0.296408, 0.955061, 0, -0.955061, 0.296408, -0.597893, 12.0637, 2.8909)
 fov = 90.0
 script = ExtResource("5_cb4gj")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_r7tdq")
 
 [node name="IDLabel" type="Label3D" parent="."]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 1.5, 0)
@@ -58,12 +71,3 @@ outline_size = 8
 
 [node name="ServerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_i4osf")
-
-[node name="PlayerInput" type="MultiplayerSynchronizer" parent="."]
-root_path = NodePath(".")
-replication_config = SubResource("SceneReplicationConfig_o5fwc")
-script = ExtResource("4_a72mp")
-
-[node name="Direction_and_BulletSpawn" type="MeshInstance3D" parent="."]
-transform = Transform3D(-1.09278e-08, 0, 0.1, 0, 0.1, 0, -0.25, 0, -4.37114e-09, 0, 0.6, -0.6)
-mesh = SubResource("BoxMesh_3vcai")

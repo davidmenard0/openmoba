@@ -22,30 +22,39 @@ public partial class Player : CharacterBody3D
 	public PlayerCamera Camera;
 
 	private PlayerInput _playerInput;
-	private float _gravity;
+	private Node3D _clientAuthority;
+	private float _gravity = (float)ProjectSettings.GetSetting("physics/3d/default_gravity");
 
 	public void Init(PlayerInfo pi){
 		PlayerInfo = pi;
-		_gravity = (float)ProjectSettings.GetSetting("physics/3d/default_gravity");
 		GetNode<Label3D>("IDLabel").Text = pi.Name;
+
+		// A few things are client-authority:
+		// Rotation of the player, camera, Input
+		_playerInput = GetNode<PlayerInput>("ClientAuthority/PlayerInput");
+		_playerInput.SetMultiplayerAuthority(pi.PeerID);
+		_clientAuthority = GetNode<Node3D>("ClientAuthority");
+		_clientAuthority.SetMultiplayerAuthority(pi.PeerID, true);
 	}
 
 	public override void _Ready()
 	{
-		_playerInput = GetNode<PlayerInput>("PlayerInput");
-		Camera = GetNode<PlayerCamera>("Camera3D");
-
-		// Dont init anythign here! The Player doesn't know yet if 
-		// its ID is the PeerID. 
-		// Request playerID & name from server.
-		// This is necessary because server is authority on everything
-		Rpc("RPC_Server_RequestInfo");
+		_playerInput = GetNode<PlayerInput>("ClientAuthority/PlayerInput");
+		Camera = GetNode<PlayerCamera>("ClientAuthority/Camera3D");
 
 		if(Multiplayer.IsServer())
 		{
 			//Process only on server
 			SetPhysicsProcess(true);
 			SetProcess(true);
+		}
+		else
+		{
+			// Dont init anythign here! The Player doesn't know yet if 
+			// its ID is the PeerID. 
+			// Request playerID & name from server.
+			// This is necessary because server is authority on everything
+			RpcId(1, "RPC_Server_RequestInfo");
 		}
 	}
 
@@ -96,7 +105,7 @@ public partial class Player : CharacterBody3D
 		var bullet = Bullet.Instantiate<Bullet>();
 		this.GetParent().AddChild(bullet, true);
 		bullet.GlobalPosition = BulletSpawn.GlobalPosition;
-		bullet.Direction = -this.GlobalTransform.Basis.Z; //forward vector
+		bullet.Direction = -_clientAuthority.GlobalTransform.Basis.Z; //forward vector
 	}
 
 	public void TakeDamage(float dmg){
@@ -115,6 +124,8 @@ public partial class Player : CharacterBody3D
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
 	private void RPC_Server_RequestInfo()
 	{
+		if(!Multiplayer.IsServer()) return;
+		
 		//Only server holds this info, so send it to clients
 		Rpc("RPC_Client_RespondInfo", PlayerInfo.PeerID, PlayerInfo.Name);
 	}

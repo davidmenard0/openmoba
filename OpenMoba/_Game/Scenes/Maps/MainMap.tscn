@@ -1,7 +1,6 @@
-[gd_scene load_steps=12 format=3 uid="uid://d0kbbii8qj6we"]
+[gd_scene load_steps=11 format=3 uid="uid://d0kbbii8qj6we"]
 
 [ext_resource type="Script" path="res://_Game/Scripts/Map.cs" id="1_rylrr"]
-[ext_resource type="PackedScene" uid="uid://bfhm45w25o4qr" path="res://_Game/Scenes/Gameplay/Player.tscn" id="2_ijgnb"]
 [ext_resource type="Material" uid="uid://dyslbqyj6rrvv" path="res://_Game/Assets/Materials/prototype1.tres" id="3_mit33"]
 [ext_resource type="PackedScene" uid="uid://per3lls2li7f" path="res://_Game/Scenes/Gameplay/Objective.tscn" id="4_nk8a7"]
 [ext_resource type="ArrayMesh" uid="uid://cqpr5jpmss2mo" path="res://_Game/Assets/Prototype_Assets/Assets/obj/Primitive_Slope.obj" id="5_0vb8v"]
@@ -29,7 +28,6 @@ glow_enabled = true
 
 [node name="MainMap" type="Node3D"]
 script = ExtResource("1_rylrr")
-playerScene = ExtResource("2_ijgnb")
 
 [node name="Map" type="Node3D" parent="."]
 

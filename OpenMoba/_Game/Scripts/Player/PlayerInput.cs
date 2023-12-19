@@ -7,10 +7,12 @@ public partial class PlayerInput : MultiplayerSynchronizer
 	public Vector2 InputVector; //Sync via replication
 
 	private Player _player;
+	private Node3D _clientAuthority;
 
     public override void _Ready()
     {
-		_player = GetParent<Player>();
+		_clientAuthority = GetParent<Node3D>();
+		_player = _clientAuthority.GetParent<Player>();
 		_player.OnInit += Init;
 		
 		// Dont do this here! (And leave it commented as a warning
@@ -53,7 +55,7 @@ public partial class PlayerInput : MultiplayerSynchronizer
 			//Y is always at the height of the player. He's always looking straight flat
 			var pos = cursorPos.Value;
 			pos.Y = _player.GlobalPosition.Y;
-			_player.LookAt(pos);
+			_clientAuthority.LookAt(pos);
 		}
     }
 
