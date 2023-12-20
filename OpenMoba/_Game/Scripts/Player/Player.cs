@@ -29,6 +29,8 @@ public partial class Player : CharacterBody3D
 		PlayerInfo = pi;
 		GetNode<Label3D>("IDLabel").Text = pi.Name;
 
+		OnInit?.Invoke(IsMine);
+
 		// A few things are client-authority:
 		// Rotation of the player, camera, Input
 		_playerInput = GetNode<PlayerInput>("ClientAuthority/PlayerInput");
@@ -48,14 +50,12 @@ public partial class Player : CharacterBody3D
 			SetPhysicsProcess(true);
 			SetProcess(true);
 		}
-		else
-		{
-			// Dont init anythign here! The Player doesn't know yet if 
-			// its ID is the PeerID. 
-			// Request playerID & name from server.
-			// This is necessary because server is authority on everything
-			RpcId(1, "RPC_Server_RequestInfo");
-		}
+
+		// Dont init anything here! The Player doesn't know yet if 
+		// its ID is the PeerID. 
+		// Request playerID & name from server.
+		// This is necessary because server is authority on everything
+		RpcId(1, "RPC_Server_RequestInfo");
 	}
 
     public override void _PhysicsProcess(double delta)
@@ -68,9 +68,6 @@ public partial class Player : CharacterBody3D
 		{
 			v.Y -= (float) (_gravity * delta);
 		}
-
-		if(PlayerInfo.PeerID != Multiplayer.GetUniqueId())
-			GD.Print(_playerInput.InputVector);
 			
 		var input = _playerInput.InputVector;
 		var direction = new Vector3(input.X, 0f, input.Y).Normalized();
@@ -125,7 +122,7 @@ public partial class Player : CharacterBody3D
 	private void RPC_Server_RequestInfo()
 	{
 		if(!Multiplayer.IsServer()) return;
-		
+
 		//Only server holds this info, so send it to clients
 		Rpc("RPC_Client_RespondInfo", PlayerInfo.PeerID, PlayerInfo.Name);
 	}
@@ -138,13 +135,15 @@ public partial class Player : CharacterBody3D
 			PeerID = id,
 			Name = name
 		};
-		Init(playerInfo);
 
 		if(id == Multiplayer.GetUniqueId())
 		{
 			GD.Print("Found local player: " + id);
 			IsMine = true;
 		}
+
+		//Cann after this --^ to maek sure isMine is set
+		Init(playerInfo);
 	}
 
 }
