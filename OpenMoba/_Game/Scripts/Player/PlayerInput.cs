@@ -48,12 +48,13 @@ public partial class PlayerInput : MultiplayerSynchronizer
 		//Control player rotation based on mouse position
 		var mouse_pos = GetViewport().GetMousePosition();
 		var from = _player.Camera.ProjectRayOrigin(mouse_pos);
-		var to = from + _player.Camera.ProjectRayNormal(mouse_pos) * 100f;
-		var cursorPos = new Plane(Vector3.Up, _player.Transform.Origin.Y).IntersectsRay(from, to);
-		if(cursorPos.HasValue)
+		var dir = _player.Camera.ProjectRayNormal(mouse_pos);
+		var bullet_spawn_height = _player.BulletSpawn.GlobalPosition.Y; //intersect at the spawn height to be precise
+		var cursor_raycast = new Plane(Vector3.Up, bullet_spawn_height).IntersectsRay(from, dir);
+		if(cursor_raycast.HasValue)
 		{
 			//Y is always at the height of the player. He's always looking straight flat
-			var pos = cursorPos.Value;
+			var pos = cursor_raycast.Value;
 			pos.Y = _player.GlobalPosition.Y;
 			_clientAuthority.LookAt(pos);
 		}

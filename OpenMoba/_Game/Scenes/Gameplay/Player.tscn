@@ -55,7 +55,7 @@ mesh = SubResource("CapsuleMesh_m63jp")
 skeleton = NodePath("../..")
 
 [node name="Camera3D" type="Camera3D" parent="ClientAuthority"]
-transform = Transform3D(1, 0, 0, 0, 0.296408, 0.955061, 0, -0.955061, 0.296408, -0.597893, 12.0637, 2.8909)
+transform = Transform3D(1, 0, 0, 0, 0.258819, 0.965926, 0, -0.965926, 0.258819, 0, 12, 4)
 fov = 90.0
 script = ExtResource("5_cb4gj")
 
