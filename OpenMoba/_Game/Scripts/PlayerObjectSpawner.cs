@@ -1,25 +1,48 @@
 using Godot;
 using Godot.Collections;
 using System;
+using System.Threading.Tasks;
 
 public partial class PlayerObjectSpawner : MultiplayerSpawner
 {
     [Export]
     private PackedScene playerScene;
+	private Node _spawnNode;
+	private Array<Node> _spawnPoints;
 
-	public void SpawnPlayers(Array<Node> spawnPoints)
+	public void SpawnPlayers(Node spawnPoints)
     {
-        Node spawnNode = GetNode<Node>(SpawnPath);
+        _spawnNode = GetNode<Node>(SpawnPath);
+		_spawnPoints = spawnPoints.GetChildren();
 		int i = 0;
 		foreach (var p in GameManager.Players)
 		{
-			Player currentPlayer = playerScene.Instantiate<Player>();
-			p.Team = i % 2;
-			currentPlayer.Init(p);
-			currentPlayer.SetMultiplayerAuthority(1, true);
-			spawnNode.AddChild(currentPlayer, true);
-			currentPlayer.GlobalPosition = ((Node3D)spawnPoints[p.Team]).GlobalPosition;
+			int team = i % 2;
+			p.Team = team;
+			SpawnPlayer(p);
 			i++;
 		}
     }
+
+	private void SpawnPlayer(PlayerInfo pi)
+	{
+		
+		Player currentPlayer = playerScene.Instantiate<Player>();
+		currentPlayer.OnDeath += OnPlayerDeath;
+		currentPlayer.Init(pi);
+		currentPlayer.SetMultiplayerAuthority(1, true);
+		_spawnNode.AddChild(currentPlayer, true);
+		
+		var pos = ((Node3D)_spawnPoints[pi.Team]).GlobalPosition;
+		currentPlayer.GlobalPosition = pos;
+	}
+
+	private async void OnPlayerDeath(Player p)
+	{
+		PlayerInfo pi = p.PlayerInfo;
+		_spawnNode.RemoveChild(p);
+		p.QueueFree();
+		await Task.Delay(3000);
+		SpawnPlayer(pi);
+	}
 }

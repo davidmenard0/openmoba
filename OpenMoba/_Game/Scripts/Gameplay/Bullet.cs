@@ -21,16 +21,4 @@ public partial class Bullet : Node3D
         this.GlobalPosition += Direction * Speed * (float)delta;
     }
 
-	
-	private void _OnBodyEntered(Node body)
-    {
-		if(!Multiplayer.IsServer()) return;
-
-        if (body is Player)
-        {
-            Player p = (Player)body;
-			p.TakeDamage(Damage);
-			this.QueueFree();
-        }
-    }
 }

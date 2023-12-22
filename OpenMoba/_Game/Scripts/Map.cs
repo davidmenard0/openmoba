@@ -16,13 +16,10 @@ public partial class Map : Node3D
 
 		var spawnPoints = FindChild("SpawnPoints");
 		Debug.Assert(spawnPoints != null, "ERROR: Could not find SpawnPoints in map.");
-		var points = spawnPoints.GetChildren();
 
 		PlayerObjectSpawner ps = GetNode<PlayerObjectSpawner>("/root/Main/PlayerObjectSpawner");
 		Debug.Assert(ps != null, "ERROR: Could not find PlayerObjectSpawner in map.");
-		ps.SpawnPlayers(points);
-
-
+		ps.SpawnPlayers(spawnPoints);
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

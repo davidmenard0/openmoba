@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://c3g3l26myqkke"]
+[gd_scene load_steps=6 format=3 uid="uid://c3g3l26myqkke"]
 
 [ext_resource type="Script" path="res://_Game/Scripts/Gameplay/Bullet.cs" id="1_qm7qq"]
+[ext_resource type="Script" path="res://_Game/Scripts/Gameplay/BulletCollisionArea.cs" id="2_l7jhx"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_pwnrk"]
 
@@ -19,6 +20,7 @@ transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
 mesh = SubResource("SphereMesh_pwnrk")
 
 [node name="Area3D" type="Area3D" parent="."]
+script = ExtResource("2_l7jhx")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
 transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)

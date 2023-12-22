@@ -5,21 +5,22 @@ using System.Diagnostics;
 public partial class Player : CharacterBody3D
 {
 	public Action<bool> OnInit; //isMine
+	public Action<Player> OnDeath; //PlayerInfo
 
 	[Export]
-	private float Health = 10f;
-	[Export]
-	
 	const float Speed = 15f;
 	[Export]
 	public PackedScene Bullet;
 	[Export]
 	public Node3D BulletSpawn;
-	public bool IsMine = false;
 
+	public bool IsMine = false;
 
 	public PlayerInfo PlayerInfo;
 	public PlayerCamera Camera;
+
+	private float _health = 2f;
+	private float _maxHealth;
 
 	private PlayerInput _playerInput;
 	private Node3D _clientAuthority;
@@ -49,6 +50,7 @@ public partial class Player : CharacterBody3D
 			//Process only on server
 			SetPhysicsProcess(true);
 			SetProcess(true);
+			_maxHealth = _health;
 		}
 
 		// Dont init anything here! The Player doesn't know yet if 
@@ -108,11 +110,12 @@ public partial class Player : CharacterBody3D
 	public void TakeDamage(float dmg){
 		if(!Multiplayer.IsServer()) return;
 
-		Health -= dmg;
-		if(Health <= 0f)
+		_health -= dmg;
+		if(_health <= 0f)
 		{
-			GD.Print("Player died!");
-			//Notify client who died
+			OnDeath?.Invoke(this);
+			//Dont queuefree here, the PlayerSpawner will do that
+			GD.Print("Player died: " + PlayerInfo.PeerID);
 		}
 	}
 
