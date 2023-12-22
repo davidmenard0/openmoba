@@ -9,7 +9,7 @@
 albedo_texture = ExtResource("1_kpq3n")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_py56p"]
-size = Vector3(64, 4, 64)
+size = Vector3(64, 2, 64)
 
 [node name="BoxWide" type="StaticBody3D"]
 physics_material_override = SubResource("PhysicsMaterial_1dshi")
@@ -20,5 +20,5 @@ material_override = SubResource("StandardMaterial3D_1ign0")
 mesh = ExtResource("2_1pcic")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0084343, 1.65124, -0.0571251)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 shape = SubResource("BoxShape3D_py56p")

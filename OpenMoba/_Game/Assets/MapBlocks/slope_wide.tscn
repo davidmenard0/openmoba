@@ -12,7 +12,7 @@ albedo_texture = ExtResource("1_rcbep")
 albedo_texture = ExtResource("1_rcbep")
 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_2kneq"]
-points = PackedVector3Array(4, 0, 12, -4, 4, 12, -4, 0, 12, 3.99989, 0, -4, -4, 4, -4, -4, 0, -4)
+points = PackedVector3Array(4, 0, 12, -4, 2, 12, -4, 0, 12, 3.99989, 0, -4, -4, 2, -4, -4, 0, -4)
 
 [node name="SlopeWide" type="StaticBody3D"]
 physics_material_override = SubResource("PhysicsMaterial_1dshi")

@@ -16,7 +16,7 @@ dest_files=["res://.godot/imported/Primitive_Box_Wide.obj-77af3d53af3dfa3d971f51
 [params]
 
 generate_tangents=true
-scale_mesh=Vector3(16, 4, 16)
+scale_mesh=Vector3(16, 2, 16)
 offset_mesh=Vector3(0, 0, 0)
 optimize_mesh=true
 force_disable_mesh_compression=false
