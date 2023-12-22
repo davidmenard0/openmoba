@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cltwsgkovn2r"
-path.s3tc="res://.godot/imported/prototypebits_texture.png-0a2ae9456f4414fbad7f66b673538899.s3tc.ctex"
+uid="uid://by2p3hrnuipb"
+path.s3tc="res://.godot/imported/prototypebits_texture.png-520de946967e430a51d50a93cb3ce000.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://_Game/Assets/Prototype_Assets/Assets/textures/prototypebits_texture.png"
-dest_files=["res://.godot/imported/prototypebits_texture.png-0a2ae9456f4414fbad7f66b673538899.s3tc.ctex"]
+source_file="res://_Game/Assets/Prototype_Assets/Assets/obj_from_package/prototypebits_texture.png"
+dest_files=["res://.godot/imported/prototypebits_texture.png-520de946967e430a51d50a93cb3ce000.s3tc.ctex"]
 
 [params]
 

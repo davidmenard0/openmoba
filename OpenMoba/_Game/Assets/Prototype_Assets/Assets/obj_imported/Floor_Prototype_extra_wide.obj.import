@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://cqem4nbj61il3"
+path="res://.godot/imported/Floor_Prototype_extra_wide.obj-d99eb8a765e7c2da6920cb0175358d25.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Floor_Prototype_extra_wide.obj-d99eb8a765e7c2da6920cb0175358d25.mesh"]
+
+source_file="res://_Game/Assets/Prototype_Assets/Assets/obj_imported/Floor_Prototype_extra_wide.obj"
+dest_files=["res://.godot/imported/Floor_Prototype_extra_wide.obj-d99eb8a765e7c2da6920cb0175358d25.mesh", "res://.godot/imported/Floor_Prototype_extra_wide.obj-d99eb8a765e7c2da6920cb0175358d25.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(32, 1, 32)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

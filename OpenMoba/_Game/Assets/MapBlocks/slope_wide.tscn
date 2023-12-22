@@ -1,0 +1,32 @@
+[gd_scene load_steps=7 format=3 uid="uid://cor51up6jihbo"]
+
+[ext_resource type="ArrayMesh" uid="uid://cqpr5jpmss2mo" path="res://_Game/Assets/Prototype_Assets/Assets/obj_imported/Primitive_Slope.obj" id="1_d3vgk"]
+[ext_resource type="Texture2D" uid="uid://cltwsgkovn2r" path="res://_Game/Assets/Prototype_Assets/Assets/textures/prototypebits_texture.png" id="1_rcbep"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_1dshi"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mfrky"]
+albedo_texture = ExtResource("1_rcbep")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fbd1q"]
+albedo_texture = ExtResource("1_rcbep")
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_2kneq"]
+points = PackedVector3Array(4, 0, 12, -4, 4, 12, -4, 0, 12, 3.99989, 0, -4, -4, 4, -4, -4, 0, -4)
+
+[node name="SlopeWide" type="StaticBody3D"]
+physics_material_override = SubResource("PhysicsMaterial_1dshi")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 4)
+material_override = SubResource("StandardMaterial3D_mfrky")
+mesh = ExtResource("1_d3vgk")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -4)
+material_override = SubResource("StandardMaterial3D_fbd1q")
+mesh = ExtResource("1_d3vgk")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -4)
+shape = SubResource("ConvexPolygonShape3D_2kneq")

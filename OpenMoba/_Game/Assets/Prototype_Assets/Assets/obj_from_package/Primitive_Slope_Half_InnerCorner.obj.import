@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://60afr3jogj0m"
+path="res://.godot/imported/Primitive_Slope_Half_InnerCorner.obj-002032c3aaa08e8554370fb72fb10fbc.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Primitive_Slope_Half_InnerCorner.obj-002032c3aaa08e8554370fb72fb10fbc.mesh"]
+
+source_file="res://_Game/Assets/Prototype_Assets/Assets/obj_from_package/Primitive_Slope_Half_InnerCorner.obj"
+dest_files=["res://.godot/imported/Primitive_Slope_Half_InnerCorner.obj-002032c3aaa08e8554370fb72fb10fbc.mesh", "res://.godot/imported/Primitive_Slope_Half_InnerCorner.obj-002032c3aaa08e8554370fb72fb10fbc.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

@@ -1,0 +1,24 @@
+[gd_scene load_steps=6 format=3 uid="uid://eowsg4xlapws"]
+
+[ext_resource type="Texture2D" uid="uid://cltwsgkovn2r" path="res://_Game/Assets/Prototype_Assets/Assets/textures/prototypebits_texture.png" id="1_1b4dx"]
+[ext_resource type="ArrayMesh" uid="uid://1de1iwv40bgm" path="res://_Game/Assets/Prototype_Assets/Assets/obj_imported/Primitive_Box.obj" id="2_6f2og"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_1dshi"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1ign0"]
+albedo_texture = ExtResource("1_1b4dx")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_py56p"]
+size = Vector3(16, 4, 16)
+
+[node name="Box" type="StaticBody3D"]
+physics_material_override = SubResource("PhysicsMaterial_1dshi")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+material_override = SubResource("StandardMaterial3D_1ign0")
+mesh = ExtResource("2_6f2og")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+shape = SubResource("BoxShape3D_py56p")

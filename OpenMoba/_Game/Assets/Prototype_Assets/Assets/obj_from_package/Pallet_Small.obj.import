@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://ce47d4yjuoqrx"
+path="res://.godot/imported/Pallet_Small.obj-e86a48b474430f386fa2ed6f74e0bc6f.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Pallet_Small.obj-e86a48b474430f386fa2ed6f74e0bc6f.mesh"]
+
+source_file="res://_Game/Assets/Prototype_Assets/Assets/obj_from_package/Pallet_Small.obj"
+dest_files=["res://.godot/imported/Pallet_Small.obj-e86a48b474430f386fa2ed6f74e0bc6f.mesh", "res://.godot/imported/Pallet_Small.obj-e86a48b474430f386fa2ed6f74e0bc6f.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

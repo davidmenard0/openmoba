@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://dprov7mtxrgwt"
+path="res://.godot/imported/Primitive_Box_Wide.obj-77af3d53af3dfa3d971f514657a3d475.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Primitive_Box_Wide.obj-77af3d53af3dfa3d971f514657a3d475.mesh"]
+
+source_file="res://_Game/Assets/Prototype_Assets/Assets/obj_imported/Primitive_Box_Wide.obj"
+dest_files=["res://.godot/imported/Primitive_Box_Wide.obj-77af3d53af3dfa3d971f514657a3d475.mesh", "res://.godot/imported/Primitive_Box_Wide.obj-77af3d53af3dfa3d971f514657a3d475.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(16, 4, 16)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

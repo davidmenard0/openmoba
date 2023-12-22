@@ -1,0 +1,24 @@
+[gd_scene load_steps=6 format=3 uid="uid://chn8ow8vqdw1k"]
+
+[ext_resource type="Texture2D" uid="uid://cltwsgkovn2r" path="res://_Game/Assets/Prototype_Assets/Assets/textures/prototypebits_texture.png" id="1_aoa4m"]
+[ext_resource type="ArrayMesh" uid="uid://cqpr5jpmss2mo" path="res://_Game/Assets/Prototype_Assets/Assets/obj_imported/Primitive_Slope.obj" id="2_wty26"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_1dshi"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lauce"]
+albedo_texture = ExtResource("1_aoa4m")
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_vhk2v"]
+points = PackedVector3Array(3.99989, 0, 4, -4, 4, 4, -4, 0, 4, 3.99989, 0, -4, -4, 4, -4, -4, 0, -4)
+
+[node name="Slope" type="StaticBody3D"]
+physics_material_override = SubResource("PhysicsMaterial_1dshi")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+material_override = SubResource("StandardMaterial3D_lauce")
+mesh = ExtResource("2_wty26")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("ConvexPolygonShape3D_vhk2v")

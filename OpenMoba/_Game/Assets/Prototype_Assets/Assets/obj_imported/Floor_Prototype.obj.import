@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://dvuink44dlrno"
+path="res://.godot/imported/Floor_Prototype.obj-3b4c9d5023bf39b4bef296c67c11a4da.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Floor_Prototype.obj-3b4c9d5023bf39b4bef296c67c11a4da.mesh"]
+
+source_file="res://_Game/Assets/Prototype_Assets/Assets/obj_imported/Floor_Prototype.obj"
+dest_files=["res://.godot/imported/Floor_Prototype.obj-3b4c9d5023bf39b4bef296c67c11a4da.mesh", "res://.godot/imported/Floor_Prototype.obj-3b4c9d5023bf39b4bef296c67c11a4da.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(2, 1, 2)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false
