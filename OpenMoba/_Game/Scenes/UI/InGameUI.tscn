@@ -23,6 +23,28 @@ offset_bottom = 30.0
 grow_horizontal = 2
 color = Color(0.639216, 0.639216, 0.639216, 0.392157)
 
+[node name="Team1" type="ColorRect" parent="ProgressRect"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_right = 300.0
+offset_bottom = 5.0
+grow_horizontal = 2
+color = Color(0.784314, 0, 0, 0.607843)
+
+[node name="Team2" type="ColorRect" parent="ProgressRect"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_top = 5.0
+offset_right = 300.0
+offset_bottom = 10.0
+grow_horizontal = 2
+rotation = 3.14159
+color = Color(0, 0, 0.784314, 0.607843)
+
 [node name="ProgressLabel" type="Label" parent="."]
 layout_mode = 1
 anchors_preset = 5

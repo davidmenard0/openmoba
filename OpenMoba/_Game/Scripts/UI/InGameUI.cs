@@ -4,16 +4,27 @@ using System.Diagnostics;
 
 public partial class InGameUI : Control
 {
-	private UIController ui;
+	private UIController UI;
 	private Label _progressLabel;
+	private ColorRect _team1Progress;
+	private ColorRect _team2Progress;
+
+	private float _maxWidth;
 
     public override void _Ready()
     {
-        ui = GetNode<UIController>("/root/Main/UI");
+        UI = GetNode<UIController>("/root/Main/UI");
 		_progressLabel = GetNode<Label>("ProgressLabel");
 		Debug.Assert(_progressLabel != null, "ERROR: _progressLabel not found in InGameUI");
 
-		ui.OnObjectiveProgressUpdate += UpdateProgress;
+		_team1Progress = GetNode<ColorRect>("ProgressRect/Team1");
+		Debug.Assert(_team1Progress != null, "ERROR: Could not find Team1Progress rect in InGameUI");
+		_team2Progress = GetNode<ColorRect>("ProgressRect/Team2");
+		Debug.Assert(_team2Progress != null, "ERROR: Could not find Team2Progress rect in InGameUI");
+		
+		_maxWidth = _team1Progress.Size.X;
+
+		UI.OnObjectiveProgressUpdate += UpdateProgress;
 
 		UpdateProgress(0f);
     }
@@ -21,5 +32,21 @@ public partial class InGameUI : Control
 	public void UpdateProgress(float progress)
 	{
 		_progressLabel.Text = String.Format("{0:0.#} %", Mathf.Abs(progress * 100f) );
+
+		var size1 = _team1Progress.Size;
+		var size2 = _team2Progress.Size;
+		if(progress > 0f)
+		{
+			size1.X = _maxWidth*Mathf.Abs(progress);
+			size2.X = 0f;
+		}
+		else
+		{
+			size1.X = 0f;
+			size2.X = _maxWidth*Mathf.Abs(progress);
+		}
+		
+		_team1Progress.Size = size1;
+		_team2Progress.Size = size2;
 	}
 }

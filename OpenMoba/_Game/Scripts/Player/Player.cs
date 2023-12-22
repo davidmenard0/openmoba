@@ -124,16 +124,17 @@ public partial class Player : CharacterBody3D
 		if(!Multiplayer.IsServer()) return;
 
 		//Only server holds this info, so send it to clients
-		Rpc("RPC_Client_RespondInfo", PlayerInfo.PeerID, PlayerInfo.Name);
+		Rpc("RPC_Client_RespondInfo", PlayerInfo.PeerID, PlayerInfo.Name, PlayerInfo.Team);
 	}
 
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	private void RPC_Client_RespondInfo(int id, string name)
+	private void RPC_Client_RespondInfo(int id, string name, int team)
 	{
 		//Update client-side info
 		PlayerInfo playerInfo = new PlayerInfo(){
 			PeerID = id,
-			Name = name
+			Name = name,
+			Team = team
 		};
 
 		if(id == Multiplayer.GetUniqueId())

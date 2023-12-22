@@ -70,7 +70,7 @@ public partial class Objective : Node3D
 		}
     }
 
-    //Clients only get progress updates
+    //Clients get progress updates
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
 	private void RPC_UpdateObjectiveProgress(float progress)
 	{
