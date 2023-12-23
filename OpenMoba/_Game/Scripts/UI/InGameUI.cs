@@ -8,6 +8,7 @@ public partial class InGameUI : Control
 	private Label _progressLabel;
 	private ColorRect _team1Progress;
 	private ColorRect _team2Progress;
+	private Label _respawnLabel;
 
 	private float _maxWidth;
 
@@ -22,6 +23,9 @@ public partial class InGameUI : Control
 		_team2Progress = GetNode<ColorRect>("ProgressRect/Team2");
 		Debug.Assert(_team2Progress != null, "ERROR: Could not find Team2Progress rect in InGameUI");
 		
+		_respawnLabel = GetNode<Label>("RespawnLabel");
+		Debug.Assert(_respawnLabel != null, "ERROR: Couldn't find RespawnLabel in InGameUI");
+
 		_maxWidth = _team1Progress.Size.X;
 
 		UI.OnObjectiveProgressUpdate += UpdateProgress;
@@ -48,5 +52,23 @@ public partial class InGameUI : Control
 		
 		_team1Progress.Size = size1;
 		_team2Progress.Size = size2;
+	}
+
+	public async void ExecuteRespawnTimer(float timer)
+	{
+		_respawnLabel.Show();
+		float t = timer;
+		long ms = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+		while(t > 0f)
+		{	
+			long new_ms = DateTimeOffset.Now.ToUnixTimeMilliseconds(); 
+			float delta = (new_ms - ms)/1000f;
+			ms = new_ms;
+			t -= delta;
+			int sec = Mathf.CeilToInt(t);
+			_respawnLabel.Text = sec.ToString();
+			await ToSignal(GetTree(), "process_frame");
+		}
+		_respawnLabel.Hide();
 	}
 }
