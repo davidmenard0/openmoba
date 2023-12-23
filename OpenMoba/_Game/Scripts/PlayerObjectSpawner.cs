@@ -13,9 +13,13 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 	private Array<Node> _spawnPoints;
 	private UIController UI;
 
-	public void SpawnPlayers(Node spawnPoints)
+    public override void _Ready()
     {
-		UI = GetNode<UIController>("/root/Main/UI");
+        UI = GetNode<UIController>("/root/Main/UI");
+    }
+
+    public void SpawnPlayers(Node spawnPoints)
+    {
         _spawnNode = GetNode<Node>(SpawnPath);
 		_spawnPoints = spawnPoints.GetChildren();
 		int i = 0;
@@ -56,4 +60,6 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 	{
 		UI.OnLocalPlayerRespawn?.Invoke(deathTimer);
 	}
+
+	
 }

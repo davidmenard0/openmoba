@@ -1,0 +1,52 @@
+[gd_scene load_steps=9 format=3 uid="uid://donme7c6f12ws"]
+
+[ext_resource type="Texture2D" uid="uid://ctbjx41ihd2um" path="res://_Game/Assets/Textures/particle_pack/smoke_04.png" id="1_oq1ky"]
+
+[sub_resource type="Curve" id="Curve_a4j2b"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.0113509), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_2xi3s"]
+curve = SubResource("Curve_a4j2b")
+
+[sub_resource type="Curve" id="Curve_3ddx5"]
+_data = [Vector2(0, 0.0261068), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_deey0"]
+curve = SubResource("Curve_3ddx5")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_7r5gb"]
+lifetime_randomness = 0.1
+angle_min = -360.0
+angle_max = 360.0
+initial_velocity_min = -1.0
+initial_velocity_max = 1.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.0
+scale_curve = SubResource("CurveTexture_deey0")
+alpha_curve = SubResource("CurveTexture_2xi3s")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_en85x"]
+transparency = 2
+alpha_scissor_threshold = 0.191
+alpha_antialiasing_mode = 0
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("1_oq1ky")
+billboard_mode = 1
+billboard_keep_scale = true
+
+[sub_resource type="QuadMesh" id="QuadMesh_1vecn"]
+material = SubResource("StandardMaterial3D_en85x")
+
+[node name="GPUParticles3D" type="GPUParticles3D"]
+cast_shadow = 0
+gi_mode = 0
+emitting = false
+amount = 12
+lifetime = 0.4
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_7r5gb")
+draw_pass_1 = SubResource("QuadMesh_1vecn")

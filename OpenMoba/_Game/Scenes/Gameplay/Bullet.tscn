@@ -5,7 +5,7 @@
 
 [sub_resource type="SphereMesh" id="SphereMesh_pwnrk"]
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_er0h4"]
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_f31h7"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_2fwh0"]
 properties/0/path = NodePath(".:position")
@@ -23,8 +23,8 @@ mesh = SubResource("SphereMesh_pwnrk")
 script = ExtResource("2_l7jhx")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
-transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
-shape = SubResource("SphereShape3D_er0h4")
+transform = Transform3D(0.1, 0, 0, 0, 0.5, 0, 0, 0, 0.1, 0, -0.45, 0)
+shape = SubResource("CylinderShape3D_f31h7")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_2fwh0")

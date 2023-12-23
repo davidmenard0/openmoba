@@ -1,7 +1,6 @@
-[gd_scene load_steps=10 format=3 uid="uid://per3lls2li7f"]
+[gd_scene load_steps=9 format=3 uid="uid://per3lls2li7f"]
 
 [ext_resource type="Script" path="res://_Game/Scripts/Gameplay/Objective.cs" id="1_kjtnp"]
-[ext_resource type="PackedScene" uid="uid://ddsgeunqurqkr" path="res://_Game/Assets/VFX/ObjectiveParticle.tscn" id="2_8s57j"]
 [ext_resource type="Script" path="res://_Game/Scripts/Gameplay/ObjectiveInfluenceArea.cs" id="2_j6726"]
 [ext_resource type="Texture2D" uid="uid://benxt1g530mmb" path="res://_Game/Assets/Textures/particle_pack/circle_03.png" id="3_xvulu"]
 
@@ -48,9 +47,6 @@ replication_config = SubResource("SceneReplicationConfig_i4osf")
 [node name="ProgressLabel" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.914927, 0)
 text = "0%"
-
-[node name="ObjectiveParticle" parent="." instance=ExtResource("2_8s57j")]
-visible = false
 
 [node name="Decal" type="Decal" parent="."]
 transform = Transform3D(1, 0, 0, 0, 5, 0, 0, 0, 1, 0, 0.5, 0)
