@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://bfhm45w25o4qr"]
+[gd_scene load_steps=14 format=3 uid="uid://bfhm45w25o4qr"]
 
 [ext_resource type="Script" path="res://_Game/Scripts/Player/Player.cs" id="1_58s1o"]
 [ext_resource type="Texture2D" uid="uid://bkyfvgfnf6wj8" path="res://icon.svg" id="2_0uukr"]
@@ -6,6 +6,7 @@
 [ext_resource type="Material" uid="uid://bumh373nox2qd" path="res://_Game/Assets/Materials/PlayerMat.tres" id="2_o7umo"]
 [ext_resource type="Script" path="res://_Game/Scripts/Player/PlayerInput.cs" id="4_a72mp"]
 [ext_resource type="Script" path="res://_Game/Scripts/Player/PlayerCamera.cs" id="5_cb4gj"]
+[ext_resource type="PackedScene" uid="uid://bd8lx24vdln3" path="res://_Game/Assets/Character/X Bot.fbx" id="6_y7xn5"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_o5fwc"]
 properties/0/path = NodePath(".:InputVector")
@@ -50,9 +51,13 @@ skeleton = NodePath("../..")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="ClientAuthority"]
 transform = Transform3D(1.31134e-07, 0, -1, 0, 1, 0, 1, 0, 1.31134e-07, 0, 0, 0)
+visible = false
 material_override = ExtResource("2_o7umo")
 mesh = SubResource("CapsuleMesh_m63jp")
 skeleton = NodePath("../..")
+
+[node name="CharacterModel" parent="ClientAuthority" instance=ExtResource("6_y7xn5")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, -0.986471, 0)
 
 [node name="Camera3D" type="Camera3D" parent="ClientAuthority"]
 transform = Transform3D(1, 0, 0, 0, 0.258819, 0.965926, 0, -0.965926, 0.258819, 0, 12, 4)

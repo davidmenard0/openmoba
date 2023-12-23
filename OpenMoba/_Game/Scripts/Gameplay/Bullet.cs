@@ -2,6 +2,11 @@ using Godot;
 using System;
 using System.Threading.Tasks;
 
+/// <summary>
+/// Bullet has a very long CollisionArea that is offset towards the bottom
+/// so players on the high ground can hit players on the low ground
+/// </summary>
+
 public partial class Bullet : Node3D
 {
 	[Export]
