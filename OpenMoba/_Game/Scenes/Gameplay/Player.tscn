@@ -88,6 +88,7 @@ libraries = {
 }
 playback_default_blend_time = 0.25
 script = ExtResource("10_awwha")
+AnimThreshold = 0.1
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_r7tdq")
