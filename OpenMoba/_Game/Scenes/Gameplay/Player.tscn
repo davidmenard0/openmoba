@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://bfhm45w25o4qr"]
+[gd_scene load_steps=24 format=3 uid="uid://bfhm45w25o4qr"]
 
 [ext_resource type="Script" path="res://_Game/Scripts/Player/Player.cs" id="1_58s1o"]
 [ext_resource type="Texture2D" uid="uid://bkyfvgfnf6wj8" path="res://icon.svg" id="2_0uukr"]
@@ -7,6 +7,16 @@
 [ext_resource type="Script" path="res://_Game/Scripts/Player/PlayerInput.cs" id="4_a72mp"]
 [ext_resource type="Script" path="res://_Game/Scripts/Player/PlayerCamera.cs" id="5_cb4gj"]
 [ext_resource type="PackedScene" uid="uid://bd8lx24vdln3" path="res://_Game/Assets/Character/X Bot.fbx" id="6_y7xn5"]
+[ext_resource type="AnimationLibrary" uid="uid://ff6cirbp8yat" path="res://_Game/Assets/Character/Animations/Idle.fbx" id="7_wso1i"]
+[ext_resource type="AnimationLibrary" uid="uid://hwm5qa321th3" path="res://_Game/Assets/Character/Animations/Back.fbx" id="8_qjuls"]
+[ext_resource type="AnimationLibrary" uid="uid://bssr4eu4vmy5r" path="res://_Game/Assets/Character/Animations/BackLeft.fbx" id="9_5wen3"]
+[ext_resource type="Script" path="res://_Game/Scripts/Player/PlayerAnimationController.cs" id="10_awwha"]
+[ext_resource type="AnimationLibrary" uid="uid://hblq5sryn188" path="res://_Game/Assets/Character/Animations/BackRight.fbx" id="10_st45j"]
+[ext_resource type="AnimationLibrary" uid="uid://neffs6imnr8i" path="res://_Game/Assets/Character/Animations/Forward.fbx" id="11_b2hia"]
+[ext_resource type="AnimationLibrary" uid="uid://74vnqhbkbxxf" path="res://_Game/Assets/Character/Animations/ForwardLeft.fbx" id="12_jwy0w"]
+[ext_resource type="AnimationLibrary" uid="uid://bbv1j6nm6qd4y" path="res://_Game/Assets/Character/Animations/ForwardRight.fbx" id="13_7fp5b"]
+[ext_resource type="AnimationLibrary" uid="uid://c803xxmvwubdr" path="res://_Game/Assets/Character/Animations/Left.fbx" id="15_vyexi"]
+[ext_resource type="AnimationLibrary" uid="uid://ct1g6xxm6cjb0" path="res://_Game/Assets/Character/Animations/Right.fbx" id="16_2ko37"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_o5fwc"]
 properties/0/path = NodePath(".:InputVector")
@@ -56,13 +66,28 @@ material_override = ExtResource("2_o7umo")
 mesh = SubResource("CapsuleMesh_m63jp")
 skeleton = NodePath("../..")
 
-[node name="CharacterModel" parent="ClientAuthority" instance=ExtResource("6_y7xn5")]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, -0.986471, 0)
-
 [node name="Camera3D" type="Camera3D" parent="ClientAuthority"]
-transform = Transform3D(1, 0, 0, 0, 0.258819, 0.965926, 0, -0.965926, 0.258819, 0, 12, 4)
+transform = Transform3D(1, 0, 0, 0, 0.258819, 0.965926, 0, -0.965926, 0.258819, 0, 8, 3)
 fov = 90.0
 script = ExtResource("5_cb4gj")
+
+[node name="CharacterModel" parent="ClientAuthority" instance=ExtResource("6_y7xn5")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, -1, 0)
+
+[node name="AnimationPlayer2" type="AnimationPlayer" parent="ClientAuthority/CharacterModel"]
+libraries = {
+"Back": ExtResource("8_qjuls"),
+"BackLeft": ExtResource("9_5wen3"),
+"BackRight": ExtResource("10_st45j"),
+"Forward": ExtResource("11_b2hia"),
+"ForwardLeft": ExtResource("12_jwy0w"),
+"ForwardRight": ExtResource("13_7fp5b"),
+"Idle": ExtResource("7_wso1i"),
+"Left": ExtResource("15_vyexi"),
+"Right": ExtResource("16_2ko37")
+}
+playback_default_blend_time = 0.25
+script = ExtResource("10_awwha")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_r7tdq")
