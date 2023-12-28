@@ -9,3 +9,6 @@ Some assets are free assets from the Godot AssetLib. LICENSE.txt of each importe
 
 ## Animation
 Player animation imported from Asobe Mixamo. See Terms of Use: https://www.adobe.com/legal/terms.html 
+
+## Audio
+Audio from https://freesound.org/

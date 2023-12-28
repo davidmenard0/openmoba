@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://b2w1macsihunb"]
+
+[ext_resource type="AudioStream" uid="uid://dxv7x1cd30bax" path="res://_Game/Assets/Audio/bullet_expire.ogg" id="1_j7vdm"]
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D"]
+stream = ExtResource("1_j7vdm")

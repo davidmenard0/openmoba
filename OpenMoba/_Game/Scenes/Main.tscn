@@ -5,7 +5,7 @@
 [ext_resource type="Script" path="res://_Game/Scripts/PlayerObjectSpawner.cs" id="3_103y6"]
 [ext_resource type="Script" path="res://_Game/Scripts/UI/UIController.cs" id="3_xvs1u"]
 [ext_resource type="PackedScene" uid="uid://bfhm45w25o4qr" path="res://_Game/Scenes/Gameplay/Player.tscn" id="4_uvess"]
-[ext_resource type="Script" path="res://_Game/Scripts/VFXManager.cs" id="6_d7shq"]
+[ext_resource type="Script" path="res://_Game/Scripts/FXManager.cs" id="5_sida8"]
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_uobwu")
@@ -30,7 +30,5 @@ script = ExtResource("3_xvs1u")
 
 [node name="PlayerObjects" type="Node" parent="."]
 
-[node name="VFXManager" type="Node" parent="."]
-script = ExtResource("6_d7shq")
-
-[node name="AudioManager" type="Node" parent="."]
+[node name="FXManager" type="Node" parent="."]
+script = ExtResource("5_sida8")

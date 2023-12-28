@@ -20,6 +20,8 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 
     public void SpawnPlayers(Node spawnPoints)
     {
+		if(!Multiplayer.IsServer()) return;
+
         _spawnNode = GetNode<Node>(SpawnPath);
 		_spawnPoints = spawnPoints.GetChildren();
 		int i = 0;
@@ -34,6 +36,8 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 
 	private async void SpawnPlayer(PlayerInfo pi)
 	{
+		if(!Multiplayer.IsServer()) return;
+		
 		RpcId(pi.PeerID, "RPC_Client_NotifyPlayerSpawn", PlayerRespawnTime);
 		await Task.Delay(Mathf.RoundToInt(PlayerRespawnTime*1000f));
 
@@ -49,6 +53,8 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 
 	private void OnPlayerDeath(Player p)
 	{
+		if(!Multiplayer.IsServer()) return;
+		
 		PlayerInfo pi = p.PlayerInfo;
 		_spawnNode.RemoveChild(p);
 		p.QueueFree();
@@ -60,6 +66,4 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 	{
 		UI.OnLocalPlayerRespawn?.Invoke(deathTimer);
 	}
-
-	
 }

@@ -21,6 +21,12 @@ public partial class Bullet : Node3D
     public override void _Ready()
     {
         SetProcess(Multiplayer.IsServer());
+
+        if(!Multiplayer.IsServer()) return;
+
+        var fx = GetNode<FXManager>("/root/Main/FXManager");
+        fx.PlayAudio("bullet_fire", this.GlobalPosition);
+
         StartLifeTimer();
     }
 
@@ -34,8 +40,9 @@ public partial class Bullet : Node3D
     private async void StartLifeTimer()
     {
         await Task.Delay(Mathf.RoundToInt(Lifetime*1000));
-        var vfx = GetNode<VFXManager>("/root/Main/VFXManager");
-        vfx.PlayOnClients("hit_smoke", this.GlobalPosition);
+        var fx = GetNode<FXManager>("/root/Main/FXManager");
+        fx.PlayVFX("hit_smoke", this.GlobalPosition);
+        fx.PlayAudio("bullet_expire", this.GlobalPosition);
         this.QueueFree();
     }
 
