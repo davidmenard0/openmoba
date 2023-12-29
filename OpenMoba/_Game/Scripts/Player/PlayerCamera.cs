@@ -14,7 +14,7 @@ public partial class PlayerCamera : Camera3D
 	{
 		_parent = GetParent<Node3D>();
 		_player = _parent.GetParent<Player>();
-		_player.OnInit += Init;
+		_player.Client_OnInit += Init;
 
 		_listener = GetNode<AudioListener3D>("AudioListener3D");
 		Debug.Assert(_listener != null, "ERROR: Cant find AudioListener3D under camera" );

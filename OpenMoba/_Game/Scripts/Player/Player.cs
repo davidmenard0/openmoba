@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 public partial class Player : CharacterBody3D
 {
-	public Action<bool> OnInit; //isMine
+	public Action<bool> Client_OnInit; //isMine
 	public Action<Player> OnDeath; //PlayerInfo
 
 	[Export]
@@ -15,6 +15,7 @@ public partial class Player : CharacterBody3D
 	public Node3D BulletSpawn;
 
 	public bool IsMine = false;
+	public bool IsInit = false;
 
 	public PlayerInfo PlayerInfo;
 	public PlayerCamera Camera;
@@ -26,22 +27,11 @@ public partial class Player : CharacterBody3D
 	private Node3D _clientAuthority;
 	private float _gravity = (float)ProjectSettings.GetSetting("physics/3d/default_gravity");
 
-	public void Init(PlayerInfo pi){
-		PlayerInfo = pi;
-		GetNode<Label3D>("IDLabel").Text = pi.Name;
-
-		OnInit?.Invoke(IsMine);
-
-		// A few things are client-authority:
-		// Rotation of the player, camera, Input
-		_playerInput = GetNode<PlayerInput>("ClientAuthority/PlayerInput");
-		_playerInput.SetMultiplayerAuthority(pi.PeerID);
-		_clientAuthority = GetNode<Node3D>("ClientAuthority");
-		_clientAuthority.SetMultiplayerAuthority(pi.PeerID, true);
-	}
+	private GameManager GM; 
 
 	public override void _Ready()
 	{
+		GM = GetNode<GameManager>("/root/Main/GameManager");
 		_playerInput = GetNode<PlayerInput>("ClientAuthority/PlayerInput");
 		Camera = GetNode<PlayerCamera>("ClientAuthority/Camera3D");
 
@@ -88,6 +78,29 @@ public partial class Player : CharacterBody3D
 		MoveAndSlide();
     }
 
+	public void Server_Init(PlayerInfo pi)
+	{
+		PlayerInfo = pi;
+	}
+
+	public void Client_Init(PlayerInfo pi)
+	{
+		PlayerInfo = pi;
+		GetNode<Label3D>("IDLabel").Text = pi.Name;
+
+		// A few things are client-authority:
+		// Rotation of the player, camera, Input
+		_playerInput = GetNode<PlayerInput>("ClientAuthority/PlayerInput");
+		_playerInput.SetMultiplayerAuthority(pi.PeerID);
+		_clientAuthority = GetNode<Node3D>("ClientAuthority");
+		_clientAuthority.SetMultiplayerAuthority(pi.PeerID, true);
+
+		IsInit = true;
+		Client_OnInit?.Invoke(IsMine);
+		GM.Client_OnPlayerInit(this);		
+	}
+
+
 	public void Fire(int id)
 	{
 		if(!Multiplayer.IsServer()) return;
@@ -115,10 +128,9 @@ public partial class Player : CharacterBody3D
 		{
 			OnDeath?.Invoke(this);
 			//Dont queuefree here, the PlayerSpawner will do that
-			GD.Print("Player died: " + PlayerInfo.PeerID);
+			Logger.Log("Player died: " + PlayerInfo.PeerID);
 		}
 	}
-
 	
 	////// Update the IDs and names on all clients ///////
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
@@ -146,8 +158,8 @@ public partial class Player : CharacterBody3D
 			IsMine = true;
 		}
 
-		//Cann after this --^ to maek sure isMine is set
-		Init(playerInfo);
+		//Call after this --^ to make sure isMine is set
+		Client_Init(playerInfo);
 	}
 
 }

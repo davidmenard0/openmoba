@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://bfhm45w25o4qr"]
+[gd_scene load_steps=26 format=3 uid="uid://bfhm45w25o4qr"]
 
 [ext_resource type="Script" path="res://_Game/Scripts/Player/Player.cs" id="1_58s1o"]
 [ext_resource type="Texture2D" uid="uid://bkyfvgfnf6wj8" path="res://icon.svg" id="2_0uukr"]
@@ -17,6 +17,7 @@
 [ext_resource type="AnimationLibrary" uid="uid://bbv1j6nm6qd4y" path="res://_Game/Assets/Character/Animations/ForwardRight.fbx" id="13_7fp5b"]
 [ext_resource type="AnimationLibrary" uid="uid://c803xxmvwubdr" path="res://_Game/Assets/Character/Animations/Left.fbx" id="15_vyexi"]
 [ext_resource type="AnimationLibrary" uid="uid://ct1g6xxm6cjb0" path="res://_Game/Assets/Character/Animations/Right.fbx" id="16_2ko37"]
+[ext_resource type="Script" path="res://_Game/Scripts/Player/PlayerVision.cs" id="18_ahcc5"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_o5fwc"]
 properties/0/path = NodePath(".:InputVector")
@@ -41,6 +42,10 @@ material = SubResource("StandardMaterial3D_ehqw6")
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
 properties/0/replication_mode = 1
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_nwvbb"]
+height = 10.0
+radius = 10.0
 
 [node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("BulletSpawn")]
 script = ExtResource("1_58s1o")
@@ -92,6 +97,12 @@ playback_default_blend_time = 0.25
 script = ExtResource("10_awwha")
 AnimThreshold = 0.1
 
+[node name="SpotLight3D" type="SpotLight3D" parent="ClientAuthority"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 10, 0)
+spot_range = 20.0
+spot_attenuation = 0.01
+spot_angle_attenuation = 0.1
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_r7tdq")
 
@@ -104,3 +115,9 @@ outline_size = 8
 
 [node name="ServerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_i4osf")
+
+[node name="VisionArea" type="Area3D" parent="."]
+script = ExtResource("18_ahcc5")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="VisionArea"]
+shape = SubResource("CylinderShape3D_nwvbb")

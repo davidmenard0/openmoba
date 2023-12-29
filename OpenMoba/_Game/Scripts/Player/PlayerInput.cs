@@ -13,7 +13,7 @@ public partial class PlayerInput : MultiplayerSynchronizer
     {
 		_clientAuthority = GetParent<Node3D>();
 		_player = _clientAuthority.GetParent<Player>();
-		_player.OnInit += Init;
+		_player.Client_OnInit += Init;
 		
 		// Dont do this here! (And leave it commented as a warning
 		// at this point, the client might not have received its playerID yet
@@ -30,7 +30,7 @@ public partial class PlayerInput : MultiplayerSynchronizer
 
     public override void _ExitTree()
     {
-		_player.OnInit -= Init;
+		_player.Client_OnInit -= Init;
     }
 
     public override void _Process(double delta)

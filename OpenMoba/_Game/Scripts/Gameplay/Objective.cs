@@ -50,11 +50,11 @@ public partial class Objective : Node3D
 
 		if(_captureProgress >= 1.0f)
 		{
-			GD.Print("TEAM 1 wins!");
+			Logger.Log("TEAM 1 wins!");
 		}
 		else if(_captureProgress <= -1.0f)
 		{
-			GD.Print("Team2 wins!");
+			Logger.Log("Team2 wins!");
 		}
 	}
 

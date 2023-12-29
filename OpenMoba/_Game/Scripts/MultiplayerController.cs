@@ -14,11 +14,13 @@ public partial class MultiplayerController : Node
 	private string address = "127.0.0.1";
 
 	private UIController UI;
+	private GameManager GM;
 	private ENetMultiplayerPeer peer;
 	private string _name = "";
 	
 	public override void _Ready()
 	{
+		GM = GetNode<GameManager>("/root/Main/GameManager");
 		UI = GetNode<UIController>("/root/Main/UI");
 		UI.OnHostClicked += HostGame;
 		UI.OnJoinClicked += JoinGame;
@@ -53,7 +55,7 @@ public partial class MultiplayerController : Node
     {
 		//Called in clients when they connect to server. 
 		// Send your name and ID to server.
-        GD.Print("(Client) Connected To Server. Sending player info.");
+        Logger.Log("(Client) Connected To Server. Sending player info.");
 		RpcId(1, "RPC_SendInfoToServer", Multiplayer.GetUniqueId(), _name);
     }
 
@@ -61,13 +63,13 @@ public partial class MultiplayerController : Node
     {
 		//Dont do anything here, the client will send its info to server,
 		// including its name.
-        GD.Print("(Server/Client) Peer Connected to server: " + id.ToString());
+        Logger.Log("(Server/Client) Peer Connected to server: " + id.ToString());
     }
 	
     private void PeerDisconnected(long id)
     {
-        GD.Print("Player Disconnected: " + id.ToString());
-		GameManager.Players.Remove(GameManager.Players.Where(i => i.PeerID == id).First<PlayerInfo>());
+        Logger.Log("Player Disconnected: " + id.ToString());
+		GM.Players.Remove(GM.Players.Where(i => i.PeerID == id).First<PlayerInfo>());
 		var players = GetTree().GetNodesInGroup("Player");
 		
 		foreach (var item in players)
@@ -80,7 +82,7 @@ public partial class MultiplayerController : Node
 
     private void ConnectionFailed()
     {
-		GD.Print("CONNECTION FAILED");
+		Logger.Log("CONNECTION FAILED");
     }
 
 
@@ -102,7 +104,7 @@ public partial class MultiplayerController : Node
 		
 		//Server sends back player info to everyone
 		if(Multiplayer.IsServer()){
-			foreach (var item in GameManager.Players)
+			foreach (var item in GM.Players)
 			{
 				Rpc("RPC_ReceiveInfoOnClients", item.PeerID, item.Name);
 			}
@@ -125,13 +127,13 @@ public partial class MultiplayerController : Node
 		var error = peer.CreateServer(port, 2);
 		if(error != Error.Ok)
 		{
-			GD.Print("error cannot host! :" + error.ToString());
+			Logger.Log("error cannot host! :" + error.ToString());
 			return;
 		}
 		peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
 
 		Multiplayer.MultiplayerPeer = peer;
-		GD.Print("Waiting For Players!");
+		Logger.Log("Waiting For Players!");
 		
 		if(spawnServerPlayer)
 			RPC_SendInfoToServer(1, _name);
@@ -145,7 +147,7 @@ public partial class MultiplayerController : Node
 
 		peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
 		Multiplayer.MultiplayerPeer = peer;
-		GD.Print("Joining Game!");
+		Logger.Log("Joining Game!");
 	}
 
 	public void StartGame()
@@ -161,8 +163,8 @@ public partial class MultiplayerController : Node
 			PeerID = id
 		};
 		
-		if(!GameManager.Players.Contains(playerInfo)){
-			GameManager.Players.Add(playerInfo);
+		if(!GM.Players.Contains(playerInfo)){
+			GM.Players.Add(playerInfo);
 		}
 	}
 

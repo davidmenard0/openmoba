@@ -27,4 +27,9 @@ public partial class BulletCollisionArea : Area3D
 			GetParent().QueueFree();
         }
     }
+
+	private void _OnBodyExited(Node body)
+    {
+		if(!Multiplayer.IsServer()) return;
+    }
 }
