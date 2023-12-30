@@ -24,8 +24,7 @@ public partial class Bullet : Node3D
 
         if(!Multiplayer.IsServer()) return;
 
-        var fx = GetNode<FXManager>("/root/Main/FXManager");
-        fx.PlayAudio("bullet_fire", this.GlobalPosition);
+        FXManager.Instance.PlayAudio("bullet_fire", this.GlobalPosition);
 
         StartLifeTimer();
     }
@@ -40,9 +39,8 @@ public partial class Bullet : Node3D
     private async void StartLifeTimer()
     {
         await Task.Delay(Mathf.RoundToInt(Lifetime*1000));
-        var fx = GetNode<FXManager>("/root/Main/FXManager");
-        fx.PlayVFX("hit_smoke", this.GlobalPosition);
-        fx.PlayAudio("bullet_expire", this.GlobalPosition);
+        FXManager.Instance.PlayVFX("hit_smoke", this.GlobalPosition);
+        FXManager.Instance.PlayAudio("bullet_expire", this.GlobalPosition);
         this.QueueFree();
     }
 

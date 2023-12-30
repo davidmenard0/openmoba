@@ -19,6 +19,9 @@ script = ExtResource("3_xvs1u")
 [node name="GameManager" type="Node" parent="Singleton"]
 script = ExtResource("7_xgyen")
 
+[node name="FXManager" type="Node" parent="Singleton"]
+script = ExtResource("5_sida8")
+
 [node name="MultiplayerController" type="Node" parent="."]
 script = ExtResource("2_8586g")
 
@@ -35,6 +38,3 @@ playerScene = ExtResource("4_uvess")
 [node name="Map" type="Node" parent="."]
 
 [node name="PlayerObjects" type="Node" parent="."]
-
-[node name="FXManager" type="Node" parent="."]
-script = ExtResource("5_sida8")
