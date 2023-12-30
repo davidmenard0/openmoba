@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 
-public partial class GameManager : Node
+public partial class GameManager : Singleton<GameManager>
 {
 
 	public List<PlayerInfo> Players = new List<PlayerInfo>();
@@ -14,7 +14,7 @@ public partial class GameManager : Node
 
 	private PlayerObjectSpawner _spawner;
 
-	public override void _Ready()
+	protected override void Initialize()
 	{
 		_spawner = GetNode<PlayerObjectSpawner>("/root/Main/PlayerObjectSpawner");
 		_spawner.Server_OnPlayerSpawn += OnPlayerSpawn;

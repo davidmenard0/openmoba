@@ -14,13 +14,11 @@ public partial class MultiplayerController : Node
 	private string address = "127.0.0.1";
 
 	private UIController UI;
-	private GameManager GM;
 	private ENetMultiplayerPeer peer;
 	private string _name = "";
 	
 	public override void _Ready()
 	{
-		GM = GetNode<GameManager>("/root/Main/GameManager");
 		UI = GetNode<UIController>("/root/Main/UI");
 		UI.OnHostClicked += HostGame;
 		UI.OnJoinClicked += JoinGame;
@@ -69,7 +67,7 @@ public partial class MultiplayerController : Node
     private void PeerDisconnected(long id)
     {
         Logger.Log("Player Disconnected: " + id.ToString());
-		GM.Players.Remove(GM.Players.Where(i => i.PeerID == id).First<PlayerInfo>());
+		GameManager.Instance.Players.Remove(GameManager.Instance.Players.Where(i => i.PeerID == id).First<PlayerInfo>());
 		var players = GetTree().GetNodesInGroup("Player");
 		
 		foreach (var item in players)
@@ -104,7 +102,7 @@ public partial class MultiplayerController : Node
 		
 		//Server sends back player info to everyone
 		if(Multiplayer.IsServer()){
-			foreach (var item in GM.Players)
+			foreach (var item in GameManager.Instance.Players)
 			{
 				Rpc("RPC_ReceiveInfoOnClients", item.PeerID, item.Name);
 			}
@@ -163,8 +161,8 @@ public partial class MultiplayerController : Node
 			PeerID = id
 		};
 		
-		if(!GM.Players.Contains(playerInfo)){
-			GM.Players.Add(playerInfo);
+		if(!GameManager.Instance.Players.Contains(playerInfo)){
+			GameManager.Instance.Players.Add(playerInfo);
 		}
 	}
 

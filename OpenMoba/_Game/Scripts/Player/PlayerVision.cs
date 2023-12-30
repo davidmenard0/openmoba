@@ -7,13 +7,9 @@ public partial class PlayerVision : Area3D
 {
 	private Player _player;
 
-	private GameManager GM;
-
 	public override void _Ready()
 	{
 		if(!Multiplayer.IsServer()) return;
-
-		GM = GetNode<GameManager>("/root/Main/GameManager");
 
 		_player = GetParent<Player>();
 		Debug.Assert(_player != null, "ERROR: can't find Player in player vision Area");
@@ -48,7 +44,7 @@ public partial class PlayerVision : Area3D
 			var other_player = (Player) body;
 			if(other_player.PlayerInfo.Team != _player.PlayerInfo.Team)
 			{
-				GM.OnPlayerVisibilityChange(_player, other_player, true);
+				GameManager.Instance.OnPlayerVisibilityChange(_player, other_player, true);
 				Logger.Log("Player " + _player.PlayerInfo.PeerID + " sees " + other_player.PlayerInfo.PeerID);
 			}
 		}
@@ -63,7 +59,7 @@ public partial class PlayerVision : Area3D
 			var other_player = (Player) body;
 			if(other_player.PlayerInfo.Team != _player.PlayerInfo.Team)
 			{
-				GM.OnPlayerVisibilityChange(_player, other_player, false);
+				GameManager.Instance.OnPlayerVisibilityChange(_player, other_player, false);
 				
 				Logger.Log("I dont see you :( ");
 			}

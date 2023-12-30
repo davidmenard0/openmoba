@@ -27,11 +27,9 @@ public partial class Player : CharacterBody3D
 	private Node3D _clientAuthority;
 	private float _gravity = (float)ProjectSettings.GetSetting("physics/3d/default_gravity");
 
-	private GameManager GM; 
 
 	public override void _Ready()
 	{
-		GM = GetNode<GameManager>("/root/Main/GameManager");
 		_playerInput = GetNode<PlayerInput>("ClientAuthority/PlayerInput");
 		Camera = GetNode<PlayerCamera>("ClientAuthority/Camera3D");
 
@@ -97,7 +95,7 @@ public partial class Player : CharacterBody3D
 
 		IsInit = true;
 		Client_OnInit?.Invoke(IsMine);
-		GM.Client_OnPlayerInit(this);		
+		GameManager.Instance.Client_OnPlayerInit(this);		
 	}
 
 

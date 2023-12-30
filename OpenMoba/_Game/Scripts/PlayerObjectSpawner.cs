@@ -21,12 +21,10 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 	private Node _spawnNode;
 	private Array<Node> _spawnPoints;
 	private UIController UI;
-	private GameManager GM;
 
     public override void _Ready()
     {
         UI = GetNode<UIController>("/root/Main/UI");
-		GM = GetNode<GameManager>("/root/Main/GameManager");
     }
 
     public void SpawnPlayers(Node spawnPoints)
@@ -36,7 +34,7 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
         _spawnNode = GetNode<Node>(SpawnPath);
 		_spawnPoints = spawnPoints.GetChildren();
 		int i = 0;
-		foreach (var p in GM.Players)
+		foreach (var p in GameManager.Instance.Players)
 		{
 			int team = i % 2;
 			p.Team = team;
