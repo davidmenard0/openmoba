@@ -48,7 +48,7 @@ public partial class PlayerVision : Area3D
 			var other_player = (Player) body;
 			if(other_player.PlayerInfo.Team != _player.PlayerInfo.Team)
 			{
-				GM.TeamSeesPlayer(_player.PlayerInfo.Team, other_player.PlayerInfo.PeerID, true);
+				GM.OnPlayerVisibilityChange(_player, other_player, true);
 				Logger.Log("Player " + _player.PlayerInfo.PeerID + " sees " + other_player.PlayerInfo.PeerID);
 			}
 		}
@@ -63,7 +63,7 @@ public partial class PlayerVision : Area3D
 			var other_player = (Player) body;
 			if(other_player.PlayerInfo.Team != _player.PlayerInfo.Team)
 			{
-				GM.TeamSeesPlayer(_player.PlayerInfo.Team, other_player.PlayerInfo.PeerID, false);
+				GM.OnPlayerVisibilityChange(_player, other_player, false);
 				
 				Logger.Log("I dont see you :( ");
 			}

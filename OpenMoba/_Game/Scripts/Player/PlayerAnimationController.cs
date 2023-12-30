@@ -34,7 +34,6 @@ public partial class PlayerAnimationController : AnimationPlayer
 		float forward_comp = dir.Dot(forward);
 		float left_comp = dir.Dot(left);
 		
-
 		if(forward_comp > AnimThreshold && left_comp > AnimThreshold)
 			this.Play("ForwardLeft/mixamo_com");
 		else if(forward_comp > AnimThreshold && left_comp < -AnimThreshold)

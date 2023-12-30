@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 public partial class PlayerObjectSpawner : MultiplayerSpawner
 {
+	public Action<Player> Server_OnPlayerSpawn;
+	public Action Server_OnPlayerDespawn;
+
     [Export]
     private PackedScene playerScene;
 	[Export]
@@ -59,6 +62,8 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 		currentPlayer.GlobalPosition = pos;
 
 		ServerPlayers.Add(currentPlayer);
+
+		Server_OnPlayerSpawn?.Invoke(currentPlayer);
 	}
 
 	private void OnPlayerDeath(Player p)
@@ -68,6 +73,7 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 		PlayerInfo pi = p.PlayerInfo;
 		_spawnNode.RemoveChild(p);
 		p.QueueFree();
+		Server_OnPlayerDespawn?.Invoke();
 		SpawnPlayer(pi);
 
 		ServerPlayers.Remove(p);

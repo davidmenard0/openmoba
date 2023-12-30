@@ -9,6 +9,7 @@ public partial class GameManager : Node
 
 	public List<PlayerInfo> Players = new List<PlayerInfo>();
 
+	//this keeps track of how many players from the opposing team see you
 	private Dictionary<int, int> _teamVisibilityCounter = new Dictionary<int, int>();
 
 	private PlayerObjectSpawner _spawner;
@@ -16,37 +17,65 @@ public partial class GameManager : Node
 	public override void _Ready()
 	{
 		_spawner = GetNode<PlayerObjectSpawner>("/root/Main/PlayerObjectSpawner");
+		_spawner.Server_OnPlayerSpawn += OnPlayerSpawn;
 	}
 
-	public void TeamSeesPlayer(int team, int peerID, bool visible)
+	public void OnPlayerVisibilityChange(Player observer, Player observee, bool visible)
 	{
 		if(!Multiplayer.IsServer()) return;
 
-		if(!_teamVisibilityCounter.ContainsKey(peerID))
-			_teamVisibilityCounter[peerID] = 0;
+		int observer_team = observer.PlayerInfo.Team;
+		int observee_id = observee.PlayerInfo.PeerID;
 
-		_teamVisibilityCounter[peerID] += visible ? 1 : -1;
-		if(_teamVisibilityCounter[peerID] < 0)
-			_teamVisibilityCounter[peerID] = 0; // cant have negative values
+		if(!_teamVisibilityCounter.ContainsKey(observee_id))
+			_teamVisibilityCounter[observee_id] = 0;
 
+		_teamVisibilityCounter[observee_id] += visible ? 1 : -1;
+		if(_teamVisibilityCounter[observee_id] < 0)
+			_teamVisibilityCounter[observee_id] = 0; // cant have negative values
+
+		bool spotted = _teamVisibilityCounter[observee_id] > 0;
+		SetPlayerVisibilityForTeam(observee, observer_team, spotted);
+	}
+
+	private void OnPlayerSpawn(Player p)
+	{
+		var sync = p.GetNode<MultiplayerSynchronizer>("ServerSynchronizer");
+		sync.PublicVisibility = false;
+		SetPlayerVisibilityForTeam(p, p.PlayerInfo.Team, true);
+	}
+
+	private void SetPlayerVisibilityForTeam(Player observee, int team, bool visibility)
+	{
+		//TODO: Take into consideration when the server is also client
+		//TODO: Add visibility for Bullets
+
+		int observee_id = observee.PlayerInfo.PeerID;
+		var observee_sync = observee.GetNode<MultiplayerSynchronizer>("ServerSynchronizer");
+		
 		foreach(var p in _spawner.ServerPlayers)
 		{
 			// Only update if other_player is on the team that sees the peerID
-			// Remember: team is NOT the peerID's team. It's the opposing team
+			// Remember: observer_team is NOT the observee's team. It's the opposing team
 			if(p.PlayerInfo.Team == team)
 			{
-				if(_teamVisibilityCounter[peerID] > 0)
+				// Team spots the observee
+				if(visibility)
 				{
-					RpcId(p.PlayerInfo.PeerID, "RPC_Client_UpdateVisibility", peerID, true);
+					observee_sync.SetVisibilityFor(p.PlayerInfo.PeerID, true);
+					RpcId(p.PlayerInfo.PeerID, "RPC_Client_UpdateVisibility", observee_id, true);
 				}
-				else
+				else // Team no longer see observee
 				{
-					RpcId(p.PlayerInfo.PeerID, "RPC_Client_UpdateVisibility", peerID, false);
+					observee_sync.SetVisibilityFor(p.PlayerInfo.PeerID, false);
+					RpcId(p.PlayerInfo.PeerID, "RPC_Client_UpdateVisibility", observee_id, false);
 				}
 			}
 		}
 	}
 
+	//Note: This is only needed when the server is also a client. 
+	// This way the server keeps the updates, but the visibility is set to false
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void RPC_Client_UpdateVisibility(int id, bool visible)
 	{
@@ -55,13 +84,12 @@ public partial class GameManager : Node
 		{
 			if(p.PlayerInfo.PeerID == id)
 			{
-				GD.Print("Player " + Multiplayer.GetUniqueId() + " setting player " + id + " to " + visible);
+				GD.Print("Player " + Multiplayer.GetUniqueId() + " un/spotted player " + id + ". Setting visibility to " + visible);
 				p.Visible = visible;
 			}
 		}
 	}
 
-	
 	//Called on all clients when the player has initialized itself. 
 	public void Client_OnPlayerInit(Player p)
 	{
