@@ -11,6 +11,7 @@ public partial class PlayerAnimationController : AnimationPlayer
 	private PlayerInput _input;
 
 	private Vector3 _lastPosition;
+	private string _lastAnimation = "";
 
 	public override void _Ready()
 	{
@@ -34,24 +35,27 @@ public partial class PlayerAnimationController : AnimationPlayer
 		float forward_comp = dir.Dot(forward);
 		float left_comp = dir.Dot(left);
 		
+		string anim = "Idle/mixamo_com";
 		if(forward_comp > AnimThreshold && left_comp > AnimThreshold)
-			this.Play("ForwardLeft/mixamo_com");
+			anim = "ForwardLeft/mixamo_com";
 		else if(forward_comp > AnimThreshold && left_comp < -AnimThreshold)
-			this.Play("ForwardRight/mixamo_com");
+			anim = "ForwardRight/mixamo_com";
 		else if(forward_comp < -AnimThreshold && left_comp > AnimThreshold)
-			this.Play("BackLeft/mixamo_com");
+			anim = "BackLeft/mixamo_com";
 		else if(forward_comp < -AnimThreshold && left_comp < -AnimThreshold)
-			this.Play("BackRight/mixamo_com");
+			anim = "BackRight/mixamo_com";
 		else if(forward_comp > AnimThreshold)
-			this.Play("Forward/mixamo_com");
+			anim = "Forward/mixamo_com";
 		else if(forward_comp < -AnimThreshold)
-			this.Play("Back/mixamo_com");
+			anim = "Back/mixamo_com";
 		else if(left_comp > AnimThreshold)
-			this.Play("Left/mixamo_com");
+			anim = "Left/mixamo_com";
 		else if(left_comp < -AnimThreshold)
-			this.Play("Right/mixamo_com");
-		else
-			this.Play("Idle/mixamo_com");
+			anim = "Right/mixamo_com";
+
+		if(anim != _lastAnimation)
+			this.Play(anim);
+		_lastAnimation = anim;
 
 		_lastPosition = _playerClientAuthority.GlobalPosition;
 	}
