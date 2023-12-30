@@ -11,6 +11,14 @@
 [node name="Main" type="Node3D"]
 script = ExtResource("1_uobwu")
 
+[node name="Singleton" type="Node" parent="."]
+
+[node name="UIController" type="Node" parent="Singleton"]
+script = ExtResource("3_xvs1u")
+
+[node name="GameManager" type="Node" parent="Singleton"]
+script = ExtResource("7_xgyen")
+
 [node name="MultiplayerController" type="Node" parent="."]
 script = ExtResource("2_8586g")
 
@@ -24,15 +32,9 @@ spawn_path = NodePath("../PlayerObjects")
 script = ExtResource("3_103y6")
 playerScene = ExtResource("4_uvess")
 
-[node name="UI" type="Node" parent="."]
-script = ExtResource("3_xvs1u")
-
 [node name="Map" type="Node" parent="."]
 
 [node name="PlayerObjects" type="Node" parent="."]
 
 [node name="FXManager" type="Node" parent="."]
 script = ExtResource("5_sida8")
-
-[node name="GameManager" type="Node" parent="."]
-script = ExtResource("7_xgyen")

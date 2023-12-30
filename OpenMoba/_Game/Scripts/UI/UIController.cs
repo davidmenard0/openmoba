@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class UIController : Node
+public partial class UIController : Singleton<UIController>
 {
 	//MainMenu
 	public Action<string, bool> OnHostClicked; //name, spawnServerPlayer
@@ -20,7 +20,7 @@ public partial class UIController : Node
 	private Control _mainMenu;
 	private InGameUI _inGameUI;
 
-	public override void _Ready()
+	protected override void Initialize()
 	{
 		OnGameStarted += GameStarted;
 		OnLocalPlayerRespawn += LocalPlayerRespawn;

@@ -20,11 +20,9 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 
 	private Node _spawnNode;
 	private Array<Node> _spawnPoints;
-	private UIController UI;
 
     public override void _Ready()
     {
-        UI = GetNode<UIController>("/root/Main/UI");
     }
 
     public void SpawnPlayers(Node spawnPoints)
@@ -80,6 +78,6 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
 	private void RPC_Client_NotifyPlayerSpawn(float deathTimer)
 	{
-		UI.OnLocalPlayerRespawn?.Invoke(deathTimer);
+		UIController.Instance.OnLocalPlayerRespawn?.Invoke(deathTimer);
 	}
 }

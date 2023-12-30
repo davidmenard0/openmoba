@@ -13,16 +13,14 @@ public partial class MultiplayerController : Node
 	[Export]
 	private string address = "127.0.0.1";
 
-	private UIController UI;
 	private ENetMultiplayerPeer peer;
 	private string _name = "";
 	
 	public override void _Ready()
 	{
-		UI = GetNode<UIController>("/root/Main/UI");
-		UI.OnHostClicked += HostGame;
-		UI.OnJoinClicked += JoinGame;
-		UI.OnStartClicked += StartGame;
+		UIController.Instance.OnHostClicked += HostGame;
+		UIController.Instance.OnJoinClicked += JoinGame;
+		UIController.Instance.OnStartClicked += StartGame;
 
 		Multiplayer.ConnectedToServer += Client_ConnectedToServer;
 		Multiplayer.PeerConnected += PeerConnected;
@@ -36,9 +34,9 @@ public partial class MultiplayerController : Node
 
     public override void _ExitTree()
     {
-        UI.OnHostClicked -= HostGame;
-		UI.OnJoinClicked -= JoinGame;
-		UI.OnStartClicked -= StartGame;
+        UIController.Instance.OnHostClicked -= HostGame;
+		UIController.Instance.OnJoinClicked -= JoinGame;
+		UIController.Instance.OnStartClicked -= StartGame;
 
 		Multiplayer.ConnectedToServer -= Client_ConnectedToServer;
 		Multiplayer.PeerConnected -= PeerConnected;
@@ -92,7 +90,7 @@ public partial class MultiplayerController : Node
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
 	private void RPC_StartGame()
 	{
-		UI.OnGameStarted?.Invoke();
+		UIController.Instance.OnGameStarted?.Invoke();
 	}
 
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]

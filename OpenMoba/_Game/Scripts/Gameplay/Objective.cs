@@ -12,12 +12,10 @@ public partial class Objective : Node3D
 
 	private ObjectiveInfluenceArea _area;
 	private float _captureProgress = 0f;
-	private UIController UI;
 	private Node3D[] _objectiveTargets;
 
 	public override void _Ready()
 	{
-		UI = GetNode<UIController>("/root/Main/UI");
 		if(!Multiplayer.IsServer()) return;
 		
 		_area = GetNode<ObjectiveInfluenceArea>("./InfluenceArea");
@@ -74,6 +72,6 @@ public partial class Objective : Node3D
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
 	private void RPC_UpdateObjectiveProgress(float progress)
 	{
-		UI.OnObjectiveProgressUpdate?.Invoke(progress);
+		UIController.Instance.OnObjectiveProgressUpdate?.Invoke(progress);
 	}
 }

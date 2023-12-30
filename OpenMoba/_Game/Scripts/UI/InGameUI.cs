@@ -4,7 +4,6 @@ using System.Diagnostics;
 
 public partial class InGameUI : Control
 {
-	private UIController UI;
 	private Label _progressLabel;
 	private ColorRect _team1Progress;
 	private ColorRect _team2Progress;
@@ -14,7 +13,6 @@ public partial class InGameUI : Control
 
     public override void _Ready()
     {
-        UI = GetNode<UIController>("/root/Main/UI");
 		_progressLabel = GetNode<Label>("ProgressLabel");
 		Debug.Assert(_progressLabel != null, "ERROR: _progressLabel not found in InGameUI");
 
@@ -28,10 +26,15 @@ public partial class InGameUI : Control
 
 		_maxWidth = _team1Progress.Size.X;
 
-		UI.OnObjectiveProgressUpdate += UpdateProgress;
+		UIController.Instance.OnObjectiveProgressUpdate += UpdateProgress;
 
 		UpdateProgress(0f);
     }
+
+	public override void _ExitTree()
+	{
+		UIController.Instance.OnObjectiveProgressUpdate -= UpdateProgress;
+	}
 
 	public void UpdateProgress(float progress)
 	{
