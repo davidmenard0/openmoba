@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://b5jhp8a2u3gnb"]
+[gd_scene load_steps=9 format=3 uid="uid://b5jhp8a2u3gnb"]
 
 [ext_resource type="Script" path="res://_Game/Scripts/Main.cs" id="1_uobwu"]
 [ext_resource type="Script" path="res://_Game/Scripts/MultiplayerController.cs" id="2_8586g"]
 [ext_resource type="Script" path="res://_Game/Scripts/PlayerObjectSpawner.cs" id="3_103y6"]
 [ext_resource type="Script" path="res://_Game/Scripts/UI/UIController.cs" id="3_xvs1u"]
+[ext_resource type="Script" path="res://_Game/Scripts/VisibilityManager.cs" id="4_cyduc"]
 [ext_resource type="PackedScene" uid="uid://bfhm45w25o4qr" path="res://_Game/Scenes/Gameplay/Player.tscn" id="4_uvess"]
 [ext_resource type="Script" path="res://_Game/Scripts/FXManager.cs" id="5_sida8"]
 [ext_resource type="Script" path="res://_Game/Scripts/GameManager.cs" id="7_xgyen"]
@@ -19,6 +20,9 @@ script = ExtResource("3_xvs1u")
 [node name="GameManager" type="Node" parent="Singleton"]
 script = ExtResource("7_xgyen")
 
+[node name="VisibilityManager" type="Node" parent="Singleton/GameManager"]
+script = ExtResource("4_cyduc")
+
 [node name="FXManager" type="Node" parent="Singleton"]
 script = ExtResource("5_sida8")
 
@@ -30,7 +34,7 @@ _spawnable_scenes = PackedStringArray("res://_Game/Scenes/Maps/MainMap.tscn", "r
 spawn_path = NodePath("../Map")
 
 [node name="PlayerObjectSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("res://_Game/Scenes/Gameplay/Player.tscn", "res://_Game/Scenes/Gameplay/Bullet.tscn")
+_spawnable_scenes = PackedStringArray("res://_Game/Scenes/Gameplay/Player.tscn")
 spawn_path = NodePath("../PlayerObjects")
 script = ExtResource("3_103y6")
 playerScene = ExtResource("4_uvess")

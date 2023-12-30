@@ -25,9 +25,9 @@ public partial class FXManager : Singleton<FXManager>
 
 		
 		_audio = new Dictionary<string, PackedScene>();
-		_audio["bullet_expire"] = ResourceLoader.Load<PackedScene>("res://_Game/Scenes/Audio/bullet_expire.tscn");
-		_audio["bullet_hit"] = ResourceLoader.Load<PackedScene>("res://_Game/Scenes/Audio/bullet_hit.tscn");
-		_audio["bullet_fire"] = ResourceLoader.Load<PackedScene>("res://_Game/Scenes/Audio/bullet_fire.tscn");
+		_audio["projectile_expire"] = ResourceLoader.Load<PackedScene>("res://_Game/Scenes/Audio/projectile_expire.tscn");
+		_audio["projectile_hit"] = ResourceLoader.Load<PackedScene>("res://_Game/Scenes/Audio/projectile_hit.tscn");
+		_audio["projectile_fire"] = ResourceLoader.Load<PackedScene>("res://_Game/Scenes/Audio/projectile_fire.tscn");
 	}
 
 	public override void _Process(double delta)

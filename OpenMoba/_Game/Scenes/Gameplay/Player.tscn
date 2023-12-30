@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" path="res://_Game/Scripts/Player/Player.cs" id="1_58s1o"]
 [ext_resource type="Texture2D" uid="uid://bkyfvgfnf6wj8" path="res://icon.svg" id="2_0uukr"]
-[ext_resource type="PackedScene" uid="uid://c3g3l26myqkke" path="res://_Game/Scenes/Gameplay/Bullet.tscn" id="2_27g2i"]
 [ext_resource type="Material" uid="uid://bumh373nox2qd" path="res://_Game/Assets/Materials/PlayerMat.tres" id="2_o7umo"]
+[ext_resource type="PackedScene" uid="uid://c3g3l26myqkke" path="res://_Game/Scenes/Gameplay/Projectile.tscn" id="2_xkb1s"]
 [ext_resource type="Script" path="res://_Game/Scripts/Player/PlayerInput.cs" id="4_a72mp"]
 [ext_resource type="Script" path="res://_Game/Scripts/Player/PlayerCamera.cs" id="5_cb4gj"]
 [ext_resource type="PackedScene" uid="uid://bd8lx24vdln3" path="res://_Game/Assets/Character/X Bot.fbx" id="6_y7xn5"]
@@ -49,7 +49,7 @@ radius = 10.0
 
 [node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("BulletSpawn")]
 script = ExtResource("1_58s1o")
-Bullet = ExtResource("2_27g2i")
+Bullet = ExtResource("2_xkb1s")
 BulletSpawn = NodePath("ClientAuthority/Direction_and_BulletSpawn")
 
 [node name="ClientAuthority" type="Node3D" parent="."]

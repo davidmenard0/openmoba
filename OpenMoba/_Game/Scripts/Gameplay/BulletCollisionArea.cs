@@ -17,7 +17,7 @@ public partial class BulletCollisionArea : Area3D
         if (body is Player)
         {
             Player p = (Player)body;
-			p.TakeDamage(GetParent<Bullet>().Damage);
+			p.TakeDamage(GetParent<Projectile>().Damage);
 
 			FXManager.Instance.PlayVFX("hit_smoke", this.GlobalPosition);
 			FXManager.Instance.PlayAudio("bullet_hit", this.GlobalPosition);

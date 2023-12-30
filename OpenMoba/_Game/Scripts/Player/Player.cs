@@ -95,7 +95,8 @@ public partial class Player : CharacterBody3D
 
 		IsInit = true;
 		Client_OnInit?.Invoke(IsMine);
-		GameManager.Instance.Client_OnPlayerInit(this);		
+
+		GameManager.Instance.Client_OnPlayerInit?.Invoke(this);		
 	}
 
 
@@ -112,7 +113,7 @@ public partial class Player : CharacterBody3D
 			return;
 		}
 
-		var bullet = Bullet.Instantiate<Bullet>();
+		var bullet = Bullet.Instantiate<Projectile>();
 		this.GetParent().AddChild(bullet, true);
 		bullet.GlobalPosition = BulletSpawn.GlobalPosition;
 		bullet.Direction = -_clientAuthority.GlobalTransform.Basis.Z; //forward vector
