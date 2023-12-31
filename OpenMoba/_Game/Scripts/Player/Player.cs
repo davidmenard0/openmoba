@@ -10,14 +10,14 @@ public partial class Player : CharacterBody3D
 	[Export]
 	const float Speed = 15f;
 	[Export]
-	public PackedScene Bullet;
+	public PackedScene ProjectileTemplate;
 	[Export]
-	public Node3D BulletSpawn;
+	public Node3D ProjectileSpawn;
 
 	public bool IsMine = false;
 	public bool IsInit = false;
 
-	public PlayerInfo PlayerInfo;
+	public int OwnerID; //Dont hold the OwnerInfo, just the ID so we can do a lookup in GameManager
 	public PlayerCamera Camera;
 
 	private float _health = 2f;
@@ -76,27 +76,26 @@ public partial class Player : CharacterBody3D
 		MoveAndSlide();
     }
 
-	public void Server_Init(PlayerInfo pi)
+	public void Server_Init(int ownerID)
 	{
-		PlayerInfo = pi;
+		OwnerID = ownerID;
 	}
 
 	public void Client_Init(PlayerInfo pi)
 	{
-		PlayerInfo = pi;
-		GetNode<Label3D>("IDLabel").Text = pi.Name;
+		OwnerID = pi.PeerID;
+		GetNode<Label3D>("IDLabel").Text = GameManager.Instance.GetPlayerInfo(OwnerID).Name;
 
 		// A few things are client-authority:
 		// Rotation of the player, camera, Input
 		_playerInput = GetNode<PlayerInput>("ClientAuthority/PlayerInput");
-		_playerInput.SetMultiplayerAuthority(pi.PeerID);
+		_playerInput.SetMultiplayerAuthority(OwnerID);
 		_clientAuthority = GetNode<Node3D>("ClientAuthority");
-		_clientAuthority.SetMultiplayerAuthority(pi.PeerID, true);
+		_clientAuthority.SetMultiplayerAuthority(OwnerID, true);
 
 		IsInit = true;
 		Client_OnInit?.Invoke(IsMine);
-
-		GameManager.Instance.Client_OnPlayerInit?.Invoke(this);		
+		GameManager.Instance.Client_OnPlayerInit?.Invoke(this);
 	}
 
 
@@ -107,16 +106,14 @@ public partial class Player : CharacterBody3D
 		//Double-check that the id is the one associated to this player. 
 		//This should always be true, since the RPC is only called on the correct player
 		// It prevents anyone from sending this RPC with malicious intent
-		if(PlayerInfo.PeerID != id)
+		if(OwnerID != id)
 		{
-			Debug.Assert(PlayerInfo.PeerID == id, "ERROR: Fire called on another Player than the one that fired");
+			Debug.Assert(OwnerID == id, "ERROR: Fire called on another Player than the one that fired");
 			return;
 		}
 
-		var bullet = Bullet.Instantiate<Projectile>();
-		this.GetParent().AddChild(bullet, true);
-		bullet.GlobalPosition = BulletSpawn.GlobalPosition;
-		bullet.Direction = -_clientAuthority.GlobalTransform.Basis.Z; //forward vector
+		var dir = -_clientAuthority.GlobalTransform.Basis.Z; //forward vector
+		GameManager.Instance.Spawner.SpawnProjectile(this, ProjectileTemplate, ProjectileSpawn.GlobalPosition, dir);
 	}
 
 	public void TakeDamage(float dmg){
@@ -127,7 +124,7 @@ public partial class Player : CharacterBody3D
 		{
 			OnDeath?.Invoke(this);
 			//Dont queuefree here, the PlayerSpawner will do that
-			Logger.Log("Player died: " + PlayerInfo.PeerID);
+			Logger.Log("Player died: " + OwnerID);
 		}
 	}
 	
@@ -138,12 +135,15 @@ public partial class Player : CharacterBody3D
 		if(!Multiplayer.IsServer()) return;
 
 		//Only server holds this info, so send it to clients
-		Rpc("RPC_Client_RespondInfo", PlayerInfo.PeerID, PlayerInfo.Name, PlayerInfo.Team);
+		var pi = GameManager.Instance.GetPlayerInfo(OwnerID);
+		Rpc("RPC_Client_RespondInfo", OwnerID, pi.Name, pi.Team);
 	}
 
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
 	private void RPC_Client_RespondInfo(int id, string name, int team)
 	{
+		//Dont server-check here because server might have spawned a player
+				
 		//Update client-side info
 		PlayerInfo playerInfo = new PlayerInfo(){
 			PeerID = id,

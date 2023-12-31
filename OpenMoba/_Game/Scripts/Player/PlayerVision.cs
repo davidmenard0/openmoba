@@ -37,32 +37,28 @@ public partial class PlayerVision : Area3D
 
 	private void _OnBodyEntered(Node body)
     {
-		if(!Multiplayer.IsServer()) return;
-
-		if(body is Player)
-		{
-			var other_player = (Player) body;
-			if(other_player.PlayerInfo.Team != _player.PlayerInfo.Team)
-			{
-				GameManager.Instance.OnPlayerVisibilityChange?.Invoke(_player, other_player, true);
-				Logger.Log("Player " + _player.PlayerInfo.PeerID + " sees " + other_player.PlayerInfo.PeerID);
-			}
-		}
+		ProcessCollision(body, true);
     }
 
 	private void _OnBodyExited(Node body)
     {
+		ProcessCollision(body, false);
+    }
+
+	private void ProcessCollision(Node body, bool entered)
+	{
 		if(!Multiplayer.IsServer()) return;
 
 		if(body is Player)
 		{
 			var other_player = (Player) body;
-			if(other_player.PlayerInfo.Team != _player.PlayerInfo.Team)
+			var this_team = GameManager.Instance.GetPlayerInfo(_player.OwnerID);
+			var other_team = GameManager.Instance.GetPlayerInfo(other_player.OwnerID);
+			if(this_team != other_team)
 			{
-				GameManager.Instance.OnPlayerVisibilityChange?.Invoke(_player, other_player, false);
-				
-				Logger.Log("I dont see you :( ");
+				Logger.Log("Player " + _player.OwnerID + " sees " + other_player.OwnerID);
+				GameManager.Instance.OnNodeVisionAreaTransition?.Invoke(_player, other_player, entered);
 			}
 		}
-    }
+	}
 }

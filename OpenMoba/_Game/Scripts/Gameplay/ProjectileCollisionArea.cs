@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class BulletCollisionArea : Area3D
+public partial class ProjectileCollisionArea : Area3D
 {	
 	public override void _Ready()
 	{
@@ -18,11 +18,7 @@ public partial class BulletCollisionArea : Area3D
         {
             Player p = (Player)body;
 			p.TakeDamage(GetParent<Projectile>().Damage);
-
-			FXManager.Instance.PlayVFX("hit_smoke", this.GlobalPosition);
-			FXManager.Instance.PlayAudio("bullet_hit", this.GlobalPosition);
-
-			GetParent().QueueFree();
+			GameManager.Instance.OnProjectileDespawn?.Invoke(GetParent<Projectile>());
         }
     }
 

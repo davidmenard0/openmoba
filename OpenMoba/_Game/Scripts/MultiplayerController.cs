@@ -7,10 +7,7 @@ using System.ComponentModel;
 
 public partial class MultiplayerController : Node
 {
-	[Export]
 	private int port = 8910;
-
-	[Export]
 	private string address = "127.0.0.1";
 
 	private ENetMultiplayerPeer peer;
@@ -65,7 +62,7 @@ public partial class MultiplayerController : Node
     private void PeerDisconnected(long id)
     {
         Logger.Log("Player Disconnected: " + id.ToString());
-		GameManager.Instance.Players.Remove(GameManager.Instance.Players.Where(i => i.PeerID == id).First<PlayerInfo>());
+		GameManager.Instance.Players.Remove((int)id); // TODO: should be a callback
 		var players = GetTree().GetNodesInGroup("Player");
 		
 		foreach (var item in players)
@@ -102,7 +99,7 @@ public partial class MultiplayerController : Node
 		if(Multiplayer.IsServer()){
 			foreach (var item in GameManager.Instance.Players)
 			{
-				Rpc("RPC_ReceiveInfoOnClients", item.PeerID, item.Name);
+				Rpc("RPC_ReceiveInfoOnClients", item.Value.PeerID, item.Value.Name);
 			}
 		}
 	}
@@ -154,13 +151,12 @@ public partial class MultiplayerController : Node
 
 	private void UpdatePlayerInfo(int id, string name)
 	{
-		PlayerInfo playerInfo = new PlayerInfo(){
-			Name = name,
-			PeerID = id
-		};
-		
-		if(!GameManager.Instance.Players.Contains(playerInfo)){
-			GameManager.Instance.Players.Add(playerInfo);
+		if(!GameManager.Instance.Players.ContainsKey(id)){
+			PlayerInfo playerInfo = new PlayerInfo(){
+				Name = name,
+				PeerID = id
+			};
+			GameManager.Instance.Players[id] = playerInfo;
 		}
 	}
 

@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://c3g3l26myqkke"]
 
 [ext_resource type="Script" path="res://_Game/Scripts/Gameplay/Projectile.cs" id="1_3vnq6"]
-[ext_resource type="Script" path="res://_Game/Scripts/Gameplay/BulletCollisionArea.cs" id="1_a3ggb"]
+[ext_resource type="Script" path="res://_Game/Scripts/Gameplay/ProjectileCollisionArea.cs" id="2_ctatd"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_pwnrk"]
 
@@ -15,17 +15,18 @@ properties/0/replication_mode = 1
 
 [node name="Projectile" type="Node3D"]
 script = ExtResource("1_3vnq6")
+Lifetime = 1.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
 mesh = SubResource("SphereMesh_pwnrk")
 
 [node name="Area3D" type="Area3D" parent="."]
-script = ExtResource("1_a3ggb")
+script = ExtResource("2_ctatd")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
 transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, -0.2, 0)
 shape = SubResource("CylinderShape3D_f31h7")
 
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+[node name="ServerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_2fwh0")

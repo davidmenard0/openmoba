@@ -1,5 +1,4 @@
 using Godot;
-using Godot.Collections;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,17 +8,21 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 	public Action<Player> Server_OnPlayerSpawn;
 	public Action Server_OnPlayerDespawn;
 
+	public Action<Projectile> Server_OnProjectileSpawn;
+	public Action Server_OnProjectileDespawn;
+
     [Export]
-    private PackedScene playerScene;
+    private PackedScene PlayerTemplate;
 	[Export]
     private float PlayerRespawnTime = 3f;
 
-	//These two could be the same list, but its clearer if we keep them separated
-	public List<Player> ServerPlayers = new List<Player>();
-	public List<Player> ClientPlayers = new List<Player>();
+	//Remember to update these on Server and Clients
+	public Dictionary<int, Player> Players = new Dictionary<int, Player>();
+
+	public Dictionary<int, Projectile> Projectiles = new Dictionary<int, Projectile>();
 
 	private Node _spawnNode;
-	private Array<Node> _spawnPoints;
+	private List<Node> _spawnPoints = new List<Node>();
 
     public override void _Ready()
     {
@@ -30,34 +33,36 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 		if(!Multiplayer.IsServer()) return;
 
         _spawnNode = GetNode<Node>(SpawnPath);
-		_spawnPoints = spawnPoints.GetChildren();
+		_spawnPoints.Add(spawnPoints.GetChild(0));
+		_spawnPoints.Add(spawnPoints.GetChild(1));
 		int i = 0;
 		foreach (var p in GameManager.Instance.Players)
 		{
 			int team = i % 2;
-			p.Team = team;
-			SpawnPlayer(p);
+			p.Value.Team = team;
+			SpawnPlayer(p.Value.PeerID);
 			i++;
 		}
     }
 
-	private async void SpawnPlayer(PlayerInfo pi)
+	private async void SpawnPlayer(int id)
 	{
 		if(!Multiplayer.IsServer()) return;
 		
-		RpcId(pi.PeerID, "RPC_Client_NotifyPlayerSpawn", PlayerRespawnTime);
+		RpcId(id, "RPC_Client_NotifyPlayerSpawn", PlayerRespawnTime);
 		await Task.Delay(Mathf.RoundToInt(PlayerRespawnTime*1000f));
 
-		Player currentPlayer = playerScene.Instantiate<Player>();
+		Player currentPlayer = PlayerTemplate.Instantiate<Player>();
 		currentPlayer.OnDeath += OnPlayerDeath;
 		currentPlayer.SetMultiplayerAuthority(1, true);
-		currentPlayer.Server_Init(pi);
+		currentPlayer.Server_Init(id);
 		_spawnNode.AddChild(currentPlayer, true);
 		
-		var pos = ((Node3D)_spawnPoints[pi.Team]).GlobalPosition;
+		int team = GameManager.Instance.GetPlayerInfo(id).Team;
+		var pos = ((Node3D)_spawnPoints[team]).GlobalPosition;
 		currentPlayer.GlobalPosition = pos;
 
-		ServerPlayers.Add(currentPlayer);
+		Players[id] = currentPlayer;
 
 		Server_OnPlayerSpawn?.Invoke(currentPlayer);
 	}
@@ -66,13 +71,42 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 	{
 		if(!Multiplayer.IsServer()) return;
 		
-		PlayerInfo pi = p.PlayerInfo;
 		_spawnNode.RemoveChild(p);
 		p.QueueFree();
 		Server_OnPlayerDespawn?.Invoke();
-		SpawnPlayer(pi);
+		SpawnPlayer(p.OwnerID);
 
-		ServerPlayers.Remove(p);
+		Players.Remove(p.OwnerID);
+	}
+
+	public void SpawnProjectile(Player owner, PackedScene template, Vector3 position, Vector3 direction)
+	{
+		if(!Multiplayer.IsServer()) return;
+
+		var projectile = template.Instantiate<Projectile>();
+		projectile.Init(owner.OwnerID);
+		_spawnNode.AddChild(projectile, true);
+		projectile.GlobalPosition = position;
+		projectile.Direction = direction;
+
+		Projectiles[projectile.UID] = projectile;
+
+		Server_OnProjectileSpawn?.Invoke(projectile);
+	}
+
+	public void DespawnProjectile(Projectile p)
+	{
+		if(!Multiplayer.IsServer()) return;
+		
+		if(p == null) return; //Projectile might ahve dies in several ways
+
+		FXManager.Instance.PlayVFX("hit_smoke", p.GlobalPosition);
+		FXManager.Instance.PlayAudio("projectile_hit", p.GlobalPosition);
+
+		_spawnNode.RemoveChild(p);
+		p.QueueFree();
+
+		Projectiles.Remove(p.OwnerID);
 	}
 
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]

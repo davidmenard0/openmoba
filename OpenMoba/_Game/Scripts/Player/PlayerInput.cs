@@ -49,7 +49,7 @@ public partial class PlayerInput : MultiplayerSynchronizer
 		var mouse_pos = GetViewport().GetMousePosition();
 		var from = _player.Camera.ProjectRayOrigin(mouse_pos);
 		var dir = _player.Camera.ProjectRayNormal(mouse_pos);
-		var bullet_spawn_height = _player.BulletSpawn.GlobalPosition.Y; //intersect at the spawn height to be precise
+		var bullet_spawn_height = _player.ProjectileSpawn.GlobalPosition.Y; //intersect at the spawn height to be precise
 		var cursor_raycast = new Plane(Vector3.Up, bullet_spawn_height).IntersectsRay(from, dir);
 		if(cursor_raycast.HasValue)
 		{

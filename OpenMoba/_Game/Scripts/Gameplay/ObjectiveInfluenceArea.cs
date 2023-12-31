@@ -20,7 +20,7 @@ public partial class ObjectiveInfluenceArea : Node
         if (body is Player)
         {
             Player p = (Player)body;
-			if(p.PlayerInfo.Team == 0)
+			if(GameManager.Instance.GetNodeTeam(body) == 0)
 				PushCounter++;
 			else
 				PushCounter--;
@@ -34,7 +34,7 @@ public partial class ObjectiveInfluenceArea : Node
         if (body is Player)
         {
             Player p = (Player)body;
-			if(p.PlayerInfo.Team == 0)
+			if(GameManager.Instance.GetNodeTeam(body) == 0)
 				PushCounter--;
 			else
 				PushCounter++;
