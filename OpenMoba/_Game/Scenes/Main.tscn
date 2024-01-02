@@ -34,7 +34,7 @@ _spawnable_scenes = PackedStringArray("res://_Game/Scenes/Maps/MainMap.tscn", "r
 spawn_path = NodePath("../Map")
 
 [node name="PlayerObjectSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("res://_Game/Scenes/Gameplay/Player.tscn")
+_spawnable_scenes = PackedStringArray("res://_Game/Scenes/Gameplay/Player.tscn", "res://_Game/Scenes/Gameplay/Projectile.tscn")
 spawn_path = NodePath("../PlayerObjects")
 script = ExtResource("3_103y6")
 PlayerTemplate = ExtResource("4_uvess")

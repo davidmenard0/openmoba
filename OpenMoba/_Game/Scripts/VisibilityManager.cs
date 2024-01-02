@@ -31,6 +31,7 @@ public partial class VisibilityManager : Node
 
 	private void OnNodeSpawn(Node3D n)
 	{
+		return;
 		var sync = n.GetNode<MultiplayerSynchronizer>("ServerSynchronizer");
 		sync.PublicVisibility = false;
 		int team = GameManager.Instance.GetNodeTeam(n);
@@ -42,28 +43,39 @@ public partial class VisibilityManager : Node
 	{
 		if(!Multiplayer.IsServer()) return;
 
+		return;
+
 		int observer_team = GameManager.Instance.GetPlayerInfo(observer.OwnerID).Team;
 		int observee_id = -1;
+		Dictionary<int,int> counter = null;
 
 		if(node is Player)
+		{
 			observee_id = ((Player)node).OwnerID;
+			counter = _teamVisibilityCounter;
+		}
 		else if(node is Projectile)
+		{
 			observee_id = ((Projectile)node).UID;
+			counter = _teamVisibilityCounter;
+		}
+
+		if(!counter.ContainsKey(observee_id))
+				counter[observee_id] = 0;
+
+		counter[observee_id] += visible ? 1 : -1;
+		if(counter[observee_id] < 0)
+			counter[observee_id] = 0; // cant have negative values
 		
-
-		if(!_teamVisibilityCounter.ContainsKey(observee_id))
-			_teamVisibilityCounter[observee_id] = 0;
-
-		_teamVisibilityCounter[observee_id] += visible ? 1 : -1;
-		if(_teamVisibilityCounter[observee_id] < 0)
-			_teamVisibilityCounter[observee_id] = 0; // cant have negative values
-
-		bool spotted = _teamVisibilityCounter[observee_id] > 0;
+		bool spotted = counter[observee_id] > 0;
 		SetNodeVisibilityForTeam(node, observer_team, spotted);
 	}
 
 	private void SetNodeVisibilityForTeam(Node3D observee, int team, bool visibility)
 	{
+		if(!Multiplayer.IsServer()) return;
+
+		return;
 		//TODO: Take into consideration when the server is also client
 		//TODO: Add visibility for Bullets
 
@@ -83,8 +95,13 @@ public partial class VisibilityManager : Node
 			int p_team = GameManager.Instance.GetPlayerInfo(p.Value.OwnerID).Team;
 			if(p_team == team)
 			{
+				//TODO: Visibility only sets... well... the visibility of the node.
+				//This means the position of each player is still being sent to each client. 
+				// This can lead to client-side map hacks
+
 				// Team spots the node
 				observee_sync.SetVisibilityFor(p.Value.OwnerID, visibility);
+				
 				/*if(observee is Player)
 					RpcId(p.Value.OwnerID, "RPC_Client_UpdatePlayerVisibility", observee_id, visibility);
 				else if(observee is Projectile)
@@ -97,7 +114,7 @@ public partial class VisibilityManager : Node
 
 	//Note: This is only needed when the server is also a client. 
 	// This way the server keeps the updates, but the visibility is set to false
-	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	/*[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void RPC_Client_UpdatePlayerVisibility(int id, bool visible)
 	{
 		if(_spawner.Players.ContainsKey(id))
@@ -114,5 +131,5 @@ public partial class VisibilityManager : Node
 		{
 			_spawner.Players[id].Visible = visible;
 		}
-	}
+	}*/
 }

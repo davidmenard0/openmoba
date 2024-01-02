@@ -98,7 +98,7 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 	{
 		if(!Multiplayer.IsServer()) return;
 		
-		if(p == null) return; //Projectile might ahve dies in several ways
+		if(p == null) return; //Projectile might have dies in several ways
 
 		FXManager.Instance.PlayVFX("hit_smoke", p.GlobalPosition);
 		FXManager.Instance.PlayAudio("projectile_hit", p.GlobalPosition);

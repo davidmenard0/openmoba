@@ -40,12 +40,13 @@ public partial class Player : CharacterBody3D
 			SetProcess(true);
 			_maxHealth = _health;
 		}
-
-		// Dont init anything here! The Player doesn't know yet if 
-		// its ID is the PeerID. 
-		// Request playerID & name from server.
-		// This is necessary because server is authority on everything
-		RpcId(1, "RPC_Server_RequestInfo");
+		else{
+			// Dont init anything here! The Player doesn't know yet if 
+			// its ID is the PeerID. 
+			// Request playerID & name from server.
+			// This is necessary because server is authority on everything
+			RpcId(1, "RPC_Server_RequestInfo");
+		}
 	}
 
     public override void _PhysicsProcess(double delta)
@@ -143,7 +144,7 @@ public partial class Player : CharacterBody3D
 	private void RPC_Client_RespondInfo(int id, string name, int team)
 	{
 		//Dont server-check here because server might have spawned a player
-				
+
 		//Update client-side info
 		PlayerInfo playerInfo = new PlayerInfo(){
 			PeerID = id,
