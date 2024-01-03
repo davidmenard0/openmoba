@@ -1,8 +1,24 @@
 using Godot;
 using System;
 
-public partial class UIController : Singleton<UIController>
+public partial class UIController : Node
 {
+	public static UIController Instance { 
+        get { return _instance; } 
+        private set { _instance = value; } 
+    }
+    private static UIController _instance;
+
+    public override void _Ready() {
+        if (_instance == null) {
+            _instance = this as UIController;
+            Initialize();
+        }
+        else {
+            this.QueueFree();
+        }
+    }
+
 	//MainMenu
 	public Action<string, bool> OnHostClicked; //name, spawnServerPlayer
 	public Action<string> OnJoinClicked; //name
@@ -20,7 +36,7 @@ public partial class UIController : Singleton<UIController>
 	private Control _mainMenu;
 	private InGameUI _inGameUI;
 
-	protected override void Initialize()
+	protected void Initialize()
 	{
 		OnGameStarted += GameStarted;
 		OnLocalPlayerRespawn += LocalPlayerRespawn;

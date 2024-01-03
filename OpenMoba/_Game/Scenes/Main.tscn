@@ -38,7 +38,6 @@ _spawnable_scenes = PackedStringArray("res://_Game/Scenes/Gameplay/Player.tscn",
 spawn_path = NodePath("../PlayerObjects")
 script = ExtResource("3_103y6")
 PlayerTemplate = ExtResource("4_uvess")
-PlayerRespawnTime = null
 
 [node name="Map" type="Node" parent="."]
 

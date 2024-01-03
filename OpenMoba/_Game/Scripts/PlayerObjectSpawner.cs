@@ -11,10 +11,10 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 	public Action<Projectile> Server_OnProjectileSpawn;
 	public Action Server_OnProjectileDespawn;
 
-    [Export]
-    private PackedScene PlayerTemplate;
 	[Export]
-    private float PlayerRespawnTime = 3f;
+	private PackedScene PlayerTemplate;
+	[Export]
+	private float PlayerRespawnTime = 3f;
 
 	//Remember to update these on Server and Clients
 	public Dictionary<int, Player> Players = new Dictionary<int, Player>();
@@ -22,19 +22,20 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 	public Dictionary<int, Projectile> Projectiles = new Dictionary<int, Projectile>();
 
 	private Node _spawnNode;
-	private List<Node> _spawnPoints = new List<Node>();
+	private List<Node> _playerSpawnPoints = new List<Node>();
 
-    public override void _Ready()
-    {
-    }
+	public override void _Ready()
+	{
+	}
 
-    public void SpawnPlayers(Node spawnPoints)
-    {
+	public void SpawnPlayers(Node spawnPoints)
+	{
 		if(!Multiplayer.IsServer()) return;
 
-        _spawnNode = GetNode<Node>(SpawnPath);
-		_spawnPoints.Add(spawnPoints.GetChild(0));
-		_spawnPoints.Add(spawnPoints.GetChild(1));
+		_spawnNode = GetNode<Node>(SpawnPath);
+
+		_playerSpawnPoints.Add(spawnPoints.GetChild(0));
+		_playerSpawnPoints.Add(spawnPoints.GetChild(1));
 		int i = 0;
 		foreach (var p in GameManager.Instance.Players)
 		{
@@ -43,7 +44,7 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 			SpawnPlayer(p.Value.PeerID);
 			i++;
 		}
-    }
+	}
 
 	private async void SpawnPlayer(int id)
 	{
@@ -54,12 +55,11 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 
 		Player currentPlayer = PlayerTemplate.Instantiate<Player>();
 		currentPlayer.OnDeath += OnPlayerDeath;
-		currentPlayer.SetMultiplayerAuthority(1, true);
-		currentPlayer.Server_Init(id);
+		currentPlayer.OwnerID = id;
 		_spawnNode.AddChild(currentPlayer, true);
 		
 		int team = GameManager.Instance.GetPlayerInfo(id).Team;
-		var pos = ((Node3D)_spawnPoints[team]).GlobalPosition;
+		var pos = ((Node3D)_playerSpawnPoints[team]).GlobalPosition;
 		currentPlayer.GlobalPosition = pos;
 
 		Players[id] = currentPlayer;
@@ -79,13 +79,13 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 		Players.Remove(p.OwnerID);
 	}
 
-	public void SpawnProjectile(Player owner, PackedScene template, Vector3 position, Vector3 direction)
+	public void SpawnProjectile(Player owner, PackedScene projectileTemplate, Vector3 position, Vector3 direction)
 	{
 		if(!Multiplayer.IsServer()) return;
 
-		var projectile = template.Instantiate<Projectile>();
-		projectile.Init(owner.OwnerID);
+		var projectile = projectileTemplate.Instantiate<Projectile>();
 		_spawnNode.AddChild(projectile, true);
+		projectile.Init(owner.OwnerID, position, direction);
 		projectile.GlobalPosition = position;
 		projectile.Direction = direction;
 

@@ -13,12 +13,28 @@ using System.Threading.Tasks;
 /// but this gives us more control over loading adn client-side control
 /// </summary>
 
-public partial class FXManager : Singleton<FXManager>
+public partial class FXManager : Node
 {
+	public static FXManager Instance { 
+        get { return _instance; } 
+        private set { _instance = value; } 
+    }
+    private static FXManager _instance;
+
+    public override void _Ready() {
+        if (_instance == null) {
+            _instance = this as FXManager;
+            Initialize();
+        }
+        else {
+            this.QueueFree();
+        }
+    }
+
 	private Dictionary<string, PackedScene> _particles;
 	private Dictionary<string, PackedScene> _audio;
 
-	protected override void Initialize()
+	protected void Initialize()
 	{
 		_particles = new Dictionary<string, PackedScene>();
 		_particles["hit_smoke"] = ResourceLoader.Load<PackedScene>("res://_Game/Scenes/VFX/smoke_hit_particle.tscn");

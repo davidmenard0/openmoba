@@ -35,12 +35,13 @@ public partial class Projectile : Node3D
         UID = _idCounter;
         _idCounter++;
 
+        //Set position and rotation on _Ready() to make sure it has time to be added to the tree
         FXManager.Instance.PlayAudio("projectile_fire", this.GlobalPosition);
 
         StartLifeTimer();
     }
 
-    public void Init(int ownerID)
+    public void Init(int ownerID, Vector3 pos, Vector3 dir)
     {
         OwnerID = ownerID;
     }

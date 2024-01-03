@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Data.Common;
 using System.Diagnostics;
 
 public partial class Player : CharacterBody3D
@@ -17,7 +18,7 @@ public partial class Player : CharacterBody3D
 	public bool IsMine = false;
 	public bool IsInit = false;
 
-	public int OwnerID; //Dont hold the OwnerInfo, just the ID so we can do a lookup in GameManager
+	public int OwnerID = -1; //Dont hold the OwnerInfo, just the ID so we can do a lookup in GameManager
 	public PlayerCamera Camera;
 
 	private float _health = 2f;
@@ -39,23 +40,35 @@ public partial class Player : CharacterBody3D
 			SetPhysicsProcess(true);
 			SetProcess(true);
 			_maxHealth = _health;
+
+			Server_Init();
 		}
-		else{
-			// Dont init anything here! The Player doesn't know yet if 
-			// its ID is the PeerID. 
-			// Request playerID & name from server.
-			// This is necessary because server is authority on everything
-			RpcId(1, "RPC_Server_RequestInfo");
+
+		if(GameManager.Instance.IsClient)
+		{
+			// Client asks the Server for a handshake.
+			RpcId(1, "RPC_Server_Handshake", Multiplayer.GetUniqueId());
 		}
 	}
 
-    public override void _PhysicsProcess(double delta)
-    {
+	public void Server_Init()
+	{
+		if(!Multiplayer.IsServer()) return;
+
+		Debug.Assert(OwnerID != -1, "ERROR: Player spawned on server witout an OwnerID");
+
+		PlayerInfo pi = GameManager.Instance.GetPlayerInfo(OwnerID);
+		RpcId(OwnerID, "RPC_Client_HandshakeResponseInfo", OwnerID, pi.Name);
+	}
+	
+
+	public override void _PhysicsProcess(double delta)
+	{
 		//Physics only on server
 		if(!Multiplayer.IsServer()) return;
 
 		var v = Velocity;
-        if(!IsOnFloor())
+		if(!IsOnFloor())
 		{
 			v.Y -= (float) (_gravity * delta);
 		}
@@ -75,28 +88,6 @@ public partial class Player : CharacterBody3D
 
 		Velocity = v;
 		MoveAndSlide();
-    }
-
-	public void Server_Init(int ownerID)
-	{
-		OwnerID = ownerID;
-	}
-
-	public void Client_Init(PlayerInfo pi)
-	{
-		OwnerID = pi.PeerID;
-		GetNode<Label3D>("IDLabel").Text = GameManager.Instance.GetPlayerInfo(OwnerID).Name;
-
-		// A few things are client-authority:
-		// Rotation of the player, camera, Input
-		_playerInput = GetNode<PlayerInput>("ClientAuthority/PlayerInput");
-		_playerInput.SetMultiplayerAuthority(OwnerID);
-		_clientAuthority = GetNode<Node3D>("ClientAuthority");
-		_clientAuthority.SetMultiplayerAuthority(OwnerID, true);
-
-		IsInit = true;
-		Client_OnInit?.Invoke(IsMine);
-		GameManager.Instance.Client_OnPlayerInit?.Invoke(this);
 	}
 
 
@@ -128,38 +119,48 @@ public partial class Player : CharacterBody3D
 			Logger.Log("Player died: " + OwnerID);
 		}
 	}
-	
-	////// Update the IDs and names on all clients ///////
+
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	private void RPC_Server_RequestInfo()
+	private void RPC_Server_Handshake(int requesterID)
 	{
 		if(!Multiplayer.IsServer()) return;
 
-		//Only server holds this info, so send it to clients
-		var pi = GameManager.Instance.GetPlayerInfo(OwnerID);
-		Rpc("RPC_Client_RespondInfo", OwnerID, pi.Name, pi.Team);
+		PlayerInfo pi = GameManager.Instance.GetPlayerInfo(requesterID);
+		if(this.OwnerID == requesterID)
+		{
+			// A few things are client-authority:
+			// Rotation of the player, camera, Input
+			// Dont forget to set ownership on both client and server
+			_clientAuthority = GetNode<Node3D>("ClientAuthority");
+			_clientAuthority.SetMultiplayerAuthority(requesterID, true);
+
+			//Server return the requested info, confirming ownership
+			RpcId(requesterID, "RPC_Client_ConfirmOwnership", pi.PeerID, pi.Name);
+		}
 	}
 
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	private void RPC_Client_RespondInfo(int id, string name, int team)
+	private void RPC_Client_ConfirmOwnership(int id, string name)
 	{
-		//Dont server-check here because server might have spawned a player
+		if(!GameManager.Instance.IsClient) return;
+		
+		OwnerID = id;
+		GetNode<Label3D>("IDLabel").Text = name;
 
-		//Update client-side info
-		PlayerInfo playerInfo = new PlayerInfo(){
-			PeerID = id,
-			Name = name,
-			Team = team
-		};
-
-		if(id == Multiplayer.GetUniqueId())
+		if(OwnerID == Multiplayer.GetUniqueId())
 		{
-			GD.Print("Found local player: " + id);
+			GD.Print("Found local player: " + OwnerID);
 			IsMine = true;
+
+			//Dont forget to set ownership on both client and server
+			_clientAuthority = GetNode<Node3D>("ClientAuthority");
+			_clientAuthority.SetMultiplayerAuthority(OwnerID, true);
 		}
 
-		//Call after this --^ to make sure isMine is set
-		Client_Init(playerInfo);
+		IsInit = true;
+
+		Client_OnInit?.Invoke(IsMine);
+		GameManager.Instance.Client_OnPlayerInit?.Invoke(this);
 	}
 
 }

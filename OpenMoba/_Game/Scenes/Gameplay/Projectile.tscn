@@ -15,9 +15,6 @@ properties/0/replication_mode = 1
 
 [node name="Projectile" type="Node3D"]
 script = ExtResource("1_3vnq6")
-Speed = null
-Damage = null
-Lifetime = null
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)

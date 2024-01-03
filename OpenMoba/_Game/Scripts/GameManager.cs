@@ -5,8 +5,24 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 
-public partial class GameManager : Singleton<GameManager>
+public partial class GameManager : Node
 {
+	public static GameManager Instance { 
+        get { return _instance; } 
+        private set { _instance = value; } 
+    }
+    private static GameManager _instance;
+
+    public override void _Ready() {
+        if (_instance == null) {
+            _instance = this as GameManager;
+            Initialize();
+        }
+        else {
+            this.QueueFree();
+        }
+    }
+
 	//Game Messages
 	
 	//Triggered by playerVision when a collider enters/Exits a vision area.
@@ -17,15 +33,16 @@ public partial class GameManager : Singleton<GameManager>
 
 	public Action<Player> Client_OnPlayerInit;
 	public Action<Projectile> Client_OnProjectileInit;
-	public PlayerObjectSpawner Spawner;
 
+	public bool IsClient = false;
+
+	public PlayerObjectSpawner Spawner;
 	//This list is only maintained on the server side
 	public Dictionary<int, PlayerInfo> Players = new Dictionary<int, PlayerInfo>();
-
 	private VisibilityManager _visibilityManager;
 	
 
-	protected override void Initialize()
+	protected void Initialize()
 	{
 		Spawner = GetNode<PlayerObjectSpawner>("/root/Main/PlayerObjectSpawner");
 		Debug.Assert(Spawner != null, "ERROR: Cannot find PlayerOBjectSpawner in GameManager.");
@@ -70,5 +87,16 @@ public partial class GameManager : Singleton<GameManager>
 	{
 		if(Multiplayer.IsServer()) return;
 		Spawner.Projectiles[p.OwnerID] = p;
+	}
+
+	////// Update the IDs and names on all clients ///////
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void RPC_HandshakeNewPlayer(int ownerID)
+	{
+		if(!Multiplayer.IsServer()) return;
+
+		//Only server holds this info, so send it to clients
+		var pi = GameManager.Instance.GetPlayerInfo(ownerID);
+		RpcId(ownerID, "RPC_Client_HandshakeResponse", ownerID, pi.Name, pi.Team);
 	}
 }

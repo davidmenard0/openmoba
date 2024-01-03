@@ -23,6 +23,7 @@ public partial class MultiplayerController : Node
 		Multiplayer.PeerConnected += PeerConnected;
 		Multiplayer.PeerDisconnected += PeerDisconnected;
 		Multiplayer.ConnectionFailed += ConnectionFailed;
+
 		if(OS.GetCmdlineArgs().Contains("--server"))
 		{
 			HostGame("", false);
@@ -46,6 +47,8 @@ public partial class MultiplayerController : Node
 
     private void Client_ConnectedToServer()
     {
+		GameManager.Instance.IsClient = true;
+
 		//Called in clients when they connect to server. 
 		// Send your name and ID to server.
         Logger.Log("(Client) Connected To Server. Sending player info.");
@@ -129,7 +132,10 @@ public partial class MultiplayerController : Node
 		Logger.Log("Waiting For Players!");
 		
 		if(spawnServerPlayer)
+		{
+			GameManager.Instance.IsClient = true;
 			RPC_SendInfoToServer(1, _name);
+		}
 	}
 
 	public void JoinGame(string name)

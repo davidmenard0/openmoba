@@ -16,8 +16,8 @@ public partial class VisibilityManager : Node
 	{
 		_spawner = GetNode<PlayerObjectSpawner>("/root/Main/PlayerObjectSpawner");
 		Debug.Assert(_spawner != null, "ERROR: Cannot find PlayerOBjectSpawner in GameManager.");
-		_spawner.Server_OnPlayerSpawn += OnNodeSpawn;
-		_spawner.Server_OnProjectileSpawn += OnNodeSpawn;
+		_spawner.Server_OnPlayerSpawn += Server_OnPlayerNodeSpawn;
+		_spawner.Server_OnProjectileSpawn += Server_OnPlayerNodeSpawn;
 
 		GameManager.Instance.OnNodeVisionAreaTransition += OnNodeVisibilityChange;
 	}
@@ -25,13 +25,15 @@ public partial class VisibilityManager : Node
     public override void _ExitTree()
     {
         GameManager.Instance.OnNodeVisionAreaTransition -= OnNodeVisibilityChange;
-		_spawner.Server_OnPlayerSpawn -= OnNodeSpawn;
-		_spawner.Server_OnProjectileSpawn += OnNodeSpawn;
+		_spawner.Server_OnPlayerSpawn -= Server_OnPlayerNodeSpawn;
+		_spawner.Server_OnProjectileSpawn += Server_OnPlayerNodeSpawn;
     }
 
-	private void OnNodeSpawn(Node3D n)
+	private void Server_OnPlayerNodeSpawn(Node3D n)
 	{
+		if(!Multiplayer.IsServer()) return;
 		return;
+
 		var sync = n.GetNode<MultiplayerSynchronizer>("ServerSynchronizer");
 		sync.PublicVisibility = false;
 		int team = GameManager.Instance.GetNodeTeam(n);
@@ -41,9 +43,9 @@ public partial class VisibilityManager : Node
 
 	private void OnNodeVisibilityChange(Player observer, Node3D node, bool visible)
 	{
-		if(!Multiplayer.IsServer()) return;
-
 		return;
+
+		if(!Multiplayer.IsServer()) return;
 
 		int observer_team = GameManager.Instance.GetPlayerInfo(observer.OwnerID).Team;
 		int observee_id = -1;
@@ -73,9 +75,9 @@ public partial class VisibilityManager : Node
 
 	private void SetNodeVisibilityForTeam(Node3D observee, int team, bool visibility)
 	{
+		return;
 		if(!Multiplayer.IsServer()) return;
 
-		return;
 		//TODO: Take into consideration when the server is also client
 		//TODO: Add visibility for Bullets
 
