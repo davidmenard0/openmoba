@@ -10,12 +10,6 @@ using System.Threading.Tasks;
 
 public partial class Projectile : Node3D
 {
-	[Export]
-	public float Speed = 20f;
-	[Export]
-	public float Damage = 1f;
-    [Export]
-	public float Lifetime = 1f;
 	public Vector3 Direction;
 
     public int UID;
@@ -50,14 +44,14 @@ public partial class Projectile : Node3D
     {
 		if(!Multiplayer.IsServer()) return;
 
-        this.GlobalPosition += Direction * Speed * (float)delta;
+        this.GlobalPosition += Direction * Balance.Get("Projectile.Speed") * (float)delta;
     }
 
     private async void StartLifeTimer()
     {
         if(!Multiplayer.IsServer()) return;
 
-        await Task.Delay(Mathf.RoundToInt(Lifetime*1000));
+        await Task.Delay(Mathf.RoundToInt(Balance.Get("Projectile.Lifetime")*1000));
 
         if(this != null) // Projectile might have hit player and already dies
             GameManager.Instance.Spawner.DespawnProjectile(this);

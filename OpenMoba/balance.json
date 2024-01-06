@@ -1,0 +1,9 @@
+{
+    "Player.MoveSpeed": 15.0,
+    "Player.BaseHealth": 2,
+
+    "Projectile.BaseDamange": 1,
+    "Projectile.Speed": 20.0,
+    "Projectile.Lifetime": 1.0
+    
+}

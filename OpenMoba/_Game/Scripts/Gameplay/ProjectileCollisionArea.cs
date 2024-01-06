@@ -17,7 +17,7 @@ public partial class ProjectileCollisionArea : Area3D
         if (body is Player)
         {
             Player p = (Player)body;
-			p.TakeDamage(GetParent<Projectile>().Damage);
+			p.TakeDamage(Balance.Get("Projectile.Damage"));
 			GameManager.Instance.OnProjectileDespawn?.Invoke(GetParent<Projectile>());
         }
     }

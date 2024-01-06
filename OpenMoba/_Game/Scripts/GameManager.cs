@@ -44,6 +44,8 @@ public partial class GameManager : Node
 
 	protected void Initialize()
 	{
+		Balance.Load();
+
 		Spawner = GetNode<PlayerObjectSpawner>("/root/Main/PlayerObjectSpawner");
 		Debug.Assert(Spawner != null, "ERROR: Cannot find PlayerOBjectSpawner in GameManager.");
 

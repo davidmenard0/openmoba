@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://b5jhp8a2u3gnb"]
+[gd_scene load_steps=10 format=3 uid="uid://b5jhp8a2u3gnb"]
 
 [ext_resource type="Script" path="res://_Game/Scripts/Main.cs" id="1_uobwu"]
 [ext_resource type="Script" path="res://_Game/Scripts/MultiplayerController.cs" id="2_8586g"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://bfhm45w25o4qr" path="res://_Game/Scenes/Gameplay/Player.tscn" id="4_uvess"]
 [ext_resource type="Script" path="res://_Game/Scripts/FXManager.cs" id="5_sida8"]
 [ext_resource type="Script" path="res://_Game/Scripts/GameManager.cs" id="7_xgyen"]
+[ext_resource type="Script" path="res://_Game/Scripts/Balance.cs" id="9_3x3oj"]
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_uobwu")
@@ -42,3 +43,6 @@ PlayerTemplate = ExtResource("4_uvess")
 [node name="Map" type="Node" parent="."]
 
 [node name="PlayerObjects" type="Node" parent="."]
+
+[node name="Balance" type="Node" parent="."]
+script = ExtResource("9_3x3oj")

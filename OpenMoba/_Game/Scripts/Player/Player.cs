@@ -9,8 +9,6 @@ public partial class Player : CharacterBody3D
 	public Action<Player> OnDeath; //PlayerInfo
 
 	[Export]
-	const float Speed = 15f;
-	[Export]
 	public PackedScene ProjectileTemplate;
 	[Export]
 	public Node3D ProjectileSpawn;
@@ -21,7 +19,7 @@ public partial class Player : CharacterBody3D
 	public int OwnerID = -1; //Dont hold the OwnerInfo, just the ID so we can do a lookup in GameManager
 	public PlayerCamera Camera;
 
-	private float _health = 2f;
+	private float _health;
 	private float _maxHealth;
 
 	private PlayerInput _playerInput;
@@ -39,7 +37,8 @@ public partial class Player : CharacterBody3D
 			//Process only on server
 			SetPhysicsProcess(true);
 			SetProcess(true);
-			_maxHealth = _health;
+			_maxHealth = Balance.Get("Player.BaseHealth");
+			_health = _maxHealth;
 
 			Server_Init();
 		}
@@ -77,13 +76,13 @@ public partial class Player : CharacterBody3D
 		var direction = new Vector3(input.X, 0f, input.Y).Normalized();
 		if(direction.LengthSquared() > Mathf.Epsilon)
 		{
-			v.X = direction.X * Speed;
-			v.Z = direction.Z * Speed;
+			v.X = direction.X * Balance.Get("Player.MoveSpeed");
+			v.Z = direction.Z * Balance.Get("Player.MoveSpeed");
 		}
 		else
 		{
-			v.X = Mathf.MoveToward(v.X, 0f, Speed);
-			v.Z = Mathf.MoveToward(v.Z, 0f, Speed);
+			v.X = Mathf.MoveToward(v.X, 0f, Balance.Get("Player.MoveSpeed"));
+			v.Z = Mathf.MoveToward(v.Z, 0f, Balance.Get("Player.MoveSpeed"));
 		}
 
 		Velocity = v;
