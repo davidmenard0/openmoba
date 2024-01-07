@@ -7,13 +7,13 @@ public partial class PlayerInput : MultiplayerSynchronizer
 	public Vector2 InputVector; //Sync via replication
 
 	private Player _player;
-	private Node3D _clientAuthority;
+	private PlayerClient _playerClient;
 
     public override void _Ready()
     {
-		_clientAuthority = GetParent<Node3D>();
-		_player = _clientAuthority.GetParent<Player>();
-		_player.Client_OnInit += Init;
+		_playerClient = GetParent<PlayerClient>();
+		_player = _playerClient.GetParent<Player>();
+		_playerClient.Client_OnInit += Init;
 		
 		// Dont do this here! (And leave it commented as a warning
 		// at this point, the client might not have received its playerID yet
@@ -30,12 +30,12 @@ public partial class PlayerInput : MultiplayerSynchronizer
 
     public override void _ExitTree()
     {
-		_player.Client_OnInit -= Init;
+		_playerClient.Client_OnInit -= Init;
     }
 
     public override void _Process(double delta)
     {
-		if(!_player.IsMine) return;
+		if(!_playerClient.IsMine) return;
 
         //Inputs only called on clients		
 		InputVector = Input.GetVector("move_left", "move_right", "move_forward", "move_backward");
@@ -47,8 +47,8 @@ public partial class PlayerInput : MultiplayerSynchronizer
 
 		//Control player rotation based on mouse position
 		var mouse_pos = GetViewport().GetMousePosition();
-		var from = _player.Camera.ProjectRayOrigin(mouse_pos);
-		var dir = _player.Camera.ProjectRayNormal(mouse_pos);
+		var from = _playerClient.Camera.ProjectRayOrigin(mouse_pos);
+		var dir = _playerClient.Camera.ProjectRayNormal(mouse_pos);
 		var bullet_spawn_height = _player.ProjectileSpawn.GlobalPosition.Y; //intersect at the spawn height to be precise
 		var cursor_raycast = new Plane(Vector3.Up, bullet_spawn_height).IntersectsRay(from, dir);
 		if(cursor_raycast.HasValue)
@@ -56,7 +56,7 @@ public partial class PlayerInput : MultiplayerSynchronizer
 			//Y is always at the height of the player. He's always looking straight flat
 			var pos = cursor_raycast.Value;
 			pos.Y = _player.GlobalPosition.Y;
-			_clientAuthority.LookAt(pos);
+			_playerClient.LookAt(pos);
 		}
     }
 

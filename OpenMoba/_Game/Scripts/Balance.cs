@@ -6,7 +6,7 @@ public partial class Balance : Node
 {
 
     //This is a Godot.Collections.Dictionary, not a System.Collections.Generic Dictionary
-    public static Dictionary BalanceValues;
+    private static Dictionary BalanceValues;
 
     public static void Load()
     {
@@ -18,7 +18,6 @@ public partial class Balance : Node
         if(error == Error.Ok)
         {
             BalanceValues = (Dictionary) json.Data;
-            GD.Print(BalanceValues);
         }
         else
         {

@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 public partial class PlayerCamera : Camera3D
 {
-	private Node3D _parent;
+	private PlayerClient _playerClient;
 	private Player _player;
 	private Camera3D _camera;
 	private Vector3 _offset;
@@ -12,16 +12,17 @@ public partial class PlayerCamera : Camera3D
 
 	public override void _Ready()
 	{
-		_parent = GetParent<Node3D>();
-		_player = _parent.GetParent<Player>();
-		_player.Client_OnInit += Init;
+		_playerClient = GetParent<PlayerClient>();
+		_player = _playerClient.GetParent<Player>();
+
+		_playerClient.Client_OnInit += Init;
 
 		_listener = GetNode<AudioListener3D>("AudioListener3D");
 		Debug.Assert(_listener != null, "ERROR: Cant find AudioListener3D under camera" );
 
 		//De-parent the camera so it doesn't turn with the player
 		//Remember: CallDeferred takes the GDScript naming conversion for function names. ("remove_child" instead of "RemoveChild")
-		_parent.CallDeferred("remove_child", this);
+		_playerClient.CallDeferred("remove_child", this);
 		_player.CallDeferred("add_child", this);
 
 		_offset = GlobalPosition - _player.GlobalPosition;

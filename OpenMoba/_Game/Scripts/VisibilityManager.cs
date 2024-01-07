@@ -32,7 +32,6 @@ public partial class VisibilityManager : Node
 	private void Server_OnPlayerNodeSpawn(Node3D n)
 	{
 		if(!Multiplayer.IsServer()) return;
-		return;
 
 		var sync = n.GetNode<MultiplayerSynchronizer>("ServerSynchronizer");
 		sync.PublicVisibility = false;
@@ -43,8 +42,6 @@ public partial class VisibilityManager : Node
 
 	private void OnNodeVisibilityChange(Player observer, Node3D node, bool visible)
 	{
-		return;
-
 		if(!Multiplayer.IsServer()) return;
 
 		int observer_team = GameManager.Instance.GetPlayerInfo(observer.OwnerID).Team;
@@ -59,7 +56,7 @@ public partial class VisibilityManager : Node
 		else if(node is Projectile)
 		{
 			observee_id = ((Projectile)node).UID;
-			counter = _teamVisibilityCounter;
+			counter = _projectileVisibilityCounter;
 		}
 
 		if(!counter.ContainsKey(observee_id))
@@ -75,19 +72,8 @@ public partial class VisibilityManager : Node
 
 	private void SetNodeVisibilityForTeam(Node3D observee, int team, bool visibility)
 	{
-		return;
 		if(!Multiplayer.IsServer()) return;
 
-		//TODO: Take into consideration when the server is also client
-		//TODO: Add visibility for Bullets
-
-		int observee_id = -1;
-
-		if(observee is Player)
-			observee_id = ((Player)observee).OwnerID;
-		else if(observee is Projectile)
-			observee_id = ((Projectile)observee).UID;
-		
 		var observee_sync = observee.GetNode<MultiplayerSynchronizer>("ServerSynchronizer");
 		
 		foreach(var p in _spawner.Players)

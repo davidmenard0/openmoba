@@ -13,8 +13,6 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 
 	[Export]
 	private PackedScene PlayerTemplate;
-	[Export]
-	private float PlayerRespawnTime = 3f;
 
 	//Remember to update these on Server and Clients
 	public Dictionary<int, Player> Players = new Dictionary<int, Player>();
@@ -50,8 +48,8 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 	{
 		if(!Multiplayer.IsServer()) return;
 		
-		RpcId(id, "RPC_Client_NotifyPlayerSpawn", PlayerRespawnTime);
-		await Task.Delay(Mathf.RoundToInt(PlayerRespawnTime*1000f));
+		RpcId(id, "RPC_Client_NotifyPlayerSpawn", Balance.Get("Game.RespawnTimer"));
+		await Task.Delay(Mathf.RoundToInt(Balance.Get("Game.RespawnTimer")*1000f));
 
 		Player currentPlayer = PlayerTemplate.Instantiate<Player>();
 		currentPlayer.OnDeath += OnPlayerDeath;
