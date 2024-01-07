@@ -19,7 +19,7 @@
 [ext_resource type="AnimationLibrary" uid="uid://c803xxmvwubdr" path="res://_Game/Assets/Character/Animations/Left.fbx" id="15_vyexi"]
 [ext_resource type="AnimationLibrary" uid="uid://ct1g6xxm6cjb0" path="res://_Game/Assets/Character/Animations/Right.fbx" id="16_2ko37"]
 [ext_resource type="Script" path="res://_Game/Scripts/Player/PlayerVision.cs" id="18_ahcc5"]
-[ext_resource type="Texture2D" uid="uid://cse6o6td4p8qa" path="res://_Game/Assets/Textures/5_perc_circle.png" id="19_xmdo5"]
+[ext_resource type="Texture2D" uid="uid://bxrdgcejw0dj3" path="res://_Game/Assets/Textures/1_perc_circle.png" id="19_ftti7"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_o5fwc"]
 properties/0/path = NodePath(".:InputVector")
@@ -116,7 +116,7 @@ outline_size = 8
 
 [node name="VisionAreaDecal" type="Decal" parent="PlayerClient"]
 size = Vector3(20, 5, 20)
-texture_albedo = ExtResource("19_xmdo5")
+texture_albedo = ExtResource("19_ftti7")
 emission_energy = 0.0
 upper_fade = 1.03526e-05
 lower_fade = 1e-05
@@ -135,4 +135,5 @@ shape = SubResource("CylinderShape3D_nwvbb")
 
 [node name="debug_floor" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+visible = false
 mesh = SubResource("PlaneMesh_7t8dv")
