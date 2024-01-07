@@ -31,9 +31,6 @@ public partial class GameManager : Node
 	//Triggered when a projectile hits or expires, used by Spawner to keep track of them
 	public Action<Projectile> OnProjectileDespawn;
 
-	public Action<Player> Client_OnPlayerInit;
-	public Action<Projectile> Client_OnProjectileInit;
-
 	public bool IsClient = false;
 
 	public PlayerObjectSpawner Spawner;
@@ -53,15 +50,7 @@ public partial class GameManager : Node
 		Debug.Assert(_visibilityManager != null, "ERROR: Cannot find VisibilityManager in GameManager.");
 		_visibilityManager.Init();
 
-		Client_OnPlayerInit += Client_AddPlayerToSpawner;
-		Client_OnProjectileInit += Client_AddProjectileToSpawner;
 	}
-
-    public override void _ExitTree()
-    {
-        Client_OnPlayerInit -= Client_AddPlayerToSpawner;
-		Client_OnProjectileInit -= Client_AddProjectileToSpawner;
-    }
 
 	public PlayerInfo GetPlayerInfo(int id)
 	{
@@ -79,7 +68,7 @@ public partial class GameManager : Node
 	}
 
     //Called on all clients when the player has initialized itself. 
-    private void Client_AddPlayerToSpawner(Player p)
+    /*private void Client_AddPlayerToSpawner(Player p)
 	{
 		if(Multiplayer.IsServer()) return;
 		Spawner.Players[p.OwnerID] = p;
@@ -89,7 +78,7 @@ public partial class GameManager : Node
 	{
 		if(Multiplayer.IsServer()) return;
 		Spawner.Projectiles[p.OwnerID] = p;
-	}
+	}*/
 
 	////// Update the IDs and names on all clients ///////
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]

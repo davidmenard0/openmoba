@@ -12,10 +12,11 @@ public partial class PlayerCamera : Camera3D
 
 	public override void _Ready()
 	{
-		_playerClient = GetParent<PlayerClient>();
-		_player = _playerClient.GetParent<Player>();
+		_playerClient = GetParentOrNull<PlayerClient>();
+		Debug.Assert(_playerClient != null, "ERROR: Cannot find PlayerClient in PlayerCamera.");
 
-		_playerClient.Client_OnInit += Init;
+		_player = _playerClient.GetParentOrNull<Player>();
+		Debug.Assert(_player != null, "ERROR: Cannot find Player in PlayerCamera.");
 
 		_listener = GetNode<AudioListener3D>("AudioListener3D");
 		Debug.Assert(_listener != null, "ERROR: Cant find AudioListener3D under camera" );
@@ -27,14 +28,11 @@ public partial class PlayerCamera : Camera3D
 
 		_offset = GlobalPosition - _player.GlobalPosition;
 	}
-
-    private void Init(bool isMine)
+    public void InitOwnership()
     {
-		if(isMine)
-		{
-        	this.Current = true;
-			_listener.MakeCurrent();
-		}
+		this.Visible = true;
+		this.Current = true;
+		_listener.MakeCurrent();
     }
 
     public override void _Process(double delta)

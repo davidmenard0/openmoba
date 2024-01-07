@@ -7,30 +7,26 @@ public partial class PlayerAnimationController : AnimationPlayer
 {
 	[Export]
 	private float AnimThreshold = 0.25f;
-	private Node3D _playerClientAuthority;
-	private PlayerInput _input;
+	private PlayerClient _playerClient;
 
 	private Vector3 _lastPosition;
 	private string _lastAnimation = "";
 
 	public override void _Ready()
 	{
-		_input = GetParent().GetParent().GetNode<PlayerInput>("PlayerInput");
-		Debug.Assert(_input != null, "ERROR: Can't find PlayerInput in PlayerCharacterController");
+		_playerClient = GetParent().GetParentOrNull<PlayerClient>();
+		Debug.Assert(_playerClient != null, "ERROR: Can't find ClientAuthority node in PlayerCharacterController");
 
-		_playerClientAuthority = GetParent().GetParent<Node3D>();
-		Debug.Assert(_playerClientAuthority != null, "ERROR: Can't find ClientAuthority node in PlayerCharacterController");
-
-		_lastPosition = _playerClientAuthority.GlobalPosition;
+		_lastPosition = _playerClient.GlobalPosition;
 	}
 
 	public override void _Process(double delta)
 	{		
-		var aim = _playerClientAuthority.Basis;
+		var aim = _playerClient.Basis;
 		var forward = -aim.Z;
 		var left = -aim.X;
 
-		Vector3 dir = (_playerClientAuthority.GlobalPosition - _lastPosition).Normalized();
+		Vector3 dir = (_playerClient.GlobalPosition - _lastPosition).Normalized();
 
 		float forward_comp = dir.Dot(forward);
 		float left_comp = dir.Dot(left);
@@ -57,6 +53,6 @@ public partial class PlayerAnimationController : AnimationPlayer
 			this.Play(anim);
 		_lastAnimation = anim;
 
-		_lastPosition = _playerClientAuthority.GlobalPosition;
+		_lastPosition = _playerClient.GlobalPosition;
 	}
 }

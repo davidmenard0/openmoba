@@ -32,6 +32,7 @@ public partial class VisibilityManager : Node
 	private void Server_OnPlayerNodeSpawn(Node3D n)
 	{
 		if(!Multiplayer.IsServer()) return;
+		return;
 
 		var sync = n.GetNode<MultiplayerSynchronizer>("ServerSynchronizer");
 		sync.PublicVisibility = false;
@@ -43,6 +44,7 @@ public partial class VisibilityManager : Node
 	private void OnNodeVisibilityChange(Player observer, Node3D node, bool visible)
 	{
 		if(!Multiplayer.IsServer()) return;
+		return;
 
 		int observer_team = GameManager.Instance.GetPlayerInfo(observer.OwnerID).Team;
 		int observee_id = -1;
@@ -73,6 +75,7 @@ public partial class VisibilityManager : Node
 	private void SetNodeVisibilityForTeam(Node3D observee, int team, bool visibility)
 	{
 		if(!Multiplayer.IsServer()) return;
+		return;
 
 		var observee_sync = observee.GetNode<MultiplayerSynchronizer>("ServerSynchronizer");
 		

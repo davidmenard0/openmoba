@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Diagnostics;
 
 public partial class PlayerInput : MultiplayerSynchronizer
 {
@@ -11,26 +12,30 @@ public partial class PlayerInput : MultiplayerSynchronizer
 
     public override void _Ready()
     {
-		_playerClient = GetParent<PlayerClient>();
-		_player = _playerClient.GetParent<Player>();
-		_playerClient.Client_OnInit += Init;
+		_playerClient = GetParentOrNull<PlayerClient>();
+		Debug.Assert(_playerClient != null, "ERROR: Cannot find PlayerClient in PlayerInput.");
+
+		_player = _playerClient.GetParentOrNull<Player>();
+		Debug.Assert(_player != null, "ERROR: Cannot find Player in PlayerInput.");
+
+		_playerClient.Client_OnOwnershipConfirmation += Init;
 		
-		// Dont do this here! (And leave it commented as a warning
+		// Dont do this here! (And leave it commented as a warning)
 		// at this point, the client might not have received its playerID yet
 		// So IsMine might not be initialized
         // SetProcessInput(_player.IsMine);
     }
 
-    private void Init(bool isMine)
+    private void Init()
     {
-        SetProcess(isMine);
-		SetProcessInput(isMine);
+        SetProcess(true);
+		SetProcessInput(true);
     }
 
 
     public override void _ExitTree()
     {
-		_playerClient.Client_OnInit -= Init;
+		_playerClient.Client_OnOwnershipConfirmation -= Init;
     }
 
     public override void _Process(double delta)

@@ -11,9 +11,8 @@ public partial class PlayerVision : Area3D
 	{
 		if(!Multiplayer.IsServer()) return;
 
-		_player = GetParent<Player>();
+		_player = GetParentOrNull<Player>();
 		Debug.Assert(_player != null, "ERROR: can't find Player in player vision Area");
-
 
 		Connect("body_entered", new Callable(this, "_OnBodyEntered"));
 		Connect("body_exited", new Callable(this, "_OnBodyExited"));

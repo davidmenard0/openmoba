@@ -1,9 +1,10 @@
 using Godot;
 using System;
+using System.Diagnostics;
 
 public partial class PlayerClient : Node3D
 {
-	public Action<bool> Client_OnInit; //isMine
+	public Action Client_OnOwnershipConfirmation;
 	
 	public bool IsMine;
 	public PlayerCamera Camera;
@@ -18,8 +19,11 @@ public partial class PlayerClient : Node3D
 		// on clinet, handshake to confirm ownership
 		if(!GameManager.Instance.IsClient) return;
 
-        _player = GetParent<Player>();
-		Camera = GetNode<PlayerCamera>("PlayerCamera");
+        _player = GetParentOrNull<Player>();
+		Debug.Assert(_player != null, "ERROR: Cannot find Player in PlayerClient.");
+
+		Camera = GetNodeOrNull<PlayerCamera>("PlayerCamera");
+		Debug.Assert(Camera != null, "ERROR: Cannot find Camera in PlayerClient.");
 
 		// Client asks the Server for a handshake.
 		_player.RpcId(1, "RPC_Server_Handshake", Multiplayer.GetUniqueId());
@@ -31,19 +35,20 @@ public partial class PlayerClient : Node3D
 	{
 		if(!GameManager.Instance.IsClient) return;
 		
-		_ownerID = id;
-		GetNode<Label3D>("IDLabel").Text = name;
-
 		if(_ownerID == Multiplayer.GetUniqueId())
 		{
-			GD.Print("Found local player: " + _ownerID);
-			IsMine = true;
-
-			//Dont forget to set ownership on both client and server
-			SetMultiplayerAuthority(_ownerID, true);
+			Debug.Assert(id == Multiplayer.GetUniqueId(), "ERROR: CLient got confirmation from server with a different MultiplayerUniqueID");	
+			return;
 		}
+		
+		_ownerID = id;
+		GetNode<Label3D>("IDLabel").Text = name;
+		GD.Print("Found local player: " + _ownerID);
+		IsMine = true;
 
-		Client_OnInit?.Invoke(IsMine);
-		GameManager.Instance.Client_OnPlayerInit?.Invoke(_player);
+		//Dont forget to set ownership on both client and server
+		SetMultiplayerAuthority(_ownerID, true);
+
+		Camera.InitOwnership();
 	}
 }

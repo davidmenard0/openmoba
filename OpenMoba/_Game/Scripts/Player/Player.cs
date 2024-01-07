@@ -26,7 +26,7 @@ public partial class Player : CharacterBody3D
 
 	public override void _Ready()
 	{
-		_playerInput = GetNode<PlayerInput>("PlayerClient/PlayerInput");
+		_playerInput = GetNodeOrNull<PlayerInput>("PlayerClient/PlayerInput");
 		Debug.Assert(_playerInput != null, "ERROR: Cannot find PlayerInput under player.");
 
 		if(!Multiplayer.IsServer()) return;
