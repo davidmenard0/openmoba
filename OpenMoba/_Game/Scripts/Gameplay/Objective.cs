@@ -2,15 +2,14 @@ using Godot;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 public partial class Objective : Node3D
 {
-[Export]
-	public float CaptureTime = 60f;
 	[Export]
 	public Label3D ProgressLabel;
 
-	private ObjectiveInfluenceArea _area;
+	private CaptureArea _area;
 	private float _captureProgress = 0f;
 	private Node3D[] _objectiveTargets;
 
@@ -18,8 +17,8 @@ public partial class Objective : Node3D
 	{
 		if(!Multiplayer.IsServer()) return;
 		
-		_area = GetNode<ObjectiveInfluenceArea>("./InfluenceArea");
-		Debug.Assert(_area != null, "ERROR: Could not find ObjectiveInfluenceArea under Objective.");
+		_area = GetNode<CaptureArea>("./CaptureArea");
+		Debug.Assert(_area != null, "ERROR: Could not find CaptureArea under Objective.");
 		Debug.Assert(ProgressLabel != null, "ERROR: ProgressLabel must be assigned in objective");
 
 		//Objectives are part of the map because they might change in position based on the map
@@ -31,12 +30,18 @@ public partial class Objective : Node3D
 		Debug.Assert(_objectiveTargets[1] != null, "ERROR: Map is missing ObjectiveTarget 1");
 	}
 
-	public override void _Process(double delta)
-	{
+    public override void _PhysicsProcess(double delta)
+    {
 		if(!Multiplayer.IsServer()) return;
 
-		double lastProgress = _captureProgress;
-		_captureProgress += _area.PushCounter * (float)delta / CaptureTime;
+		ProcessProgress(delta);
+        StickToFloor();
+    }
+
+    private void ProcessProgress(double delta)
+    {
+        double lastProgress = _captureProgress;
+		_captureProgress += _area.PushCounter * (float)delta / Balance.Get("Game.CaptureTime");
 		_captureProgress = Mathf.Clamp(_captureProgress, -1f, 1f);
 
 		var pos = _objectiveTargets[0].GlobalPosition.Lerp(_objectiveTargets[1].GlobalPosition, (1f+_captureProgress)*0.5f );
@@ -54,11 +59,11 @@ public partial class Objective : Node3D
 		{
 			Logger.Log("Team2 wins!");
 		}
-	}
+    }
 
-    public override void _PhysicsProcess(double delta)
-    {
-        var spaceState = GetWorld3D().DirectSpaceState;
+    private void StickToFloor()
+	{
+		var spaceState = GetWorld3D().DirectSpaceState;
 		Vector3 raycast_to = this.GlobalPosition + Vector3.Down*10f;
 		var query = PhysicsRayQueryParameters3D.Create(this.GlobalPosition, raycast_to);
 		var result = spaceState.IntersectRay(query);
@@ -66,7 +71,7 @@ public partial class Objective : Node3D
 		{
 			this.GlobalPosition = (Vector3)result["position"] + Vector3.Up;
 		}
-    }
+	}
 
     //Clients get progress updates
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]

@@ -1,8 +1,7 @@
 using Godot;
 using System;
-using System.Diagnostics;
 
-public partial class ObjectiveInfluenceArea : Node
+public partial class CaptureArea : Area3D
 {
 	public int PushCounter = 0;
 

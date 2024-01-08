@@ -38,7 +38,7 @@ public partial class PlayerInput : MultiplayerSynchronizer
 		_playerClient.Client_OnOwnershipConfirmation -= Init;
     }
 
-    public override void _Process(double delta)
+    public override void _PhysicsProcess(double delta)
     {
 		if(!_playerClient.IsMine) return;
 

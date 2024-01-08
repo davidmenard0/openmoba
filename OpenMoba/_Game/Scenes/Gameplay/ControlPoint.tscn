@@ -1,0 +1,65 @@
+[gd_scene load_steps=9 format=3 uid="uid://b22ucoqmhjk21"]
+
+[ext_resource type="Script" path="res://_Game/Scripts/Gameplay/ControlPoint.cs" id="1_k7h1i"]
+[ext_resource type="Script" path="res://_Game/Scripts/Gameplay/CaptureArea.cs" id="2_0ikgy"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_n2nmu"]
+height = 4.0
+radius = 10.0
+
+[sub_resource type="TorusMesh" id="TorusMesh_pkg1o"]
+inner_radius = 9.8
+outer_radius = 10.0
+ring_segments = 8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_uq1tk"]
+top_radius = 0.1
+bottom_radius = 0.2
+height = 5.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_lqcfo"]
+size = Vector3(0.1, 1, 1.5)
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_epd13"]
+properties/0/path = NodePath("Visuals/Flag:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_abjib"]
+size = Vector2(25, 25)
+
+[node name="ControlPoint" type="Node3D" node_paths=PackedStringArray("Flag")]
+script = ExtResource("1_k7h1i")
+Flag = NodePath("Visuals/FlagBase")
+
+[node name="CaptureArea" type="Area3D" parent="."]
+script = ExtResource("2_0ikgy")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CaptureArea"]
+shape = SubResource("CylinderShape3D_n2nmu")
+
+[node name="Visuals" type="Node3D" parent="."]
+
+[node name="Outline" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, 0)
+mesh = SubResource("TorusMesh_pkg1o")
+skeleton = NodePath("../..")
+
+[node name="Tower" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.44245, 0)
+mesh = SubResource("CylinderMesh_uq1tk")
+skeleton = NodePath("../..")
+
+[node name="FlagBase" type="Node3D" parent="Visuals"]
+
+[node name="Flag" type="MeshInstance3D" parent="Visuals/FlagBase"]
+transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, 0.570246, 0.522402, -0.585474)
+mesh = SubResource("BoxMesh_lqcfo")
+skeleton = NodePath("../../..")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_epd13")
+
+[node name="FloorDebug" type="MeshInstance3D" parent="."]
+visible = false
+mesh = SubResource("PlaneMesh_abjib")

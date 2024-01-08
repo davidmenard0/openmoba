@@ -1,10 +1,11 @@
-[gd_scene load_steps=9 format=3 uid="uid://d0kbbii8qj6we"]
+[gd_scene load_steps=10 format=3 uid="uid://d0kbbii8qj6we"]
 
 [ext_resource type="Script" path="res://_Game/Scripts/Map.cs" id="1_rylrr"]
 [ext_resource type="PackedScene" uid="uid://eowsg4xlapws" path="res://_Game/Assets/MapBlocks/box.tscn" id="2_irv72"]
 [ext_resource type="PackedScene" uid="uid://ldveryh7vvot" path="res://_Game/Assets/MapBlocks/floor.tscn" id="2_mnq1i"]
 [ext_resource type="PackedScene" uid="uid://cor51up6jihbo" path="res://_Game/Assets/MapBlocks/slope_wide.tscn" id="3_65g6p"]
 [ext_resource type="PackedScene" uid="uid://per3lls2li7f" path="res://_Game/Scenes/Gameplay/Objective.tscn" id="4_nk8a7"]
+[ext_resource type="PackedScene" uid="uid://b22ucoqmhjk21" path="res://_Game/Scenes/Gameplay/ControlPoint.tscn" id="6_yxivj"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_apb68"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -156,3 +157,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 8, 40)
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(0.990446, -0.103121, -0.0915617, 0.13687, 0.65393, 0.744071, -0.0168541, -0.749494, 0.661796, -4.21889, 53.4508, 73.1412)
+
+[node name="ControlPoint" parent="." instance=ExtResource("6_yxivj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 2, -34)
