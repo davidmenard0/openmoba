@@ -10,11 +10,13 @@ using System.Threading.Tasks;
 /// state while its VFX/Audio plays.
 /// 
 /// Note: We could use a MultiplayerSpawner for this as well, 
-/// but this gives us more control over loading adn client-side control
+/// but this gives us more control over loading and client-side control
 /// </summary>
 
 public partial class FXManager : Node
 {
+	#region Singleton
+	//Singleton base class does not work because of this issue: https://github.com/godotengine/godot/issues/79519
 	public static FXManager Instance { 
         get { return _instance; } 
         private set { _instance = value; } 
@@ -30,6 +32,7 @@ public partial class FXManager : Node
             this.QueueFree();
         }
     }
+	#endregion
 
 	private Dictionary<string, PackedScene> _particles;
 	private Dictionary<string, PackedScene> _audio;
@@ -39,7 +42,6 @@ public partial class FXManager : Node
 		_particles = new Dictionary<string, PackedScene>();
 		_particles["hit_smoke"] = ResourceLoader.Load<PackedScene>("res://_Game/Scenes/VFX/smoke_hit_particle.tscn");
 
-		
 		_audio = new Dictionary<string, PackedScene>();
 		_audio["projectile_expire"] = ResourceLoader.Load<PackedScene>("res://_Game/Scenes/Audio/projectile_expire.tscn");
 		_audio["projectile_hit"] = ResourceLoader.Load<PackedScene>("res://_Game/Scenes/Audio/projectile_hit.tscn");

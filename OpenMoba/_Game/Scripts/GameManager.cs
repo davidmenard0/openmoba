@@ -7,6 +7,8 @@ using System.Runtime.CompilerServices;
 
 public partial class GameManager : Node
 {
+	#region Singleton
+	//Singleton base class does not work because of this issue: https://github.com/godotengine/godot/issues/79519
 	public static GameManager Instance { 
         get { return _instance; } 
         private set { _instance = value; } 
@@ -22,6 +24,7 @@ public partial class GameManager : Node
             this.QueueFree();
         }
     }
+	#endregion
 
 	//Game Messages
 	

@@ -3,6 +3,8 @@ using System;
 
 public partial class UIController : Node
 {
+	#region Singleton
+	//Singleton base class does not work because of this issue: https://github.com/godotengine/godot/issues/79519
 	public static UIController Instance { 
         get { return _instance; } 
         private set { _instance = value; } 
@@ -18,6 +20,7 @@ public partial class UIController : Node
             this.QueueFree();
         }
     }
+	#endregion
 
 	//MainMenu
 	public Action<string, bool> OnHostClicked; //name, spawnServerPlayer
