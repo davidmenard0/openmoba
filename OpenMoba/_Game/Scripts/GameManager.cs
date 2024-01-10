@@ -34,6 +34,8 @@ public partial class GameManager : Node
 	//Triggered when a projectile hits or expires, used by Spawner to keep track of them
 	public Action<Projectile> OnProjectileDespawn;
 
+	public Color[] TeamColors = {new Color(1,0,0), new Color(0,0,1)};
+
 	public bool IsClient = false;
 
 	public PlayerObjectSpawner Spawner;
@@ -68,6 +70,11 @@ public partial class GameManager : Node
 		else if(node is Projectile)
 			id = ((Projectile)node).OwnerID;
 		return Players[id].Team;
+	}
+
+	public Color GetNodeColor(Node node)
+	{
+		return TeamColors[GetNodeTeam(node)];
 	}
 
     //Called on all clients when the player has initialized itself. 

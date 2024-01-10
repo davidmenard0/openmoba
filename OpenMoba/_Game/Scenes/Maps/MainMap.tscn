@@ -160,3 +160,4 @@ transform = Transform3D(0.990446, -0.103121, -0.0915617, 0.13687, 0.65393, 0.744
 
 [node name="ControlPoint" parent="." instance=ExtResource("6_yxivj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 2, -34)
+CaptureTime = 10.0

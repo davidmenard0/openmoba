@@ -9,25 +9,31 @@ public partial class ControlPoint : Node
 
 	[Export]
 	private Node3D Flag;
+	[Export]
+	private Color FlagColor = new Color(1,1,1); // Exported so we can use the multiplayerSynchronize to sync
+
 	private float _flagTopY = 3.75f; // hardcoded
 	
 	private CaptureArea _area;
 	private float _captureProgress = 0f;
+	private StandardMaterial3D _material;
 	
 	public override void _Ready()
 	{
-		if(!Multiplayer.IsServer()) return;
-		
 		Debug.Assert(Flag != null, "ERROR: Must assign flag in ControlPoint: " + this.Name);
 
 		_area = GetNode<CaptureArea>("./CaptureArea");
 		Debug.Assert(_area != null, "ERROR: Could not find CaptureArea under Objective.");
 		
+		_material = (StandardMaterial3D) Flag.GetChild<MeshInstance3D>(0).Mesh.SurfaceGetMaterial(0);
+
+		SetPhysicsProcess(Multiplayer.IsServer());
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
-		double lastProgress = _captureProgress;
+		if(!Multiplayer.IsServer()) return;
+
 		_captureProgress += _area.PushCounter * (float)delta / CaptureTime;
 		_captureProgress = Mathf.Clamp(_captureProgress, -1f, 1f);
 
@@ -36,9 +42,28 @@ public partial class ControlPoint : Node
 		flag_pos.Y = abs_progress*_flagTopY;
 		Flag.Position = flag_pos;
 
+		if(_captureProgress > 0.01f)
+		{
+			FlagColor = GameManager.Instance.TeamColors[0];
+		}
+		else if(_captureProgress < -0.01f)
+		{
+			FlagColor = GameManager.Instance.TeamColors[1];
+		}
+
 		if(_captureProgress >= 1.0f)
 		{
 			GD.Print("yay!");
 		}
+		else if(_captureProgress <= -1.0f)
+		{
+			
+		}
 	}
+
+    public override void _Process(double delta)
+    {
+		if(_material.AlbedoColor != FlagColor)
+			_material.AlbedoColor = FlagColor;
+    }
 }
