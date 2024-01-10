@@ -6,6 +6,8 @@ public partial class ControlPoint : Node
 {
 	[Export]
 	private float CaptureTime = 10f;
+	[Export]
+	private float Income = 1;
 
 	[Export]
 	private Node3D Flag;
@@ -16,6 +18,7 @@ public partial class ControlPoint : Node
 	
 	private CaptureArea _area;
 	private float _captureProgress = 0f;
+	private int _capturedTeam = -1;
 	private StandardMaterial3D _material;
 	
 	public override void _Ready()
@@ -53,11 +56,18 @@ public partial class ControlPoint : Node
 
 		if(_captureProgress >= 1.0f)
 		{
-			GD.Print("yay!");
+			if(_capturedTeam != 0)
+			{
+				Logger.Log("Team 0 captured point!");
+			}
+				
 		}
 		else if(_captureProgress <= -1.0f)
 		{
-			
+			if(_capturedTeam != 1)
+			{
+				Logger.Log("Team 1 captured point!");
+			}
 		}
 	}
 

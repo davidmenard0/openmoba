@@ -18,7 +18,8 @@ public partial class ProjectileCollisionArea : Area3D
         {
             Player p = (Player)body;
 			p.TakeDamage(Balance.Get("Projectile.BaseDamage"));
-			GameManager.Instance.OnProjectileDespawn?.Invoke(GetParent<Projectile>());
+			var projectile = GetParent<Projectile>();
+			projectile.QueueFree();
         }
     }
 

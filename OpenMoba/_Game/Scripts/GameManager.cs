@@ -26,13 +26,12 @@ public partial class GameManager : Node
     }
 	#endregion
 
-	//Game Messages
-	
+
 	//Triggered by playerVision when a collider enters/Exits a vision area.
 	// Observer, Observee, Tnered/Exited
 	public Action<Player, Player, bool> OnNodeVisionAreaTransition;
-	//Triggered when a projectile hits or expires, used by Spawner to keep track of them
-	public Action<Projectile> OnProjectileDespawn;
+	
+	public int[] TeamIncome = {0,0};
 
 	public Color[] TeamColors = {new Color(1,0,0), new Color(0,0,1)};
 
@@ -41,6 +40,8 @@ public partial class GameManager : Node
 	public PlayerObjectSpawner Spawner;
 	//This list is only maintained on the server side
 	public Dictionary<int, PlayerInfo> Players = new Dictionary<int, PlayerInfo>();
+
+
 	private VisibilityManager _visibilityManager;
 	
 
@@ -54,10 +55,8 @@ public partial class GameManager : Node
 		_visibilityManager = GetNode<VisibilityManager>("VisibilityManager");
 		Debug.Assert(_visibilityManager != null, "ERROR: Cannot find VisibilityManager in GameManager.");
 		_visibilityManager.Init();
-
 	}
-
-	public PlayerInfo GetPlayerInfo(int id)
+    public PlayerInfo GetPlayerInfo(int id)
 	{
 		return Players[id];
 	}
@@ -76,6 +75,7 @@ public partial class GameManager : Node
 	{
 		return TeamColors[GetNodeTeam(node)];
 	}
+
 
     //Called on all clients when the player has initialized itself. 
     /*private void Client_AddPlayerToSpawner(Player p)

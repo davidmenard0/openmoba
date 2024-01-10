@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 public partial class Projectile : Node3D
 {
+    public Action<Projectile> OnDespawn; //UID
 	public Vector3 Direction;
 
     public int UID;
@@ -35,6 +36,11 @@ public partial class Projectile : Node3D
         StartLifeTimer();
     }
 
+    public override void _ExitTree()
+    {
+        OnDespawn?.Invoke(this);
+    }
+
     public void Init(int ownerID, Vector3 pos, Vector3 dir)
     {
         OwnerID = ownerID;
@@ -54,7 +60,7 @@ public partial class Projectile : Node3D
         await Task.Delay(Mathf.RoundToInt(Balance.Get("Projectile.Lifetime")*1000));
 
         if(this != null) // Projectile might have hit player and already dies
-            GameManager.Instance.Spawner.DespawnProjectile(this);
+            this.QueueFree();
     }
 
 }
