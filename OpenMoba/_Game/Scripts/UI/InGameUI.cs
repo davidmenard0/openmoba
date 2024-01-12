@@ -8,6 +8,7 @@ public partial class InGameUI : Control
 	private ColorRect _team1Progress;
 	private ColorRect _team2Progress;
 	private Label _respawnLabel;
+	private Label _resourceLabel;
 
 	private float _maxWidth;
 
@@ -24,16 +25,21 @@ public partial class InGameUI : Control
 		_respawnLabel = GetNode<Label>("RespawnLabel");
 		Debug.Assert(_respawnLabel != null, "ERROR: Couldn't find RespawnLabel in InGameUI");
 
+		_resourceLabel = GetNode<Label>("ResourceLabel");
+		Debug.Assert(_resourceLabel != null, "ERROR: Couldn't find ResourceLabel in InGameUI");
+
 		_maxWidth = _team1Progress.Size.X;
 
 		UIController.Instance.OnObjectiveProgressUpdate += UpdateProgress;
+		UIController.Instance.OnResourceChange += OnResourceChange;
 
 		UpdateProgress(0f);
     }
 
-	public override void _ExitTree()
+    public override void _ExitTree()
 	{
 		UIController.Instance.OnObjectiveProgressUpdate -= UpdateProgress;
+		UIController.Instance.OnResourceChange -= OnResourceChange;
 	}
 
 	public void UpdateProgress(float progress)
@@ -74,4 +80,9 @@ public partial class InGameUI : Control
 		}
 		_respawnLabel.Hide();
 	}
+
+    private void OnResourceChange(int resource)
+    {
+        _resourceLabel.Text = resource.ToString();
+    }
 }

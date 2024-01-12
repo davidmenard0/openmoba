@@ -64,14 +64,14 @@ public partial class ControlPoint : Node
 		}
 
 		// Update Capture State
-		if(_state == STATE.CAPTURED)
+		if( _state == STATE.CAPTURED && _area.HasPlayersInside() )
 		{
-			if(_capturedTeam == 0 && _area.PushCounter > 0)
+			if(_capturedTeam == 0 && _area.PushCounter < 0)
 			{
 				_state = STATE.DISPUTED;
 				StopIncomeTimer();
 			}
-			if(_capturedTeam == 1 && _area.PushCounter < 0)
+			if(_capturedTeam == 1 && _area.PushCounter > 0)
 			{
 				_state = STATE.DISPUTED;
 				StopIncomeTimer();
@@ -93,41 +93,29 @@ public partial class ControlPoint : Node
 
 	private void Capture(int team)
 	{
+		//Note: This will lead to unpredictability in capture mechanics. 
+		// for example, if a capture is done 0.27s after the resource tick,
+		// the capture cooldown will be 0.73s
+		if(_cancelTokenSource != null) return;
+
 		_state = STATE.CAPTURED;
 		_capturedTeam = team;
-		StartIncomeTimer();
+		_cancelTokenSource = new CancellationTokenSource();
+		StartIncomeTimer(_cancelTokenSource.Token);
 		Rpc("RPC_Client_NotifyCapture", team, GameManager.Instance.TeamColors[team]);
 		Logger.Log(String.Format("Team {0} captured point!", team));
 	}
 
-	private async void StartIncomeTimer()
+	private async void StartIncomeTimer(CancellationToken token)
 	{
-		if(_cancelTokenSource == null)
-		{
-			_cancelTokenSource = new CancellationTokenSource();
-			try
-			{
-				await DoIncomeTimer(_cancelTokenSource.Token);
-			}
-			catch(OperationCanceledException)
-			{
-			}
-			finally
-			{
-				_cancelTokenSource.Cancel();
-				_cancelTokenSource = null;
-			}
-		}
-	}
-
-	private async Task DoIncomeTimer(CancellationToken token)
-	{
-		token.ThrowIfCancellationRequested();
 		while(true)
 		{
-			await Task.Delay(IncomePeriod*1000);
+			await Task.Delay(IncomePeriod*1000); // delay before giving the first resources
+			if(token.IsCancellationRequested) break; // if its cancelled while we wait, dont give money!
 			GameManager.Instance.GiveResourceToTeam(_capturedTeam, Income);
 		}
+		_cancelTokenSource.Dispose();
+		_cancelTokenSource = null;
 	}
 
 	private void StopIncomeTimer()
@@ -135,10 +123,8 @@ public partial class ControlPoint : Node
 		if(_cancelTokenSource != null)
 		{
 			_cancelTokenSource.Cancel();
-			_cancelTokenSource = null;
 		}
 	}
-
 
 	////////// Client functions //////////////
 	

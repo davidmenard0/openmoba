@@ -34,6 +34,7 @@ public partial class UIController : Node
 	//InGameEvents
 	public Action<float> OnObjectiveProgressUpdate; //progress %
 	public Action<float> OnLocalPlayerRespawn; // respawn timer
+	public Action<int> OnResourceChange; // resources
 
 	//Main UI Scenes
 	private Control _mainMenu;
@@ -68,4 +69,5 @@ public partial class UIController : Node
 	{
 		_inGameUI.ExecuteRespawnTimer(timer);
 	}
+
 }

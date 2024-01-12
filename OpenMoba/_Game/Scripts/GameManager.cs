@@ -2,8 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
-
+using System.Linq;
 
 public partial class GameManager : Node
 {
@@ -41,10 +40,8 @@ public partial class GameManager : Node
 	//This list is only maintained on the server side
 	public Dictionary<int, PlayerInfo> Players = new Dictionary<int, PlayerInfo>();
 
-
 	private VisibilityManager _visibilityManager;
 	
-
 	protected void Initialize()
 	{
 		Balance.Load();
@@ -63,6 +60,8 @@ public partial class GameManager : Node
 
 	public int GetNodeTeam(Node node)
 	{
+		if(!Multiplayer.IsServer()) return -1;
+
 		int id = -1;
 		if(node is Player)
 			id = ((Player)node).OwnerID;
@@ -78,31 +77,25 @@ public partial class GameManager : Node
 
 	public void GiveResourceToTeam(int team, int resource)
 	{
-		//TODO;
+		if(!Multiplayer.IsServer()) return;
+
+		if(resource < 0) return; // cant give negative resources. Use another function
+
+		var players_in_team = Players.Select(p=>p.Value).Where(x => x.Team == team);
+		foreach(var p in players_in_team)
+		{
+			p.Resources += resource;
+			RpcId(p.PeerID, "Client_OnResourceChange", p.Resources);
+		}
 		Logger.Log(String.Format("Giving {0} resources to team {1}", resource, team));
 	}
 
-    //Called on all clients when the player has initialized itself. 
-    /*private void Client_AddPlayerToSpawner(Player p)
-	{
-		if(Multiplayer.IsServer()) return;
-		Spawner.Players[p.OwnerID] = p;
-	}
 
-	private void Client_AddProjectileToSpawner(Projectile p)
-	{
-		if(Multiplayer.IsServer()) return;
-		Spawner.Projectiles[p.OwnerID] = p;
-	}*/
+	////////////////////// Client functions /////////////////////
 
-	////// Update the IDs and names on all clients ///////
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	private void RPC_HandshakeNewPlayer(int ownerID)
+	public void Client_OnResourceChange(int new_resource)
 	{
-		if(!Multiplayer.IsServer()) return;
-
-		//Only server holds this info, so send it to clients
-		var pi = GameManager.Instance.GetPlayerInfo(ownerID);
-		RpcId(ownerID, "RPC_Client_HandshakeResponse", ownerID, pi.Name, pi.Team);
+		UIController.Instance.OnResourceChange?.Invoke(new_resource);
 	}
 }

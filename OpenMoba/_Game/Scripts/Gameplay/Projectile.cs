@@ -62,5 +62,4 @@ public partial class Projectile : Node3D
         if(this != null && IsInstanceValid(this)) // Projectile might have hit player and already dies
             this.QueueFree();
     }
-
 }

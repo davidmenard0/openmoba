@@ -4,6 +4,7 @@ using System;
 public partial class CaptureArea : Area3D
 {
 	public int PushCounter = 0;
+	public int[] TeamPlayers = {0,0};
 
 	public override void _Ready()
 	{
@@ -20,9 +21,15 @@ public partial class CaptureArea : Area3D
         {
             Player p = (Player)body;
 			if(GameManager.Instance.GetNodeTeam(body) == 0)
+			{
+				TeamPlayers[0]++;
 				PushCounter++;
+			}
 			else
+			{
 				PushCounter--;
+				TeamPlayers[1]++;
+			}
         }
     }
 
@@ -34,9 +41,20 @@ public partial class CaptureArea : Area3D
         {
             Player p = (Player)body;
 			if(GameManager.Instance.GetNodeTeam(body) == 0)
+			{
+				TeamPlayers[0]--;
 				PushCounter--;
+			}
 			else
+			{
 				PushCounter++;
+				TeamPlayers[1]--;
+			}
         }
     }
+
+	public bool HasPlayersInside()
+	{
+		return TeamPlayers[0] != 0 || TeamPlayers[1] != 0;
+	}
 }
