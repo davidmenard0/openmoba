@@ -76,6 +76,11 @@ public partial class GameManager : Node
 		return TeamColors[GetNodeTeam(node)];
 	}
 
+	public void GiveResourceToTeam(int team, int resource)
+	{
+		//TODO;
+		Logger.Log(String.Format("Giving {0} resources to team {1}", resource, team));
+	}
 
     //Called on all clients when the player has initialized itself. 
     /*private void Client_AddPlayerToSpawner(Player p)

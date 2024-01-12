@@ -59,7 +59,7 @@ public partial class Projectile : Node3D
 
         await Task.Delay(Mathf.RoundToInt(Balance.Get("Projectile.Lifetime")*1000));
 
-        if(this != null) // Projectile might have hit player and already dies
+        if(this != null && IsInstanceValid(this)) // Projectile might have hit player and already dies
             this.QueueFree();
     }
 

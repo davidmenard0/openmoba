@@ -22,8 +22,4 @@ public partial class Map : Node3D
 		ps.SpawnPlayers(spawnPoints);
 	}
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
-	}
 }

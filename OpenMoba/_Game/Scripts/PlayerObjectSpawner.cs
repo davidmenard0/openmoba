@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 public partial class PlayerObjectSpawner : MultiplayerSpawner
@@ -101,8 +102,6 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 
 		FXManager.Instance.PlayVFX("hit_smoke", p.GlobalPosition);
 		FXManager.Instance.PlayAudio("projectile_hit", p.GlobalPosition);
-
-		_spawnNode.RemoveChild(p);
 
 		Projectiles.Remove(p.OwnerID);
     }
