@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://blew3em7063hi"]
+[gd_scene load_steps=4 format=3 uid="uid://blew3em7063hi"]
 
 [ext_resource type="Script" path="res://_Game/Scripts/UI/InGameUI.cs" id="1_rmier"]
+[ext_resource type="Script" path="res://_Game/Scripts/UI/SkillBar.cs" id="2_ghbhd"]
+[ext_resource type="PackedScene" uid="uid://bq3djvvi5fspe" path="res://_Game/Scenes/UI/Skill.tscn" id="3_8r4fr"]
 
 [node name="InGameUI" type="Control"]
 layout_mode = 3
@@ -9,6 +11,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 3
 script = ExtResource("1_rmier")
 
 [node name="ProgressRect" type="ColorRect" parent="."]
@@ -63,23 +66,41 @@ layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = -33.0
-offset_right = 66.0
-offset_bottom = -10.0
+offset_top = -34.0
+offset_right = 50.0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 24
 text = "0"
 
 [node name="RespawnLabel" type="Label" parent="."]
-layout_mode = 0
-offset_left = 425.0
-offset_top = 125.0
-offset_right = 725.0
-offset_bottom = 275.0
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -150.0
+offset_top = 150.0
+offset_right = 150.0
+offset_bottom = 300.0
+grow_horizontal = 2
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 100
 text = "3"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="SkillsContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -210.0
+offset_top = -70.0
+offset_right = 210.0
+grow_horizontal = 2
+grow_vertical = 0
+alignment = 1
+script = ExtResource("2_ghbhd")
+Skilltemplate = ExtResource("3_8r4fr")

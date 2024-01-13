@@ -83,38 +83,6 @@ public partial class MultiplayerController : Node
 
 
 	#endregion
-	
-
-	#region RPCs
-
-	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	private void RPC_StartGame()
-	{
-		UIController.Instance.OnGameStarted?.Invoke();
-	}
-
-	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	private void RPC_SendInfoToServer(int id, string name)
-	{
-		UpdatePlayerInfo(id, name);
-		
-		//Server sends back player info to everyone
-		if(Multiplayer.IsServer()){
-			foreach (var item in GameManager.Instance.Players)
-			{
-				Rpc("RPC_ReceiveInfoOnClients", item.Value.PeerID, item.Value.Name);
-			}
-		}
-	}
-
-	//Dont call local, server has the info
-	[Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	private void RPC_ReceiveInfoOnClients(int id, string name)
-	{
-		UpdatePlayerInfo(id, name);
-	}
-
-	#endregion
 
 
 	public void HostGame(string name, bool spawnServerPlayer = false){
@@ -151,8 +119,7 @@ public partial class MultiplayerController : Node
 
 	public void StartGame()
 	{
-		LoadMap();
-		Rpc("RPC_StartGame");
+		GameManager.Instance.StartGame("MainMap");
 	}
 
 	private void UpdatePlayerInfo(int id, string name)
@@ -165,20 +132,31 @@ public partial class MultiplayerController : Node
 			GameManager.Instance.Players[id] = playerInfo;
 		}
 	}
+	
 
-	//Map sync is handled by the MapSpawner object
-	private void LoadMap()
+	#region Client RPCs
+
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void RPC_SendInfoToServer(int id, string name)
 	{
-		if(!Multiplayer.IsServer()) return;
-
-		var map = GetNode("../Map");
-		foreach(var c in map.GetChildren())
-		{
-			map.RemoveChild(c);
-			c.QueueFree();
+		UpdatePlayerInfo(id, name);
+		
+		//Server sends back player info to everyone
+		if(Multiplayer.IsServer()){
+			foreach (var item in GameManager.Instance.Players)
+			{
+				Rpc("RPC_ReceiveInfoOnClients", item.Value.PeerID, item.Value.Name);
+			}
 		}
-
-		Node3D newmap = ResourceLoader.Load<PackedScene>("res://_Game/Scenes/Maps/MainMap.tscn").Instantiate<Node3D>();
-		map.AddChild(newmap);
 	}
+
+	//Dont call local, server has the info
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void RPC_ReceiveInfoOnClients(int id, string name)
+	{
+		UpdatePlayerInfo(id, name);
+	}
+
+	#endregion
 }

@@ -14,6 +14,16 @@ public partial class InGameUI : Control
 
     public override void _Ready()
     {
+		UIController.Instance.OnGameStarted += InitializeGame;
+    }
+    public override void _ExitTree()
+	{
+		EndGame();
+		UIController.Instance.OnGameStarted -= InitializeGame;
+	}
+
+    private void InitializeGame()
+	{
 		_progressLabel = GetNode<Label>("ProgressLabel");
 		Debug.Assert(_progressLabel != null, "ERROR: _progressLabel not found in InGameUI");
 
@@ -32,15 +42,16 @@ public partial class InGameUI : Control
 
 		UIController.Instance.OnObjectiveProgressUpdate += UpdateProgress;
 		UIController.Instance.OnResourceChange += OnResourceChange;
-
+		
 		UpdateProgress(0f);
-    }
+	}
 
-    public override void _ExitTree()
+	private void EndGame()
 	{
 		UIController.Instance.OnObjectiveProgressUpdate -= UpdateProgress;
 		UIController.Instance.OnResourceChange -= OnResourceChange;
 	}
+
 
 	public void UpdateProgress(float progress)
 	{

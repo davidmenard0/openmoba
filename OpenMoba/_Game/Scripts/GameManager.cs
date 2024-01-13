@@ -41,11 +41,11 @@ public partial class GameManager : Node
 	public Dictionary<int, PlayerInfo> Players = new Dictionary<int, PlayerInfo>();
 
 	private VisibilityManager _visibilityManager;
+	private Map _map;
 	
 	protected void Initialize()
 	{
-		Balance.Load();
-
+		//TODO: This shouldnt be a singleton!
 		Spawner = GetNode<PlayerObjectSpawner>("/root/Main/PlayerObjectSpawner");
 		Debug.Assert(Spawner != null, "ERROR: Cannot find PlayerOBjectSpawner in GameManager.");
 
@@ -53,6 +53,19 @@ public partial class GameManager : Node
 		Debug.Assert(_visibilityManager != null, "ERROR: Cannot find VisibilityManager in GameManager.");
 		_visibilityManager.Init();
 	}
+
+	#region public methods
+
+	public void StartGame(string mapName)
+	{
+		if(!Multiplayer.IsServer()) return;
+
+		Rpc("Client_OnStartGame");
+		Balance.Load();
+		LoadMap(mapName);
+		GiveInitialSkills();
+	}
+
     public PlayerInfo GetPlayerInfo(int id)
 	{
 		return Players[id];
@@ -90,12 +103,57 @@ public partial class GameManager : Node
 		Logger.Log(String.Format("Giving {0} resources to team {1}", resource, team));
 	}
 
+	#endregion
 
+	#region private methods
+
+	private void GiveInitialSkills()
+	{
+		foreach(var p in Players)
+		{
+			RpcId(p.Value.PeerID, "Client_OnNewSkill", 0);
+		}
+	}
+
+	private void LoadMap(string mapName)
+	{
+		//Map sync is handled by the MapSpawner object
+		if(!Multiplayer.IsServer()) return;
+
+		var map_container = GetNode("../../Map");
+		foreach(var c in map_container.GetChildren())
+		{
+			map_container.RemoveChild(c);
+			c.QueueFree();
+		}
+
+		_map = ResourceLoader.Load<PackedScene>(String.Format("res://_Game/Scenes/Maps/{0}.tscn",mapName)).Instantiate<Map>();
+		map_container.AddChild(_map);
+	}
+
+	#endregion
+
+	#region client functions
 	////////////////////// Client functions /////////////////////
+
+	
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void Client_OnStartGame()
+	{
+		Balance.Load(); //Load balance on clients as well, because there are some values used for the UI in here
+		UIController.Instance.OnGameStarted?.Invoke();
+	}
 
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
 	public void Client_OnResourceChange(int new_resource)
 	{
 		UIController.Instance.OnResourceChange?.Invoke(new_resource);
 	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	public void Client_OnNewSkill(int skillslot)
+	{
+		UIController.Instance.OnNewSkill?.Invoke(skillslot);
+	}
+	#endregion
 }

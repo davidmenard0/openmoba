@@ -1,6 +1,7 @@
 {
 	"Game.RespawnTimer": 1.0,
 	"Game.CaptureTime": 60.0,
+	"Game.MaxSkills" : 6,
 
 	"Player.MoveSpeed": 15.0,
 	"Player.BaseHealth": 2,

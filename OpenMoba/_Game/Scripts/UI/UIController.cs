@@ -35,6 +35,7 @@ public partial class UIController : Node
 	public Action<float> OnObjectiveProgressUpdate; //progress %
 	public Action<float> OnLocalPlayerRespawn; // respawn timer
 	public Action<int> OnResourceChange; // resources
+	public Action<int> OnNewSkill; //skillslot
 
 	//Main UI Scenes
 	private Control _mainMenu;

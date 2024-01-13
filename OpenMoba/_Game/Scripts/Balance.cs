@@ -31,4 +31,9 @@ public partial class Balance : Node
     {
         return (float)BalanceValues[key];
     }
+
+    public static int GetInt(string key)
+    {
+        return Mathf.RoundToInt( (float)BalanceValues[key] );
+    }
 }

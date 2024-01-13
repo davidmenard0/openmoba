@@ -15,9 +15,6 @@ script = ExtResource("1_uobwu")
 
 [node name="Singleton" type="Node" parent="."]
 
-[node name="UIController" type="Node" parent="Singleton"]
-script = ExtResource("3_xvs1u")
-
 [node name="GameManager" type="Node" parent="Singleton"]
 script = ExtResource("7_xgyen")
 
@@ -26,6 +23,9 @@ script = ExtResource("4_cyduc")
 
 [node name="FXManager" type="Node" parent="Singleton"]
 script = ExtResource("5_sida8")
+
+[node name="UIController" type="Node" parent="Singleton"]
+script = ExtResource("3_xvs1u")
 
 [node name="MultiplayerController" type="Node" parent="."]
 script = ExtResource("2_8586g")
