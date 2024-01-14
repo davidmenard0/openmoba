@@ -7,7 +7,7 @@ public partial class PlayerInput : MultiplayerSynchronizer
 	[Export]
 	public Vector2 InputVector; //Sync via replication
 
-	private Player _player;
+	private PlayerNode _playerNode;
 	private PlayerClient _playerClient;
 
     public override void _Ready()
@@ -15,8 +15,8 @@ public partial class PlayerInput : MultiplayerSynchronizer
 		_playerClient = GetParentOrNull<PlayerClient>();
 		Debug.Assert(_playerClient != null, "ERROR: Cannot find PlayerClient in PlayerInput.");
 
-		_player = _playerClient.GetParentOrNull<Player>();
-		Debug.Assert(_player != null, "ERROR: Cannot find Player in PlayerInput.");
+		_playerNode = _playerClient.GetParentOrNull<PlayerNode>();
+		Debug.Assert(_playerNode != null, "ERROR: Cannot find Player in PlayerInput.");
 
 		_playerClient.Client_OnOwnershipConfirmation += Init;
 		
@@ -54,13 +54,13 @@ public partial class PlayerInput : MultiplayerSynchronizer
 		var mouse_pos = GetViewport().GetMousePosition();
 		var from = _playerClient.Camera.ProjectRayOrigin(mouse_pos);
 		var dir = _playerClient.Camera.ProjectRayNormal(mouse_pos);
-		var bullet_spawn_height = _player.ProjectileSpawn.GlobalPosition.Y; //intersect at the spawn height to be precise
+		var bullet_spawn_height = _playerNode.ProjectileSpawn.GlobalPosition.Y; //intersect at the spawn height to be precise
 		var cursor_raycast = new Plane(Vector3.Up, bullet_spawn_height).IntersectsRay(from, dir);
 		if(cursor_raycast.HasValue)
 		{
 			//Y is always at the height of the player. He's always looking straight flat
 			var pos = cursor_raycast.Value;
-			pos.Y = _player.GlobalPosition.Y;
+			pos.Y = _playerNode.GlobalPosition.Y;
 			_playerClient.LookAt(pos);
 		}
     }
@@ -69,7 +69,7 @@ public partial class PlayerInput : MultiplayerSynchronizer
 	private void Server_Fire(int id)
 	{
 		if(!Multiplayer.IsServer()) return;
-		_player.Fire(id);
+		_playerNode.Fire(id);
 	}
 
 }

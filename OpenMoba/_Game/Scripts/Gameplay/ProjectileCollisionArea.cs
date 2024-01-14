@@ -14,9 +14,9 @@ public partial class ProjectileCollisionArea : Area3D
     {
 		if(!Multiplayer.IsServer()) return;
 
-        if (body is Player)
+        if (body is PlayerNode)
         {
-            Player p = (Player)body;
+            PlayerNode p = (PlayerNode)body;
 			p.TakeDamage(Balance.Get("Projectile.BaseDamage"));
 			var projectile = GetParent<Projectile>();
 			projectile.QueueFree();

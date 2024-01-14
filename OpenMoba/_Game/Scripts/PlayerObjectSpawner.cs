@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 public partial class PlayerObjectSpawner : MultiplayerSpawner
 {
-	public Action<Player> Server_OnPlayerSpawn;
+	public Action<PlayerNode> Server_OnPlayerSpawn;
 	public Action Server_OnPlayerDespawn;
 
 	public Action<Projectile> Server_OnProjectileSpawn;
@@ -16,7 +16,7 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 	private PackedScene PlayerTemplate;
 
 	//Remember to update these on Server and Clients
-	public Dictionary<int, Player> Players = new Dictionary<int, Player>();
+	public Dictionary<int, PlayerNode> PlayerNodes = new Dictionary<int, PlayerNode>();
 
 	public Dictionary<int, Projectile> Projectiles = new Dictionary<int, Projectile>();
 
@@ -52,7 +52,7 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 		RpcId(id, "RPC_Client_NotifyPlayerSpawn", Balance.Get("Game.RespawnTimer"));
 		await Task.Delay(Mathf.RoundToInt(Balance.Get("Game.RespawnTimer")*1000f));
 
-		Player currentPlayer = PlayerTemplate.Instantiate<Player>();
+		PlayerNode currentPlayer = PlayerTemplate.Instantiate<PlayerNode>();
 		currentPlayer.OnDeath += OnPlayerDeath;
 		currentPlayer.OwnerID = id;
 		_spawnNode.AddChild(currentPlayer, true);
@@ -61,12 +61,12 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 		var pos = ((Node3D)_playerSpawnPoints[team]).GlobalPosition;
 		currentPlayer.GlobalPosition = pos;
 
-		Players[id] = currentPlayer;
+		PlayerNodes[id] = currentPlayer;
 
 		Server_OnPlayerSpawn?.Invoke(currentPlayer);
 	}
 
-	private void OnPlayerDeath(Player p)
+	private void OnPlayerDeath(PlayerNode p)
 	{
 		if(!Multiplayer.IsServer()) return;
 		
@@ -75,10 +75,10 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 		Server_OnPlayerDespawn?.Invoke();
 		SpawnPlayer(p.OwnerID);
 
-		Players.Remove(p.OwnerID);
+		PlayerNodes.Remove(p.OwnerID);
 	}
 
-	public void SpawnProjectile(Player owner, PackedScene projectileTemplate, Vector3 position, Vector3 direction)
+	public void SpawnProjectile(PlayerNode owner, PackedScene projectileTemplate, Vector3 position, Vector3 direction)
 	{
 		if(!Multiplayer.IsServer()) return;
 

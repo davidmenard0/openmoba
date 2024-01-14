@@ -41,7 +41,7 @@ public partial class VisibilityManager : Node
 	}
 
 
-	private void OnNodeVisibilityChange(Player observer, Node3D node, bool visible)
+	private void OnNodeVisibilityChange(PlayerNode observer, Node3D node, bool visible)
 	{
 		if(!Multiplayer.IsServer()) return;
 		return;
@@ -50,9 +50,9 @@ public partial class VisibilityManager : Node
 		int observee_id = -1;
 		Dictionary<int,int> counter = null;
 
-		if(node is Player)
+		if(node is PlayerNode)
 		{
-			observee_id = ((Player)node).OwnerID;
+			observee_id = ((PlayerNode)node).OwnerID;
 			counter = _teamVisibilityCounter;
 		}
 		else if(node is Projectile)
@@ -79,7 +79,7 @@ public partial class VisibilityManager : Node
 
 		var observee_sync = observee.GetNode<MultiplayerSynchronizer>("ServerSynchronizer");
 		
-		foreach(var p in _spawner.Players)
+		foreach(var p in _spawner.PlayerNodes)
 		{
 			// Only update if other_player is on the team that sees the peerID
 			// Remember: observer_team is NOT the observee's team. It's the opposing team

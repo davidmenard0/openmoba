@@ -5,13 +5,13 @@ using System.Diagnostics;
 
 public partial class PlayerVision : Area3D
 {
-	private Player _player;
+	private PlayerNode _player;
 
 	public override void _Ready()
 	{
 		if(!Multiplayer.IsServer()) return;
 
-		_player = GetParentOrNull<Player>();
+		_player = GetParentOrNull<PlayerNode>();
 		Debug.Assert(_player != null, "ERROR: can't find Player in player vision Area");
 
 		Connect("body_entered", new Callable(this, "_OnBodyEntered"));
@@ -32,9 +32,9 @@ public partial class PlayerVision : Area3D
 	{
 		if(!Multiplayer.IsServer()) return;
 
-		if(body is Player)
+		if(body is PlayerNode)
 		{
-			var other_player = (Player) body;
+			var other_player = (PlayerNode) body;
 			var this_team = GameManager.Instance.GetPlayerInfo(_player.OwnerID);
 			var other_team = GameManager.Instance.GetPlayerInfo(other_player.OwnerID);
 			if(this_team != other_team)

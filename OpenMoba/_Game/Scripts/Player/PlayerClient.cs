@@ -11,7 +11,7 @@ public partial class PlayerClient : Node3D
 
 	private int _ownerID = -1;
 
-	private Player _player;
+	private PlayerNode _player;
 
     public override void _Ready()
     {
@@ -19,7 +19,7 @@ public partial class PlayerClient : Node3D
 		// on clinet, handshake to confirm ownership
 		if(!GameManager.Instance.IsClient) return;
 
-        _player = GetParentOrNull<Player>();
+        _player = GetParentOrNull<PlayerNode>();
 		Debug.Assert(_player != null, "ERROR: Cannot find Player in PlayerClient.");
 
 		Camera = GetNodeOrNull<PlayerCamera>("PlayerCamera");

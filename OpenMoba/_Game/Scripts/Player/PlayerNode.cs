@@ -3,9 +3,9 @@ using System;
 using System.Data.Common;
 using System.Diagnostics;
 
-public partial class Player : CharacterBody3D
+public partial class PlayerNode : CharacterBody3D
 {
-	public Action<Player> OnDeath; //PlayerInfo
+	public Action<PlayerNode> OnDeath; //PlayerInfo
 
 	[Export]
 	public PackedScene ProjectileTemplate;

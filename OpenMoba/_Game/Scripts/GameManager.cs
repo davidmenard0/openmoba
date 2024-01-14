@@ -28,7 +28,7 @@ public partial class GameManager : Node
 
 	//Triggered by playerVision when a collider enters/Exits a vision area.
 	// Observer, Observee, Tnered/Exited
-	public Action<Player, Player, bool> OnNodeVisionAreaTransition;
+	public Action<PlayerNode, PlayerNode, bool> OnNodeVisionAreaTransition;
 	
 	public int[] TeamIncome = {0,0};
 
@@ -76,8 +76,8 @@ public partial class GameManager : Node
 		if(!Multiplayer.IsServer()) return -1;
 
 		int id = -1;
-		if(node is Player)
-			id = ((Player)node).OwnerID;
+		if(node is PlayerNode)
+			id = ((PlayerNode)node).OwnerID;
 		else if(node is Projectile)
 			id = ((Projectile)node).OwnerID;
 		return Players[id].Team;

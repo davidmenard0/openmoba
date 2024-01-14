@@ -1,6 +1,6 @@
 [gd_scene load_steps=30 format=3 uid="uid://bfhm45w25o4qr"]
 
-[ext_resource type="Script" path="res://_Game/Scripts/Player/Player.cs" id="1_58s1o"]
+[ext_resource type="Script" path="res://_Game/Scripts/Player/PlayerNode.cs" id="1_7qxfn"]
 [ext_resource type="Texture2D" uid="uid://bkyfvgfnf6wj8" path="res://icon.svg" id="2_0uukr"]
 [ext_resource type="Material" uid="uid://bumh373nox2qd" path="res://_Game/Assets/Materials/PlayerMat.tres" id="2_o7umo"]
 [ext_resource type="PackedScene" uid="uid://c3g3l26myqkke" path="res://_Game/Scenes/Gameplay/Projectile.tscn" id="2_qbgdq"]
@@ -56,8 +56,8 @@ albedo_color = Color(0.152941, 0.152941, 0.207843, 1)
 material = SubResource("StandardMaterial3D_l3hw6")
 size = Vector2(25, 25)
 
-[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("ProjectileSpawn")]
-script = ExtResource("1_58s1o")
+[node name="PlayerNode" type="CharacterBody3D" node_paths=PackedStringArray("ProjectileSpawn")]
+script = ExtResource("1_7qxfn")
 ProjectileTemplate = ExtResource("2_qbgdq")
 ProjectileSpawn = NodePath("PlayerClient/Direction_and_BulletSpawn")
 

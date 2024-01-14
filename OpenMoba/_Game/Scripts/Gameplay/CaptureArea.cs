@@ -17,9 +17,9 @@ public partial class CaptureArea : Area3D
     {
 		if(!Multiplayer.IsServer()) return;
 		
-        if (body is Player)
+        if (body is PlayerNode)
         {
-            Player p = (Player)body;
+            PlayerNode p = (PlayerNode)body;
 			if(GameManager.Instance.GetNodeTeam(body) == 0)
 			{
 				TeamPlayers[0]++;
@@ -37,9 +37,9 @@ public partial class CaptureArea : Area3D
     {
 		if(!Multiplayer.IsServer()) return;
 
-        if (body is Player)
+        if (body is PlayerNode)
         {
-            Player p = (Player)body;
+            PlayerNode p = (PlayerNode)body;
 			if(GameManager.Instance.GetNodeTeam(body) == 0)
 			{
 				TeamPlayers[0]--;

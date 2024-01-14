@@ -5,7 +5,7 @@ using System.Diagnostics;
 public partial class PlayerCamera : Camera3D
 {
 	private PlayerClient _playerClient;
-	private Player _player;
+	private PlayerNode _player;
 	private Camera3D _camera;
 	private Vector3 _offset;
 	private AudioListener3D _listener;
@@ -15,7 +15,7 @@ public partial class PlayerCamera : Camera3D
 		_playerClient = GetParentOrNull<PlayerClient>();
 		Debug.Assert(_playerClient != null, "ERROR: Cannot find PlayerClient in PlayerCamera.");
 
-		_player = _playerClient.GetParentOrNull<Player>();
+		_player = _playerClient.GetParentOrNull<PlayerNode>();
 		Debug.Assert(_player != null, "ERROR: Cannot find Player in PlayerCamera.");
 
 		_listener = GetNode<AudioListener3D>("AudioListener3D");
