@@ -13,4 +13,6 @@ public class PlayerInfo
             Team = this.Team
         };
     }
+
+    public Skill[] Skills;
 }
