@@ -7,7 +7,7 @@ using System.ComponentModel;
 
 public partial class MultiplayerController : Node
 {
-	private int port = 8910;
+	private int port = 7777;
 	private string address = "127.0.0.1";
 
 	private ENetMultiplayerPeer peer;
@@ -106,11 +106,17 @@ public partial class MultiplayerController : Node
 		}
 	}
 
-	public void JoinGame(string name)
+	public void JoinGame(string name, string ip = "")
 	{
+		string ip_to_join = ip == "" ? address : ip;
 		_name = name;
 		peer = new ENetMultiplayerPeer();
-		peer.CreateClient(address, port);
+		var error = peer.CreateClient(ip_to_join, port);
+		if(error != Error.Ok)
+		{
+			Logger.Log("Error: cannot join :" + error.ToString());
+			return;
+		}
 
 		peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
 		Multiplayer.MultiplayerPeer = peer;

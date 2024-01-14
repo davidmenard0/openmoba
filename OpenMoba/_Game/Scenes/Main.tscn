@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://b5jhp8a2u3gnb"]
+[gd_scene load_steps=11 format=3 uid="uid://b5jhp8a2u3gnb"]
 
 [ext_resource type="Script" path="res://_Game/Scripts/Main.cs" id="1_uobwu"]
 [ext_resource type="Script" path="res://_Game/Scripts/MultiplayerController.cs" id="2_8586g"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://_Game/Scripts/VisibilityManager.cs" id="4_cyduc"]
 [ext_resource type="PackedScene" uid="uid://bfhm45w25o4qr" path="res://_Game/Scenes/Gameplay/Player.tscn" id="4_uvess"]
 [ext_resource type="Script" path="res://_Game/Scripts/FXManager.cs" id="5_sida8"]
+[ext_resource type="Script" path="res://_Game/Scripts/PortForwarding.cs" id="7_e57ck"]
 [ext_resource type="Script" path="res://_Game/Scripts/GameManager.cs" id="7_xgyen"]
 [ext_resource type="Script" path="res://_Game/Scripts/Balance.cs" id="9_3x3oj"]
 
@@ -29,6 +30,9 @@ script = ExtResource("3_xvs1u")
 
 [node name="MultiplayerController" type="Node" parent="."]
 script = ExtResource("2_8586g")
+
+[node name="PortForwarding" type="Node" parent="MultiplayerController"]
+script = ExtResource("7_e57ck")
 
 [node name="MapSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("res://_Game/Scenes/Maps/MainMap.tscn", "res://_Game/Scenes/Maps/testmap.tscn")

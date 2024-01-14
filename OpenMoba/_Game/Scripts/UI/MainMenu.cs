@@ -21,7 +21,7 @@ public partial class MainMenu : Control
 
 	public void _on_join_button_down()
 	{
-		UIController.Instance.OnJoinClicked?.Invoke(GetNode<LineEdit>("QuickStart/NameInput").Text);
+		UIController.Instance.OnJoinClicked?.Invoke(GetNode<LineEdit>("QuickStart/NameInput").Text, GetNode<LineEdit>("QuickStart/IPInput").Text);
 	}
 
 	public void _on_start_game_button_down()

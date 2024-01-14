@@ -24,7 +24,7 @@ public partial class UIController : Node
 
 	//MainMenu
 	public Action<string, bool> OnHostClicked; //name, spawnServerPlayer
-	public Action<string> OnJoinClicked; //name
+	public Action<string, string> OnJoinClicked; //name
 	public Action OnStartClicked;
 
 
