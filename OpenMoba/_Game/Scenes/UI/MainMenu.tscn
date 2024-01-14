@@ -155,7 +155,6 @@ grow_vertical = 0
 text = "Leave Game"
 
 [node name="QuickStart" type="Control" parent="."]
-visible = false
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
