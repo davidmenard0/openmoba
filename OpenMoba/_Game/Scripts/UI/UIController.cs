@@ -22,10 +22,12 @@ public partial class UIController : Node
     }
 	#endregion
 
-	//MainMenu
-	public Action<string, bool> OnHostClicked; //name, spawnServerPlayer
-	public Action<string, string> OnJoinClicked; //name
+	//Menu Naviagtion
+	public Action<string> OnHostLANClicked; //name
+	public Action<string> OnHostInternetClicked; //name
+	public Action<string, string, int> OnJoinClicked; //name, ip, port
 	public Action OnStartClicked;
+	public Action<string, int> OnGameCreated; // ip, port
 
 
 	// Multiplayer events
@@ -40,25 +42,41 @@ public partial class UIController : Node
 	//Main UI Scenes
 	private Control _mainMenu;
 	private InGameUI _inGameUI;
+	private Lobby _lobby;
+	
+	private Control _creatingGameModal;
 
 	protected void Initialize()
 	{
 		OnGameStarted += GameStarted;
 		OnLocalPlayerRespawn += LocalPlayerRespawn;
+		OnHostLANClicked += ShowCreatingGameModal;
+		OnHostInternetClicked += ShowCreatingGameModal;
+		OnGameCreated += HideCreatingGameModal;
 
-		_mainMenu = ResourceLoader.Load<PackedScene>("res://_Game/Scenes/UI/MainMenu.tscn").Instantiate<Control>();
+		_mainMenu = ResourceLoader.Load<PackedScene>("res://_Game/Scenes/UI/Menu.tscn").Instantiate<Control>();
 		AddChild(_mainMenu);
 
 		_inGameUI = ResourceLoader.Load<PackedScene>("res://_Game/Scenes/UI/InGameUI.tscn").Instantiate<InGameUI>();
 		_inGameUI.Hide();
 		AddChild(_inGameUI);
+
+		_creatingGameModal = ResourceLoader.Load<PackedScene>("res://_Game/Scenes/UI/CreatingGamePanel.tscn").Instantiate<Control>();
+		AddChild(_creatingGameModal);
+		_creatingGameModal.Visible = false;
+
 	}
+
 
     public override void _ExitTree()
     {
         OnGameStarted -= GameStarted;
 		OnLocalPlayerRespawn -= LocalPlayerRespawn;
+		OnHostLANClicked -= ShowCreatingGameModal;
+		OnHostInternetClicked -= ShowCreatingGameModal;
+		OnGameCreated -= HideCreatingGameModal;
     }
+
 
     private void GameStarted()
     {
@@ -70,5 +88,15 @@ public partial class UIController : Node
 	{
 		_inGameUI.ExecuteRespawnTimer(timer);
 	}
+
+    private void ShowCreatingGameModal(string name)
+    {
+        _creatingGameModal.Visible = true;
+    }
+	
+    private void HideCreatingGameModal(string ip, int port)
+    {
+        _creatingGameModal.Visible = false;
+    }
 
 }

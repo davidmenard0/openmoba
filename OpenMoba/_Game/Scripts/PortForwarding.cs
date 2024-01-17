@@ -7,34 +7,45 @@ public partial class PortForwarding : Node
 {
 	public Action<string, int> OnPortForwardingComplete; // ip, port
 
+	public string LocalIP;
 	public string PublicIP;
-	public const int SERVER_PORT = 7777;
+	public int Port = -1;
 
 	Upnp _upnp;
 	public override void _Ready()
 	{
-		SetupPotForwarding();
+		FindLocalIP();
+		_upnp = new Upnp();
 	}
 
     public override void _ExitTree()
     {
-        _upnp.DeletePortMapping(SERVER_PORT, "UDP");
-		_upnp.DeletePortMapping(SERVER_PORT, "TCP");
+		if(Port != -1)
+		{
+			_upnp.DeletePortMapping(Port, "UDP");
+			_upnp.DeletePortMapping(Port, "TCP");
+		}
     }
 
-    public override void _Process(double delta)
+	private void FindLocalIP()
 	{
+		if(OS.HasFeature("windows") && OS.HasEnvironment("COMPUTERNAME"))
+			LocalIP =  IP.ResolveHostname(OS.GetEnvironment("COMPUTERNAME"),IP.Type.Ipv4);
+		else if(OS.HasFeature("x11") && OS.HasEnvironment("HOSTNAME")) // linux
+			LocalIP =  IP.ResolveHostname(OS.GetEnvironment("HOSTNAME"),IP.Type.Ipv4);
+		else if(OS.HasFeature("OSX") && OS.HasEnvironment("HOSTNAME"))
+			LocalIP =  IP.ResolveHostname(OS.GetEnvironment("HOSTNAME"),IP.Type.Ipv4);
+
+		Logger.Log("Local IP: " + LocalIP);
 	}
 
-	private void SetupPotForwarding()
+	public void SetupPortForwarding(int port)
 	{
-		_upnp = new Upnp();
 		Upnp.UpnpResult error = (Upnp.UpnpResult) _upnp.Discover();
 
 		if(error != Upnp.UpnpResult.Success ) // 0 = Success
 		{
-			GD.Print("errooor.");
-			//EmitSignal("upnp_error", (int)error);
+			Logger.Log("Error setting up Port Forwarding");
 			return;
 		}
 
@@ -43,27 +54,29 @@ public partial class PortForwarding : Node
 			GD.Print("UPnP Gateway found: ", _upnp.GetGateway().DescriptionUrl);
 			if(_upnp.GetGateway().IsValidGateway() )
 			{
-				int err1 = _upnp.AddPortMapping(SERVER_PORT, SERVER_PORT, "openmoba", "UDP");
-				int err2 = _upnp.AddPortMapping(SERVER_PORT, SERVER_PORT, "openmoba", "TCP");
+				int err1 = _upnp.AddPortMapping(port, port, "openmoba", "UDP");
+				int err2 = _upnp.AddPortMapping(port, port, "openmoba", "TCP");
 
 				if(err1 != 0)
 				{
-					GD.Print("Error setting up UCP mapping");
+					Logger.Log("Error setting up UCP mapping");
+					return;
 				}
 				
 				if(err2 != 0)
 				{
-					GD.Print("Error setting up UCP mapping");
+					Logger.Log("Error setting up UCP mapping");
+					return;
 				}
 
-				//EmitSignal("upnp_completed", 0);
-				GD.Print("cool!");
+				Port = port;
+				Logger.Log("Done setting up port forwarding");
 			}
 		} 
 
 		PublicIP = _upnp.QueryExternalAddress();
-		GD.Print(PublicIP);
+		Logger.Log("External IP: " + PublicIP);
 
-		OnPortForwardingComplete?.Invoke(PublicIP, SERVER_PORT);
+		OnPortForwardingComplete?.Invoke(PublicIP, port);
 	}
 }

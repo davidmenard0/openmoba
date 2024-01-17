@@ -1,15 +1,149 @@
-[gd_scene load_steps=2 format=3 uid="uid://7g6oqy0hi451"]
+[gd_scene load_steps=5 format=3 uid="uid://omywuhoqfgyd"]
 
-[ext_resource type="Script" path="res://_Game/Scripts/UI/MainMenu.cs" id="1_cmmeq"]
+[ext_resource type="Script" path="res://_Game/Scripts/UI/Menu.cs" id="1_gy64d"]
+[ext_resource type="Script" path="res://_Game/Scripts/UI/Landing.cs" id="2_tkytv"]
+[ext_resource type="Script" path="res://_Game/Scripts/UI/Lobby.cs" id="3_7bs6d"]
+[ext_resource type="Script" path="res://_Game/Scripts/UI/QuickStart.cs" id="4_jtkkm"]
 
-[node name="MainMenu" type="Control"]
+[node name="Menu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_cmmeq")
+script = ExtResource("1_gy64d")
+
+[node name="Landing" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -8.0
+offset_top = 1.0
+offset_right = -8.0
+offset_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_tkytv")
+
+[node name="HostLANButton" type="Button" parent="Landing"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -254.0
+offset_top = -29.0
+offset_right = -60.0
+offset_bottom = 23.0
+grow_horizontal = 2
+grow_vertical = 2
+tooltip_text = "A Local Area Network (LAN) lobby creates a game accessible only to others on your network (same wifi). Give your IP to others who wish to join the game."
+text = "Host LAN Lobby"
+
+[node name="HostInternetButton" type="Button" parent="Landing"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -254.0
+offset_top = 39.0
+offset_right = -60.0
+offset_bottom = 91.0
+grow_horizontal = 2
+grow_vertical = 2
+tooltip_text = "An Internet Lobby is available for anyone on the internet to join. Give your displayed IP address to friends who wish to join the game. "
+text = "Host Internet Lobby"
+
+[node name="JoinButton" type="Button" parent="Landing"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 61.0
+offset_top = 51.0
+offset_right = 282.0
+offset_bottom = 103.0
+grow_horizontal = 2
+grow_vertical = 2
+tooltip_text = "Join a LAN or Internet game. Simply enter the hosts' IP address"
+text = "Join Lobby"
+
+[node name="NameInput" type="LineEdit" parent="Landing"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -130.0
+offset_top = -110.0
+offset_right = 191.0
+offset_bottom = -79.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="NameLabel" type="Label" parent="Landing/NameInput"]
+layout_mode = 0
+offset_left = -63.0
+offset_top = 1.0
+offset_right = -16.0
+offset_bottom = 27.0
+text = "Name"
+
+[node name="TitleLabel" type="Label" parent="Landing"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -293.0
+offset_top = 54.0
+offset_right = 294.0
+offset_bottom = 153.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 66
+text = "Open Battle Arena"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="IPInput" type="LineEdit" parent="Landing"]
+layout_mode = 0
+offset_left = 718.0
+offset_top = 294.0
+offset_right = 855.0
+offset_bottom = 325.0
+text = "127.0.0.1"
+
+[node name="IPLabel" type="Label" parent="Landing/IPInput"]
+layout_mode = 0
+offset_left = -81.0
+offset_top = 6.0
+offset_right = -12.0
+offset_bottom = 32.0
+text = "Server IP"
+
+[node name="PortInput" type="LineEdit" parent="Landing"]
+layout_mode = 0
+offset_left = 718.0
+offset_top = 331.0
+offset_right = 790.0
+offset_bottom = 362.0
+text = "7777"
+
+[node name="PortLabel" type="Label" parent="Landing/PortInput"]
+layout_mode = 0
+offset_left = -81.0
+offset_top = 6.0
+offset_right = -12.0
+offset_bottom = 32.0
+text = "Port"
 
 [node name="Lobby" type="Control" parent="."]
 visible = false
@@ -19,6 +153,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("3_7bs6d")
 
 [node name="GameName" type="Label" parent="Lobby"]
 layout_mode = 0
@@ -158,6 +293,7 @@ text = "Leave Game"
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+script = ExtResource("4_jtkkm")
 
 [node name="Host" type="Button" parent="QuickStart"]
 layout_mode = 0
@@ -207,6 +343,22 @@ offset_right = 109.0
 offset_bottom = 111.0
 text = "Server IP"
 
+[node name="PortInput" type="LineEdit" parent="QuickStart"]
+layout_mode = 0
+offset_left = 327.0
+offset_top = 77.0
+offset_right = 394.063
+offset_bottom = 108.0
+text = "7777"
+
+[node name="PortLabel" type="Label" parent="QuickStart"]
+layout_mode = 0
+offset_left = 279.0
+offset_top = 82.0
+offset_right = 322.0
+offset_bottom = 108.0
+text = "Port"
+
 [node name="NameLabel" type="Label" parent="QuickStart"]
 layout_mode = 0
 offset_left = 56.0
@@ -214,60 +366,6 @@ offset_top = 40.0
 offset_right = 103.0
 offset_bottom = 66.0
 text = "Name"
-
-[node name="MainMenu" type="Control" parent="."]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="HostLobby" type="Button" parent="MainMenu"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -98.0
-offset_top = -28.0
-offset_right = 96.0
-offset_bottom = 24.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "Host Lobby"
-
-[node name="JoinLobby" type="Button" parent="MainMenu"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -98.0
-offset_top = 38.0
-offset_right = 96.0
-offset_bottom = 90.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "Join Lobby"
-
-[node name="TitleLabel" type="Label" parent="MainMenu"]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -293.0
-offset_top = 54.0
-offset_right = 294.0
-offset_bottom = 153.0
-grow_horizontal = 2
-theme_override_font_sizes/font_size = 66
-text = "Open Battle Arena"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [connection signal="button_down" from="QuickStart/Host" to="." method="_on_host_button_down"]
 [connection signal="button_down" from="QuickStart/Join" to="." method="_on_join_button_down"]

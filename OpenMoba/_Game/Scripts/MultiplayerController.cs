@@ -3,6 +3,8 @@ using System;
 using System.Xml.Schema;
 using System.Linq;
 using System.ComponentModel;
+using System.Threading;
+using System.Diagnostics;
 
 
 public partial class MultiplayerController : Node
@@ -12,10 +14,12 @@ public partial class MultiplayerController : Node
 
 	private ENetMultiplayerPeer peer;
 	private string _name = "";
+	private PortForwarding _portForwarding;
 	
 	public override void _Ready()
 	{
-		UIController.Instance.OnHostClicked += HostGame;
+		UIController.Instance.OnHostLANClicked += HostGame;
+		UIController.Instance.OnHostInternetClicked += HostInternetGame;
 		UIController.Instance.OnJoinClicked += JoinGame;
 		UIController.Instance.OnStartClicked += StartGame;
 
@@ -24,15 +28,20 @@ public partial class MultiplayerController : Node
 		Multiplayer.PeerDisconnected += PeerDisconnected;
 		Multiplayer.ConnectionFailed += ConnectionFailed;
 
+		_portForwarding = GetNodeOrNull<PortForwarding>("PortForwarding");
+		Debug.Assert(_portForwarding != null, "ERROR: Cant find PortForwarding under MultiplayerControler");
+		
+
 		if(OS.GetCmdlineArgs().Contains("--server"))
 		{
-			HostGame("", false);
+			HostInternetGame("");
 		}
 	}
 
     public override void _ExitTree()
     {
-        UIController.Instance.OnHostClicked -= HostGame;
+        UIController.Instance.OnHostLANClicked -= HostGame;
+		UIController.Instance.OnHostInternetClicked -= HostInternetGame;
 		UIController.Instance.OnJoinClicked -= JoinGame;
 		UIController.Instance.OnStartClicked -= StartGame;
 
@@ -40,6 +49,8 @@ public partial class MultiplayerController : Node
 		Multiplayer.PeerConnected -= PeerConnected;
 		Multiplayer.PeerDisconnected -= PeerDisconnected;
 		Multiplayer.ConnectionFailed -= ConnectionFailed;
+
+		
     }
 
     #region multiplayer callbacks
@@ -84,8 +95,7 @@ public partial class MultiplayerController : Node
 
 	#endregion
 
-
-	public void HostGame(string name, bool spawnServerPlayer = false){
+	private void HostGame(string name){
 		_name = name;
 		peer = new ENetMultiplayerPeer();
 		var error = peer.CreateServer(port, 2);
@@ -99,19 +109,27 @@ public partial class MultiplayerController : Node
 		Multiplayer.MultiplayerPeer = peer;
 		Logger.Log("Waiting For Players!");
 		
-		if(spawnServerPlayer)
-		{
-			GameManager.Instance.IsClient = true;
-			RPC_SendInfoToServer(1, _name);
-		}
+		//Spawn a server client
+		GameManager.Instance.IsClient = true;
+		RPC_SendInfoToServer(1, _name);
+
+		UIController.Instance.OnGameCreated?.Invoke(_portForwarding.LocalIP, port );
 	}
 
-	public void JoinGame(string name, string ip = "")
+	private void HostInternetGame(string name){
+		var worker = new BackgroundWorker();
+		worker.DoWork += delegate{_portForwarding.SetupPortForwarding(port);};
+		worker.RunWorkerCompleted += (sender, e) => {
+			UIController.Instance.OnGameCreated(_portForwarding.PublicIP, _portForwarding.Port);
+		};
+		worker.RunWorkerAsync();
+	}
+
+	private void JoinGame(string name, string ip, int port)
 	{
-		string ip_to_join = ip == "" ? address : ip;
 		_name = name;
 		peer = new ENetMultiplayerPeer();
-		var error = peer.CreateClient(ip_to_join, port);
+		var error = peer.CreateClient(ip, port);
 		if(error != Error.Ok)
 		{
 			Logger.Log("Error: cannot join :" + error.ToString());
