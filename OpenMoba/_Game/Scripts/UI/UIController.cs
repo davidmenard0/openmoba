@@ -26,12 +26,16 @@ public partial class UIController : Node
 	public Action<string> OnHostLANClicked; //name
 	public Action<string> OnHostInternetClicked; //name
 	public Action<string, string, int> OnJoinClicked; //name, ip, port
-	public Action OnStartClicked;
-	public Action<string, int> OnGameCreated; // ip, port
+	//Also called when creating game
+	public Action<string, int> OnLocalPlayerJoinedGame; // ip, port
+	public Action OnLocalPlayerLeftGame;
+	public Action OnStartPressed;
+	public Action OnLeavePressed;
 
 
 	// Multiplayer events
 	public Action OnGameStarted;
+
 
 	//InGameEvents
 	public Action<float> OnObjectiveProgressUpdate; //progress %
@@ -40,48 +44,69 @@ public partial class UIController : Node
 	public Action<int> OnNewSkill; //skillslot
 
 	//Main UI Scenes
-	private Control _mainMenu;
+	private Menu _menu;
 	private InGameUI _inGameUI;
 	private Lobby _lobby;
 	
-	private Control _creatingGameModal;
+	private MessageModal _messageModal;
 
 	protected void Initialize()
 	{
-		OnGameStarted += GameStarted;
-		OnLocalPlayerRespawn += LocalPlayerRespawn;
+		
 		OnHostLANClicked += ShowCreatingGameModal;
 		OnHostInternetClicked += ShowCreatingGameModal;
-		OnGameCreated += HideCreatingGameModal;
+		OnJoinClicked += ShowJoiningGameModal;
 
-		_mainMenu = ResourceLoader.Load<PackedScene>("res://_Game/Scenes/UI/Menu.tscn").Instantiate<Control>();
-		AddChild(_mainMenu);
+		OnGameStarted += GameStarted;
+		OnLocalPlayerJoinedGame += HideModal;
+		OnLocalPlayerRespawn += LocalPlayerRespawn;
+
+		_menu = ResourceLoader.Load<PackedScene>("res://_Game/Scenes/UI/Menu.tscn").Instantiate<Menu>();
+		AddChild(_menu);
 
 		_inGameUI = ResourceLoader.Load<PackedScene>("res://_Game/Scenes/UI/InGameUI.tscn").Instantiate<InGameUI>();
 		_inGameUI.Hide();
 		AddChild(_inGameUI);
 
-		_creatingGameModal = ResourceLoader.Load<PackedScene>("res://_Game/Scenes/UI/CreatingGamePanel.tscn").Instantiate<Control>();
-		AddChild(_creatingGameModal);
-		_creatingGameModal.Visible = false;
+		_messageModal = ResourceLoader.Load<PackedScene>("res://_Game/Scenes/UI/MessageModal.tscn").Instantiate<MessageModal>();
+		AddChild(_messageModal);
+		_messageModal.Visible = false;
 
+		OnLocalPlayerJoinedGame += DoLocalPlayerJoinedGame;
+		OnLocalPlayerLeftGame += DoLocalPlayerLeftGame;
 	}
 
 
     public override void _ExitTree()
     {
-        OnGameStarted -= GameStarted;
-		OnLocalPlayerRespawn -= LocalPlayerRespawn;
-		OnHostLANClicked -= ShowCreatingGameModal;
-		OnHostInternetClicked -= ShowCreatingGameModal;
-		OnGameCreated -= HideCreatingGameModal;
-    }
+		OnHostLANClicked += ShowCreatingGameModal;
+		OnHostInternetClicked += ShowCreatingGameModal;
+		OnJoinClicked += ShowJoiningGameModal;
+		
+		OnGameStarted += GameStarted;
+		OnLocalPlayerJoinedGame += HideModal;
+        OnLocalPlayerRespawn += LocalPlayerRespawn;
 
+		OnLocalPlayerJoinedGame -= DoLocalPlayerJoinedGame;
+		OnLocalPlayerLeftGame -= DoLocalPlayerLeftGame;
+ 	}
+
+	public void DoLocalPlayerJoinedGame(string ip, int port)
+	{
+		MultiplayerGame.Instance.Client_OnNewPlayerJoined += DoPlayerJoinedGame;
+		MultiplayerGame.Instance.Client_OnPlayerDisconnected += DoPlayerLeftGame;
+	}
+
+	public void DoLocalPlayerLeftGame()
+	{
+		MultiplayerGame.Instance.Client_OnNewPlayerJoined -= DoPlayerJoinedGame;
+		MultiplayerGame.Instance.Client_OnPlayerDisconnected -= DoPlayerLeftGame;
+	}
 
     private void GameStarted()
     {
 		_inGameUI.Show();
-        _mainMenu.Hide();
+        _menu.Hide();
     }
 
 	private void LocalPlayerRespawn(float timer)
@@ -91,12 +116,34 @@ public partial class UIController : Node
 
     private void ShowCreatingGameModal(string name)
     {
-        _creatingGameModal.Visible = true;
+		_messageModal.SetMessage("Creating Game...");
+        _messageModal.Visible = true;
+    }
+
+	private void ShowJoiningGameModal(string name, string ip, int port)
+    {
+		_messageModal.SetMessage("Joining Game...");
+        _messageModal.Visible = true;
     }
 	
-    private void HideCreatingGameModal(string ip, int port)
+    private void HideModal(string ip, int port)
     {
-        _creatingGameModal.Visible = false;
+        _messageModal.Visible = false;
+    }
+
+	private void HideModal()
+    {
+        _messageModal.Visible = false;
+    }
+
+	private void DoPlayerJoinedGame(PlayerInfo info)
+    {
+        _menu.Lobby.OnPlayerJoined(info);
+    }
+
+	private void DoPlayerLeftGame(int id)
+    {
+        _menu.Lobby.OnPlayerLeft(id);
     }
 
 }

@@ -4,34 +4,37 @@ using System.Diagnostics;
 
 public partial class Menu : Control
 {
+    public Lobby Lobby;
     private Control _landing;
-    private Lobby _lobby;
 
     public override void _Ready()
     {
         _landing = GetNodeOrNull<Control>("Landing");
         Debug.Assert(_landing != null, "ERROR: Cant find Landing page in Menu");
-        _lobby = GetNodeOrNull<Lobby>("Lobby");
-        Debug.Assert(_lobby != null, "ERROR: Cant find Lobby page in Menu");
+        Lobby = GetNodeOrNull<Lobby>("Lobby");
+        Debug.Assert(Lobby != null, "ERROR: Cant find Lobby page in Menu");
 
-        UIController.Instance.OnGameCreated += OpenLobby;
+        UIController.Instance.OnLocalPlayerJoinedGame += OpenLobby;
+        UIController.Instance.OnLocalPlayerLeftGame += GoToLandingPage;
     }
 
     public override void _ExitTree()
     {
-        UIController.Instance.OnGameCreated -= OpenLobby;
+        UIController.Instance.OnLocalPlayerJoinedGame -= OpenLobby;
+        UIController.Instance.OnLocalPlayerLeftGame -= GoToLandingPage;
     }
 
     private void OpenLobby(string ip, int port)
     {
         _landing.Visible = false;
-        _lobby.Visible = true;
+        Lobby.Visible = true;
+        Lobby.Initialize(ip,port);
     }
 
     public void GoToLandingPage()
     {
         _landing.Visible = true;
-        _lobby.Visible = false;
+        Lobby.Visible = false;
     }
 
 }

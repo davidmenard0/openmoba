@@ -26,7 +26,7 @@ public partial class QuickStart : Control
 
 	public void _on_start_game_button_down()
 	{
-		UIController.Instance.OnStartClicked?.Invoke();
+		UIController.Instance.OnStartPressed?.Invoke();
 	}
 	#endregion
 

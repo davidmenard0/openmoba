@@ -15,7 +15,6 @@ grow_vertical = 2
 script = ExtResource("1_gy64d")
 
 [node name="Landing" type="Control" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -155,16 +154,41 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("3_7bs6d")
 
-[node name="GameName" type="Label" parent="Lobby"]
+[node name="IP" type="Label" parent="Lobby"]
 layout_mode = 0
-offset_left = 24.0
-offset_top = 25.0
-offset_right = 369.0
-offset_bottom = 86.0
+offset_left = 78.0
+offset_top = 26.0
+offset_right = 423.0
+offset_bottom = 87.0
 theme_override_font_sizes/font_size = 36
-text = "Game Name"
+text = "127.0.0.1"
 
-[node name="Team1Label" type="Label" parent="Lobby"]
+[node name="IPLabel" type="Label" parent="Lobby/IP"]
+layout_mode = 0
+offset_left = -54.0
+offset_top = -1.0
+offset_bottom = 60.0
+theme_override_font_sizes/font_size = 36
+text = "IP:"
+
+[node name="Port" type="Label" parent="Lobby"]
+layout_mode = 0
+offset_left = 84.0
+offset_top = 76.0
+offset_right = 429.0
+offset_bottom = 137.0
+theme_override_font_sizes/font_size = 24
+text = "7777"
+
+[node name="PortLabel" type="Label" parent="Lobby/Port"]
+layout_mode = 0
+offset_left = -60.0
+offset_right = 15.0
+offset_bottom = 61.0
+theme_override_font_sizes/font_size = 24
+text = "Port:"
+
+[node name="Team1" type="Label" parent="Lobby"]
 layout_mode = 0
 offset_left = 50.0
 offset_top = 150.0
@@ -173,39 +197,19 @@ offset_bottom = 188.0
 theme_override_font_sizes/font_size = 24
 text = "Team1"
 
-[node name="PlayerListContainer" type="VBoxContainer" parent="Lobby/Team1Label"]
+[node name="PlayerListContainer" type="VBoxContainer" parent="Lobby/Team1"]
 layout_mode = 0
 offset_left = 6.0
 offset_top = 60.0
 offset_right = 456.0
 offset_bottom = 360.0
 
-[node name="Player1" type="Label" parent="Lobby/Team1Label/PlayerListContainer"]
+[node name="_template" type="Label" parent="Lobby/Team1/PlayerListContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
-text = "Player"
+text = "Player12424"
 
-[node name="Player2" type="Label" parent="Lobby/Team1Label/PlayerListContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "Player"
-
-[node name="Player3" type="Label" parent="Lobby/Team1Label/PlayerListContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "Player"
-
-[node name="Player4" type="Label" parent="Lobby/Team1Label/PlayerListContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "Player"
-
-[node name="Player5" type="Label" parent="Lobby/Team1Label/PlayerListContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "Player"
-
-[node name="Team2Label" type="Label" parent="Lobby"]
+[node name="Team2" type="Label" parent="Lobby"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -219,7 +223,7 @@ theme_override_font_sizes/font_size = 24
 text = "Team 2"
 horizontal_alignment = 2
 
-[node name="PlayerListContainer2" type="VBoxContainer" parent="Lobby/Team2Label"]
+[node name="PlayerListContainer2" type="VBoxContainer" parent="Lobby/Team2"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -229,34 +233,10 @@ offset_top = 60.0
 offset_bottom = 360.0
 grow_horizontal = 0
 
-[node name="Player6" type="Label" parent="Lobby/Team2Label/PlayerListContainer2"]
+[node name="_template" type="Label" parent="Lobby/Team2/PlayerListContainer2"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
-text = "Player"
-horizontal_alignment = 2
-
-[node name="Player7" type="Label" parent="Lobby/Team2Label/PlayerListContainer2"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "Player"
-horizontal_alignment = 2
-
-[node name="Player8" type="Label" parent="Lobby/Team2Label/PlayerListContainer2"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "Player"
-horizontal_alignment = 2
-
-[node name="Player9" type="Label" parent="Lobby/Team2Label/PlayerListContainer2"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "Player"
-horizontal_alignment = 2
-
-[node name="Player10" type="Label" parent="Lobby/Team2Label/PlayerListContainer2"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "Player"
+text = "Player123241"
 horizontal_alignment = 2
 
 [node name="StartGameButton" type="Button" parent="Lobby"]
@@ -290,6 +270,7 @@ grow_vertical = 0
 text = "Leave Game"
 
 [node name="QuickStart" type="Control" parent="."]
+visible = false
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0

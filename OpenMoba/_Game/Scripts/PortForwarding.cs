@@ -7,24 +7,22 @@ public partial class PortForwarding : Node
 {
 	public Action<string, int> OnPortForwardingComplete; // ip, port
 
-	public string LocalIP;
+	public string LocalIP = "127.0.0.1";
 	public string PublicIP;
-	public int Port = -1;
+	public int Port = 7777;
+
+	private bool _portForwardingComplete = false;
 
 	Upnp _upnp;
 	public override void _Ready()
 	{
-		FindLocalIP();
+		//FindLocalIP();
 		_upnp = new Upnp();
 	}
 
     public override void _ExitTree()
     {
-		if(Port != -1)
-		{
-			_upnp.DeletePortMapping(Port, "UDP");
-			_upnp.DeletePortMapping(Port, "TCP");
-		}
+		RemovePortForwarding();
     }
 
 	private void FindLocalIP()
@@ -39,8 +37,10 @@ public partial class PortForwarding : Node
 		Logger.Log("Local IP: " + LocalIP);
 	}
 
-	public void SetupPortForwarding(int port)
+	public void SetupPortForwarding()
 	{
+		if(_portForwardingComplete) return;
+
 		Upnp.UpnpResult error = (Upnp.UpnpResult) _upnp.Discover();
 
 		if(error != Upnp.UpnpResult.Success ) // 0 = Success
@@ -54,8 +54,8 @@ public partial class PortForwarding : Node
 			GD.Print("UPnP Gateway found: ", _upnp.GetGateway().DescriptionUrl);
 			if(_upnp.GetGateway().IsValidGateway() )
 			{
-				int err1 = _upnp.AddPortMapping(port, port, "openmoba", "UDP");
-				int err2 = _upnp.AddPortMapping(port, port, "openmoba", "TCP");
+				int err1 = _upnp.AddPortMapping(Port, Port, "openmoba", "UDP");
+				int err2 = _upnp.AddPortMapping(Port, Port, "openmoba", "TCP");
 
 				if(err1 != 0)
 				{
@@ -69,7 +69,7 @@ public partial class PortForwarding : Node
 					return;
 				}
 
-				Port = port;
+				_portForwardingComplete = true;
 				Logger.Log("Done setting up port forwarding");
 			}
 		} 
@@ -77,6 +77,16 @@ public partial class PortForwarding : Node
 		PublicIP = _upnp.QueryExternalAddress();
 		Logger.Log("External IP: " + PublicIP);
 
-		OnPortForwardingComplete?.Invoke(PublicIP, port);
+		OnPortForwardingComplete?.Invoke(PublicIP, Port);
+	}
+
+	private void RemovePortForwarding()
+	{
+		if(_upnp != null && Port != -1 && _portForwardingComplete)
+		{
+			_upnp.DeletePortMapping(Port, "UDP");
+			_upnp.DeletePortMapping(Port, "TCP");
+			_portForwardingComplete = false;
+		}
 	}
 }

@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,6 +28,8 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 	{
 	}
 
+	#region public methods
+
 	public void SpawnPlayers(Node spawnPoints)
 	{
 		if(!Multiplayer.IsServer()) return;
@@ -35,15 +38,32 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 
 		_playerSpawnPoints.Add(spawnPoints.GetChild(0));
 		_playerSpawnPoints.Add(spawnPoints.GetChild(1));
-		int i = 0;
-		foreach (var p in GameManager.Instance.Players)
+		foreach(var p in GameManager.Instance.Players)
 		{
-			int team = i % 2;
-			p.Value.Team = team;
 			SpawnPlayer(p.Value.PeerID);
-			i++;
 		}
 	}
+
+	public void KillPlayer(int id)
+	{
+		if(!Multiplayer.IsServer()) return;
+
+		CleanupPlayerNode(id);
+	}
+	
+	public void CleanupPlayerNode(int id )
+	{
+		if(PlayerNodes.ContainsKey(id))
+		{
+			PlayerNode p = PlayerNodes[id];
+			_spawnNode.RemoveChild(p);
+			p.QueueFree();
+			Server_OnPlayerDespawn?.Invoke();
+			PlayerNodes.Remove(p.OwnerID);
+		}
+	}
+
+	#endregion
 
 	private async void SpawnPlayer(int id)
 	{
@@ -70,12 +90,8 @@ public partial class PlayerObjectSpawner : MultiplayerSpawner
 	{
 		if(!Multiplayer.IsServer()) return;
 		
-		_spawnNode.RemoveChild(p);
-		p.QueueFree();
-		Server_OnPlayerDespawn?.Invoke();
+		CleanupPlayerNode(p.OwnerID);
 		SpawnPlayer(p.OwnerID);
-
-		PlayerNodes.Remove(p.OwnerID);
 	}
 
 	public void SpawnProjectile(PlayerNode owner, PackedScene projectileTemplate, Vector3 position, Vector3 direction)

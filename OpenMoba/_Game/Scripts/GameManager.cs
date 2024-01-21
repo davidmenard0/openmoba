@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
+// GameManager is to manage the in-game exprience
+// vs MultiplayerGame to manage lobby and connections
 public partial class GameManager : Node
 {
 	#region Singleton
@@ -34,7 +36,6 @@ public partial class GameManager : Node
 
 	public Color[] TeamColors = {new Color(1,0,0), new Color(0,0,1)};
 
-	public bool IsClient = false;
 
 	public PlayerObjectSpawner Spawner;
 	//This list is only maintained on the server side
@@ -45,7 +46,6 @@ public partial class GameManager : Node
 	
 	protected void Initialize()
 	{
-		//TODO: This shouldnt be a singleton!
 		Spawner = GetNode<PlayerObjectSpawner>("/root/Main/PlayerObjectSpawner");
 		Debug.Assert(Spawner != null, "ERROR: Cannot find PlayerOBjectSpawner in GameManager.");
 
@@ -103,6 +103,11 @@ public partial class GameManager : Node
 		Logger.Log(String.Format("Giving {0} resources to team {1}", resource, team));
 	}
 
+	public void RemovePlayer(int id)
+	{
+		Spawner.CleanupPlayerNode(id);
+	}
+
 	#endregion
 
 	#region private methods
@@ -120,7 +125,7 @@ public partial class GameManager : Node
 		//Map sync is handled by the MapSpawner object
 		if(!Multiplayer.IsServer()) return;
 
-		var map_container = GetNode("../../Map");
+		var map_container = GetNode("/root/Main/Map");
 		foreach(var c in map_container.GetChildren())
 		{
 			map_container.RemoveChild(c);

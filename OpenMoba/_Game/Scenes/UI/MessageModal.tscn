@@ -1,6 +1,8 @@
-[gd_scene format=3 uid="uid://b05guyjxo7t8p"]
+[gd_scene load_steps=2 format=3 uid="uid://b05guyjxo7t8p"]
 
-[node name="CreatingGamePanel" type="ColorRect"]
+[ext_resource type="Script" path="res://_Game/Scripts/UI/MessageModal.cs" id="1_iora6"]
+
+[node name="MessageModal" type="ColorRect"]
 visible = false
 anchors_preset = 8
 anchor_left = 0.5
@@ -14,8 +16,9 @@ offset_bottom = 49.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.227451, 0.227451, 0.227451, 1)
+script = ExtResource("1_iora6")
 
-[node name="Label" type="Label" parent="."]
+[node name="MessageLabel" type="Label" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5

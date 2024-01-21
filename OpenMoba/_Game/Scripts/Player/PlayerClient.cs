@@ -17,7 +17,7 @@ public partial class PlayerClient : Node3D
     {
 		// Players are all spawned on server, so when it get mirrored
 		// on clinet, handshake to confirm ownership
-		if(!GameManager.Instance.IsClient) return;
+		if(!MultiplayerGame.Instance.IsClient) return;
 
         _player = GetParentOrNull<PlayerNode>();
 		Debug.Assert(_player != null, "ERROR: Cannot find Player in PlayerClient.");
@@ -33,7 +33,7 @@ public partial class PlayerClient : Node3D
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
 	private void RPC_Client_ConfirmOwnership(int id, string name)
 	{
-		if(!GameManager.Instance.IsClient) return;
+		if(!MultiplayerGame.Instance.IsClient) return;
 		
 		if(_ownerID == Multiplayer.GetUniqueId())
 		{

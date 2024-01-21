@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=3 uid="uid://b5jhp8a2u3gnb"]
 
 [ext_resource type="Script" path="res://_Game/Scripts/Main.cs" id="1_uobwu"]
-[ext_resource type="Script" path="res://_Game/Scripts/MultiplayerController.cs" id="2_8586g"]
+[ext_resource type="Script" path="res://_Game/Scripts/MultiplayerGame.cs" id="2_78rxf"]
 [ext_resource type="Script" path="res://_Game/Scripts/PlayerObjectSpawner.cs" id="3_103y6"]
 [ext_resource type="Script" path="res://_Game/Scripts/UI/UIController.cs" id="3_xvs1u"]
 [ext_resource type="Script" path="res://_Game/Scripts/VisibilityManager.cs" id="4_cyduc"]
@@ -16,23 +16,23 @@ script = ExtResource("1_uobwu")
 
 [node name="Singleton" type="Node" parent="."]
 
-[node name="GameManager" type="Node" parent="Singleton"]
+[node name="UIController" type="Node" parent="Singleton"]
+script = ExtResource("3_xvs1u")
+
+[node name="MultiplayerGame" type="Node" parent="Singleton"]
+script = ExtResource("2_78rxf")
+
+[node name="PortForwarding" type="Node" parent="Singleton/MultiplayerGame"]
+script = ExtResource("7_e57ck")
+
+[node name="GameManager" type="Node" parent="Singleton/MultiplayerGame"]
 script = ExtResource("7_xgyen")
 
-[node name="VisibilityManager" type="Node" parent="Singleton/GameManager"]
+[node name="VisibilityManager" type="Node" parent="Singleton/MultiplayerGame/GameManager"]
 script = ExtResource("4_cyduc")
 
 [node name="FXManager" type="Node" parent="Singleton"]
 script = ExtResource("5_sida8")
-
-[node name="UIController" type="Node" parent="Singleton"]
-script = ExtResource("3_xvs1u")
-
-[node name="MultiplayerController" type="Node" parent="."]
-script = ExtResource("2_8586g")
-
-[node name="PortForwarding" type="Node" parent="MultiplayerController"]
-script = ExtResource("7_e57ck")
 
 [node name="MapSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("res://_Game/Scenes/Maps/MainMap.tscn", "res://_Game/Scenes/Maps/testmap.tscn")

@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 public partial class PlayerNode : CharacterBody3D
 {
-	public Action<PlayerNode> OnDeath; //PlayerInfo
+	public Action<PlayerNode> OnDeath; //PlayerInfo, respawn
 
 	[Export]
 	public PackedScene ProjectileTemplate;
